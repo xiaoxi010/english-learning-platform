@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试记录管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #0c0c1d, #1a1a3e, #0d1b2a, #1b0a2e);
+            min-height: 100vh; color: #fff;
+        }
+        .header {
+            background: rgba(0,0,0,0.4); padding: 12px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { font-size: 1.4em; color: #ffd93d; }
+        .back-btn {
+            color: #aaa; text-decoration: none; padding: 8px 16px;
+            border-radius: 20px; background: rgba(255,255,255,0.1);
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        
+        .container { display: flex; gap: 15px; padding: 15px; max-width: 1400px; margin: 0 auto; height: calc(100vh - 70px); }
+        
+        .left-panel { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+        .panel {
+            background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px;
+        }
+        .panel h3 { font-size: 1em; color: #ffd93d; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        .dict-list { max-height: 200px; overflow-y: auto; }
+        .dict-item {
+            padding: 6px 10px; margin: 2px 0; border-radius: 6px; cursor: pointer;
+            font-size: 0.85em; transition: background 0.2s;
+        }
+        .dict-item:hover { background: rgba(255,255,255,0.1); }
+        .dict-item.selected { background: rgba(108,92,231,0.3); }
+        
+        .btn {
+            padding: 8px 14px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.85em; transition: all 0.2s; color: white; font-weight: bold;
+        }
+        .btn-danger { background: #e74c3c; width: 100%; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-export { background: #6c5ce7; }
+        .btn-export:hover { background: #5a4bd1; }
+        .btn-export:disabled { opacity: 0.4; cursor: not-allowed; }
+        
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+        
+        .tabs { display: flex; gap: 5px; }
+        .tab {
+            padding: 8px 18px; border-radius: 10px 10px 0 0; cursor: pointer;
+            background: rgba(255,255,255,0.05); border: none; color: #aaa; font-size: 0.85em;
+        }
+        .tab.active { background: rgba(255,255,255,0.1); color: #ffd93d; }
+        
+        .tab-content { display: none; flex: 1; overflow-y: auto; }
+        .tab-content.active { display: flex; flex-direction: column; }
+        
+        .sort-bar { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+        .sort-btn {
+            padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+            background: transparent; color: #aaa; cursor: pointer; font-size: 0.8em;
+        }
+        .sort-btn.active { background: #6c5ce7; border-color: #6c5ce7; color: white; }
+        
+        table {
+            width: 100%; border-collapse: collapse; table-layout: fixed; min-width: 700px;
+        }
+        th {
+            background: #2d3436; padding: 8px 6px; font-size: 0.85em;
+            position: sticky; top: 0; z-index: 1; text-align: center;
+        }
+        td {
+            padding: 8px 6px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        tr:hover td { background: rgba(255,255,255,0.03); cursor: pointer; }
+        .pass-green { color: #2ed573; font-weight: bold; }
+        .pass-red { color: #e74c3c; font-weight: bold; }
+        .pass-gray { color: #95a5a6; }
+        
+        .detail-panel {
+            background: rgba(255,255,255,0.05); border-radius: 12px;
+            padding: 15px; margin-top: 10px; flex-shrink: 0;
+        }
+        .detail-panel h3 { color: #ffd93d; margin-bottom: 10px; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .detail-item { display: flex; }
+        .detail-label { color: #3498db; width: 80px; flex-shrink: 0; }
+        .detail-value { color: #fff; }
+        
+        .stats-box { font-size: 0.85em; line-height: 1.8; }
+        .stats-box .highlight { color: #ffd93d; font-weight: bold; }
+        
+        select {
+            background: #1e1e3a; color: white; padding: 5px 10px;
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
+        }
+         /* 隐藏所有滚动条 */
+        *::-webkit-scrollbar {
+            width: 0px;
+        }
+        *:hover::-webkit-scrollbar {
+            width: 4px;
+        }
+        *::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 考试记录管理</h1>
+        <a href="/" class="back-btn">← 返回主菜单</a>
+    </div>
+
+    <div class="container">
+        <!-- 左侧面板 -->
+        <div class="left-panel">
+            <div class="panel">
+                <h3>📖 词典筛选</h3>
+                <div class="dict-list" id="dictList"></div>
+            </div>
+            <div class="panel">
+                <h3>📈 统计信息</h3>
+                <div class="stats-box" id="statsBox">加载中...</div>
+            </div>
+            <button class="btn btn-danger" onclick="clearAll()">🗑️ 清空全部记录</button>
+        </div>
+
+        <!-- 右侧面板 -->
+        <div class="right-panel">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('stats')">📊 单词组统计</button>
+                <button class="tab" onclick="switchTab('records')">📝 详细考核记录</button>
+            </div>
+
+            <!-- 单词组统计 -->
+            <div class="tab-content active" id="tab-stats">
+                <div class="sort-bar">
+                    <span style="color:#aaa;font-size:0.8em;">排序:</span>
+                    <button class="sort-btn active" onclick="sortStats('group_name')">组名</button>
+                    <button class="sort-btn" onclick="sortStats('challenge_count')">挑战次数</button>
+                    <button class="sort-btn" onclick="sortStats('pass_count')">通过次数</button>
+                    <button class="sort-btn" onclick="sortStats('highest_score')">最高分</button>
+                    <button class="sort-btn" onclick="sortStats('gpa')">绩点</button>
+                </div>
+                <div style="overflow-y:auto;flex:1;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:18%;">组名</th>
+                                <th style="width:13%;">所属词典</th>
+                                <th style="width:12%;">挑战次数</th>
+                                <th style="width:12%;">通过次数</th>
+                                <th style="width:12%;">最高分</th>
+                                <th style="width:12%;">绩点</th>
+                                <th style="width:21%;">最早通过时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 详细记录 -->
+            <div class="tab-content" id="tab-records">
+                <div style="overflow-y:auto;flex:1;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:5%;">#</th>
+                                <th style="width:18%;">考核时间</th>
+                                <th style="width:14%;">组名</th>
+                                <th style="width:12%;">词典</th>
+                                <th style="width:12%;">版型</th>
+                                <th style="width:10%;">分数</th>
+                                <th style="width:10%;">绩点</th>
+                                <th style="width:10%;">结果</th>
+                                <th style="width:9%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 记录详情 -->
+            <div class="detail-panel" id="detailPanel" style="display:none;">
+                <h3>📋 记录详情</h3>
+                <div class="detail-grid" id="detailContent"></div>
+                <div style="margin-top:10px;">
+                    <button class="btn btn-export" id="btnExportPng" disabled onclick="exportPng()">📸 导出PNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDict = '全部';
+        let currentSort = 'group_name';
+        let currentTab = 'stats';
+        let selectedRecordId = null;
+
+        async function init() {
+            await loadDictionaries();
+            await loadSummary();
+            await loadStats();
+        }
+
+        // ========== 词典 ==========
+        async function loadDictionaries() {
+            const resp = await fetch('/api/exam/dictionaries');
+            const dicts = await resp.json();
+            const list = document.getElementById('dictList');
+            list.innerHTML = `<div class="dict-item selected" onclick="selectDict('全部')">📋 全部</div>` +
+                dicts.map(d => `<div class="dict-item" onclick="selectDict('${d}')">📖 ${d}</div>`).join('');
+        }
+
+        function selectDict(name) {
+            currentDict = name;
+            document.querySelectorAll('.dict-item').forEach(el => {
+                el.classList.toggle('selected', el.textContent.includes(name));
+            });
+            if (currentTab === 'stats') loadStats();
+            else loadRecords();
+            loadSummary();
+        }
+
+        // ========== 统计摘要 ==========
+        async function loadSummary() {
+            const resp = await fetch('/api/exam/summary');
+            const s = await resp.json();
+            document.getElementById('statsBox').innerHTML = `
+                <div>平均绩点: <span class="highlight">${s.avg_gpa?.toFixed(2) || '0.00'}</span></div>
+                <div>总通过率: <span class="highlight">${s.total_pass_rate?.toFixed(1) || 0}%</span></div>
+                <hr style="border-color:rgba(255,255,255,0.1);margin:5px 0;">
+                <div>盗宝大师: <span class="highlight">${(s.pattern_integrals?.['盗宝大师'] || 0).toFixed(1)}</span></div>
+                <div>诡影重重: <span class="highlight">${(s.pattern_integrals?.['诡影重重'] || 0).toFixed(1)}</span></div>
+                <div>意言译语: <span class="highlight">${(s.pattern_integrals?.['意言译语'] || 0).toFixed(1)}</span></div>
+                <div>三十六计: <span class="highlight">${(s.pattern_integrals?.['三十六计'] || 0).toFixed(1)}</span></div>
+                <div>七十二变: <span class="highlight">${(s.pattern_integrals?.['七十二变'] || 0).toFixed(1)}</span></div>
+                <div>万圣之夜: <span class="highlight">${(s.pattern_integrals?.['万圣之夜'] || 0).toFixed(1)}</span></div>
+            `;
+        }
+
+        // ========== 单词组统计 ==========
+        async function loadStats() {
+            const resp = await fetch(`/api/exam/stats?dict=${currentDict}&sort=${currentSort}`);
+            const stats = await resp.json();
+            document.getElementById('statsBody').innerHTML = stats.map(s => {
+                const passClass = s.pass_count === '-' ? 'pass-gray' : (parseInt(s.pass_count) >= 1 ? 'pass-green' : 'pass-red');
+                return `<tr ondblclick="showStatDetail('${s.group_name}', '${s.dictionary_name}', '${s.challenge_count}', '${s.pass_count}', '${s.highest_score}', '${s.gpa}', '${s.earliest_pass_time}')">
+                    <td>${s.group_name}</td>
+                    <td>${s.dictionary_name}</td>
+                    <td>${s.challenge_count}</td>
+                    <td class="${passClass}">${s.pass_count}</td>
+                    <td>${s.highest_score}</td>
+                    <td>${typeof s.gpa === 'number' ? s.gpa.toFixed(2) : s.gpa}</td>
+                    <td>${s.earliest_pass_time}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function showStatDetail(group, dict, challenge, passed, score, gpa, time) {
+            const panel = document.getElementById('detailPanel');
+            panel.style.display = 'block';
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-item"><span class="detail-label">组名:</span><span class="detail-value">${group}</span></div>
+                <div class="detail-item"><span class="detail-label">词典:</span><span class="detail-value">${dict}</span></div>
+                <div class="detail-item"><span class="detail-label">挑战次数:</span><span class="detail-value">${challenge}</span></div>
+                <div class="detail-item"><span class="detail-label">通过次数:</span><span class="detail-value">${passed}</span></div>
+                <div class="detail-item"><span class="detail-label">最高分:</span><span class="detail-value">${score}</span></div>
+                <div class="detail-item"><span class="detail-label">绩点:</span><span class="detail-value">${typeof gpa === 'number' ? gpa.toFixed(2) : gpa}</span></div>
+                <div class="detail-item"><span class="detail-label">最早通过:</span><span class="detail-value">${time}</span></div>
+            `;
+            document.getElementById('btnExportPng').disabled = true;
+        }
+
+        function sortStats(sort) {
+            currentSort = sort;
+            document.querySelectorAll('#tab-stats .sort-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            loadStats();
+        }
+
+        // ========== 详细记录 ==========
+        async function loadRecords() {
+            const resp = await fetch(`/api/exam/records?dict=${currentDict}`);
+            const records = await resp.json();
+            document.getElementById('recordsBody').innerHTML = records.map((r, i) => `
+                <tr ondblclick="showRecordDetail(${r.id})">
+                    <td>${i + 1}</td>
+                    <td>${r.exam_time}</td>
+                    <td>${r.group_name}</td>
+                    <td>${r.dictionary_name}</td>
+                    <td>${r.pattern_name}</td>
+                    <td>${r.score?.toFixed(1)}</td>
+                    <td>${r.gpa?.toFixed(2)}</td>
+                    <td class="${r.is_passed ? 'pass-green' : 'pass-red'}">${r.is_passed ? '✓ 通过' : '✗ 未通过'}</td>
+                    <td><button class="btn btn-export btn-sm" onclick="event.stopPropagation();exportPngById(${r.id})">📸</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function showRecordDetail(id) {
+            const resp = await fetch(`/api/exam/record/${id}`);
+            const r = await resp.json();
+            if (r.error) return;
+            
+            selectedRecordId = id;
+            const panel = document.getElementById('detailPanel');
+            panel.style.display = 'block';
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-item"><span class="detail-label">时间:</span><span class="detail-value">${r.exam_time}</span></div>
+                <div class="detail-item"><span class="detail-label">组名:</span><span class="detail-value">${r.group_name}</span></div>
+                <div class="detail-item"><span class="detail-label">词典:</span><span class="detail-value">${r.dictionary_name}</span></div>
+                <div class="detail-item"><span class="detail-label">版型:</span><span class="detail-value">${r.pattern_name}</span></div>
+                <div class="detail-item"><span class="detail-label">得分:</span><span class="detail-value">${r.score?.toFixed(1)}</span></div>
+                <div class="detail-item"><span class="detail-label">绩点:</span><span class="detail-value">${r.gpa?.toFixed(2)}</span></div>
+                <div class="detail-item"><span class="detail-label">结果:</span><span class="detail-value ${r.is_passed ? 'pass-green' : 'pass-red'}">${r.is_passed ? '通过' : '未通过'}</span></div>
+                <div class="detail-item"><span class="detail-label">基础分:</span><span class="detail-value">${r.basic_score?.toFixed(1) || '-'}</span></div>
+                <div class="detail-item"><span class="detail-label">版型分:</span><span class="detail-value">${r.shadow_score?.toFixed(1) || '-'}</span></div>
+                <div class="detail-item"><span class="detail-label">总分:</span><span class="detail-value">${r.total_score?.toFixed(1) || '-'}</span></div>
+            `;
+            document.getElementById('btnExportPng').disabled = false;
+        }
+
+        function exportPng() {
+            if (selectedRecordId) exportPngById(selectedRecordId);
+        }
+
+        function exportPngById(id) {
+            window.open(`/api/exam/export_png/${id}`, '_blank');
+        }
+
+        // ========== 清空 ==========
+        async function clearAll() {
+            if (!confirm('确定要清空所有考试记录吗？此操作不可恢复！')) return;
+            const resp = await fetch('/api/exam/clear', { method: 'POST' });
+            const result = await resp.json();
+            alert(result.message);
+            if (result.success) {
+                loadStats();
+                loadRecords();
+                loadSummary();
+                document.getElementById('detailPanel').style.display = 'none';
+            }
+        }
+
+        // ========== 标签切换 ==========
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach((t, i) => {
+                t.classList.toggle('active', (tab === 'stats' && i === 0) || (tab === 'records' && i === 1));
+            });
+            document.getElementById('tab-stats').classList.toggle('active', tab === 'stats');
+            document.getElementById('tab-records').classList.toggle('active', tab === 'records');
+            if (tab === 'stats') loadStats();
+            else loadRecords();
+        }
+
+        init();
+    </script>
+</body>
+</html>

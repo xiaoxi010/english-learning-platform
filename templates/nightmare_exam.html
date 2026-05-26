@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>噩梦高考</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #0c0c1d 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh; color: #e0e0e0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .sticky-header {
+            position: sticky; top: 0; z-index: 999;
+            background: rgba(20,20,40,0.98); backdrop-filter: blur(10px);
+            border-radius: 15px; padding: 12px 25px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,0,0,0.3);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.8);
+        }
+        .header-title {
+            font-size: 22px; font-weight: bold;
+            background: linear-gradient(135deg, #ff0000, #ff4444);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .header-center { display: flex; align-items: center; gap: 15px; }
+        .timer-display {
+            font-size: 26px; font-weight: bold; color: #ff4444;
+            font-family: 'Courier New', monospace;
+        }
+        .timer-display.warning { animation: blink 0.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.4; } }
+        .btn-submit {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white; padding: 10px 30px; border: none;
+            border-radius: 10px; font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .btn-submit:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(243,156,18,0.4); }
+        .btn-back { background: #555; color: white; padding: 8px 18px; border-radius: 20px; text-decoration: none; font-size: 13px; }
+        .panel { display: none; animation: fadeIn 0.4s; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card {
+            background: rgba(26,26,46,0.95); border-radius: 20px; padding: 30px;
+            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .card-title { font-size: 22px; font-weight: bold; margin-bottom: 20px; color: #ff4444; text-align: center; }
+        .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .config-item {
+            background: rgba(255,255,255,0.03); padding: 18px; border-radius: 12px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.08);
+        }
+        .config-item .type-icon { font-size: 28px; margin-bottom: 8px; }
+        .config-item .type-name { font-size: 14px; color: #ccc; font-weight: bold; }
+        .config-item .type-available { font-size: 12px; color: #888; margin-bottom: 10px; }
+        .config-item .type-available span { color: #f39c12; font-weight: bold; }
+        .config-item input {
+            width: 80px; padding: 8px; text-align: center;
+            border: 1px solid #444; border-radius: 8px;
+            font-size: 16px; font-weight: bold;
+            background: #1a1a2e; color: #e0e0e0;
+        }
+        .config-item input:focus { outline: none; border-color: #ff4444; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: #ccc; font-size: 14px; }
+        .form-group select {
+            width: 100%; padding: 12px; border: 1px solid #444;
+            border-radius: 10px; font-size: 15px;
+            background: #1a1a2e; color: #e0e0e0;
+        }
+        .form-row { display: flex; gap: 20px; flex-wrap: wrap; }
+        .form-col { flex: 1; min-width: 180px; }
+        .form-col label { display: block; margin-bottom: 6px; font-weight: bold; color: #ccc; font-size: 14px; }
+        .form-col input {
+            width: 100%; padding: 12px; border: 1px solid #444;
+            border-radius: 10px; font-size: 15px;
+            background: #1a1a2e; color: #e0e0e0;
+        }
+        .form-col input:focus { outline: none; border-color: #ff4444; }
+        .btn {
+            padding: 10px 24px; border: none; border-radius: 10px;
+            cursor: pointer; font-size: 15px; font-weight: bold;
+            transition: all 0.3s; display: inline-block;
+        }
+        .btn-primary { background: linear-gradient(135deg, #ff0000, #cc0000); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,0,0,0.4); }
+        .btn-warning { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .type-section-title {
+            font-size: 19px; font-weight: bold; color: #ff4444;
+            margin: 30px 0 15px 0; padding: 10px 15px;
+            border-left: 4px solid #ff4444;
+            background: rgba(255,68,68,0.05);
+            border-radius: 0 10px 10px 0;
+        }
+        .question-block {
+            background: rgba(255,255,255,0.02); border-radius: 15px;
+            padding: 20px; margin-bottom: 12px;
+            border-left: 3px solid #ff4444;
+        }
+        .question-block.correct { border-left-color: #2ecc71; background: rgba(46,204,113,0.04); }
+        .question-block.wrong { border-left-color: #e74c3c; background: rgba(231,76,60,0.04); }
+        .question-block.partial { border-left-color: #00bcd4; background: rgba(0,188,212,0.04); }
+        .q-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 15px; }
+        .q-type-badge {
+            padding: 3px 12px; border-radius: 15px;
+            font-size: 12px; font-weight: bold;
+            background: #ff4444; color: white; white-space: nowrap;
+        }
+        .q-type-badge.badge-correct { background: #2ecc71; }
+        .q-type-badge.badge-wrong { background: #e74c3c; }
+        .q-type-badge.badge-partial { background: #00bcd4; }
+        .q-score-tag { font-size: 12px; color: #aaa; margin-left: auto; }
+        .q-content { margin-bottom: 12px; color: #ddd; line-height: 1.6; }
+        .option-item {
+            display: block; padding: 10px 15px; margin: 4px 0;
+            background: rgba(255,255,255,0.02); border-radius: 8px;
+            cursor: pointer; transition: all 0.2s;
+            border: 2px solid transparent; font-size: 14px;
+        }
+        .option-item:hover { background: rgba(255,255,255,0.05); }
+        .option-item.selected { border-color: #ff4444; background: rgba(255,0,0,0.1); }
+        .option-item.correct-ans { border-color: #2ecc71; background: rgba(46,204,113,0.08); }
+        .option-item.wrong-ans { border-color: #e74c3c; background: rgba(231,76,60,0.08); }
+        .option-item.missed-ans { border-color: #00bcd4; background: rgba(0,188,212,0.08); }
+        .option-item.disabled { pointer-events: none; opacity: 0.85; }
+        textarea.answer-input {
+            width: 100%; padding: 12px; border: 1px solid #444;
+            border-radius: 10px; font-size: 14px;
+            background: #1a1a2e; color: #e0e0e0;
+            resize: vertical; min-height: 80px; font-family: inherit;
+        }
+        textarea.answer-input:focus { outline: none; border-color: #ff4444; }
+        .answer-label { font-size: 12px; color: #888; margin-bottom: 5px; }
+        .answer-text { padding: 10px; background: rgba(255,255,255,0.03); border-radius: 8px; margin: 3px 0; font-size: 13px; }
+        .answer-text.user { color: #e74c3c; }
+        .answer-text.correct-ans-text { color: #2ecc71; }
+        .explanation-box {
+            background: rgba(52,152,219,0.08); padding: 12px;
+            border-radius: 8px; margin-top: 10px;
+            font-size: 13px; color: #3498db;
+            border: 1px solid rgba(52,152,219,0.2);
+        }
+        .scenario-box {
+            background: rgba(255,255,255,0.03); padding: 15px;
+            border-radius: 10px; margin-bottom: 15px;
+            color: #f39c12; font-size: 14px;
+            border: 1px solid rgba(243,156,18,0.2);
+        }
+        .score-display { text-align: center; padding: 30px; }
+        .big-score {
+            font-size: 80px; font-weight: bold;
+            background: linear-gradient(135deg, #ff4444, #ff8800);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .big-score.passed {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            -webkit-background-clip: text; background-clip: text;
+        }
+        .pass-status { font-size: 24px; font-weight: bold; margin-top: 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 20px 0; }
+        .stat-item {
+            background: rgba(255,255,255,0.03); padding: 15px;
+            border-radius: 10px; text-align: center;
+        }
+        .stat-item .stat-name { font-size: 12px; color: #aaa; }
+        .stat-item .stat-score { font-size: 22px; font-weight: bold; color: #ff4444; }
+        .stat-item .stat-full { font-size: 11px; color: #666; }
+        .total-preview-box {
+            background: rgba(46,204,113,0.1); border: 2px solid rgba(46,204,113,0.3);
+            border-radius: 12px; padding: 15px; text-align: center; margin-top: 20px;
+        }
+        .total-preview-box .total-label { font-size: 14px; color: #2ecc71; }
+        .total-preview-box .total-value { font-size: 36px; font-weight: bold; color: #2ecc71; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        .toast {
+            position: fixed; bottom: 20px; right: 20px; padding: 12px 24px;
+            border-radius: 10px; color: white; font-weight: bold;
+            z-index: 2000; animation: slideIn 0.3s;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-success { background: #2ecc71; }
+        .toast-error { background: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 设置面板 -->
+        <div class="panel active" id="panel-setup">
+            <div class="card">
+                <div class="card-title">💀 噩梦高考 - 考试配置</div>
+                <div class="form-group">
+                    <label>📂 选择题库分类</label>
+                    <select id="category-select" onchange="loadCategoryStats()">
+                        <option value="">-- 请选择分类 --</option>
+                    </select>
+                </div>
+                <div class="card-title" style="font-size:16px; margin-top:25px;">📊 各题型数量设置</div>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <div class="type-icon">📖</div><div class="type-name">单选题</div>
+                        <div class="type-available">题库共 <span id="avail-single">0</span> 道</div>
+                        <input type="number" id="cnt-single" value="10" min="0" onchange="validateCount('single')">
+                    </div>
+                    <div class="config-item">
+                        <div class="type-icon">🔘</div><div class="type-name">多选题</div>
+                        <div class="type-available">题库共 <span id="avail-multi">0</span> 道</div>
+                        <input type="number" id="cnt-multi" value="5" min="0" onchange="validateCount('multi')">
+                    </div>
+                    <div class="config-item">
+                        <div class="type-icon">📝</div><div class="type-name">填空题</div>
+                        <div class="type-available">题库共 <span id="avail-fill">0</span> 道</div>
+                        <input type="number" id="cnt-fill" value="5" min="0" onchange="validateCount('fill')">
+                    </div>
+                    <div class="config-item">
+                        <div class="type-icon">✏️</div><div class="type-name">简答题</div>
+                        <div class="type-available">题库共 <span id="avail-short">0</span> 道</div>
+                        <input type="number" id="cnt-short" value="4" min="0" onchange="validateCount('short')">
+                    </div>
+                    <div class="config-item">
+                        <div class="type-icon">📊</div><div class="type-name">应用大题</div>
+                        <div class="type-available">题库共 <span id="avail-app">0</span> 道大题</div>
+                        <input type="number" id="cnt-app" value="2" min="0" onchange="validateCount('app')">
+                    </div>
+                </div>
+
+                <!-- ⭐ 总分设置 -->
+                <div class="total-preview-box" style="display:block;">
+                    <div class="total-label">📊 考试总分设置</div>
+                    <input type="number" id="total-score" value="100" min="10" max="500" 
+                        style="width:120px;padding:10px;text-align:center;font-size:24px;font-weight:bold;
+                        border:2px solid #2ecc71;border-radius:10px;background:#1a1a2e;color:#2ecc71;margin:10px 0;">
+                    <div style="font-size:13px;color:#aaa;">（单选:多选:填空:简答:应用小问 = 2:2:2:5:5）</div>
+                </div>
+
+                <div class="form-row" style="margin-top:20px;">
+                    <div class="form-col"><label>⏰ 考试时间（分钟）</label><input type="number" id="exam-time" value="120" min="10" max="300"></div>
+                    <div class="form-col"><label>✅ 及格分数线</label><input type="number" id="pass-score" value="60" min="1" max="500"></div>
+                </div>
+                <div style="text-align:center; margin-top:25px;">
+                    <button class="btn btn-primary" style="font-size:20px; padding:15px 60px;" onclick="startExam()">
+                        💀 开始噩梦高考
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 考试面板 -->
+        <div class="panel" id="panel-exam">
+            <div class="sticky-header">
+                <span class="header-title">💀 噩梦高考</span>
+                <div class="header-center"><span class="timer-display" id="timer-display">⏰ 02:00:00</span></div>
+                <button class="btn-submit" onclick="submitExam()">📝 交卷</button>
+            </div>
+            <div id="exam-questions"></div>
+        </div>
+
+        <!-- 结果面板 -->
+        <div class="panel" id="panel-result">
+            <div class="card" id="result-content"></div>
+        </div>
+    </div>
+
+    <script>
+        let examConfig = null;
+        let examQuestions = null;
+        let userAnswers = {};
+        let timerInterval = null;
+        let timeRemaining = 0;
+        let isSubmitted = false;
+        let availableStats = {};
+        
+        let globalAppIdx = 0;
+let totalScoreSet = 100;  // ⭐ 加这行
+
+        document.addEventListener('DOMContentLoaded', () => { loadCategories(); updateScorePreview(); });
+
+        async function loadCategories() {
+            try {
+                const res = await fetch('/nightmare/api/categories');
+                const data = await res.json();
+                if (data.success) {
+                    const select = document.getElementById('category-select');
+                    select.innerHTML = '<option value="">-- 请选择分类 --</option>';
+                    data.data.forEach(cat => {
+                        const opt = document.createElement('option');
+                        opt.value = cat.id;
+                        opt.textContent = `${cat.name} (单${cat.stats.single}|多${cat.stats.multi}|填${cat.stats.fill}|简${cat.stats.short}|应${cat.stats.application})`;
+                        opt.dataset.stats = JSON.stringify(cat.stats);
+                        select.appendChild(opt);
+                    });
+                }
+            } catch(e) { showToast('加载分类失败','error'); }
+        }
+
+        function loadCategoryStats() {
+            const sel = document.getElementById('category-select').selectedOptions[0];
+            if (sel && sel.dataset.stats) {
+                availableStats = JSON.parse(sel.dataset.stats);
+                ['single','multi','fill','short','app'].forEach(k => {
+                    const key = k === 'app' ? 'application' : k;
+                    document.getElementById('avail-'+k).textContent = availableStats[key];
+                    document.getElementById('cnt-'+k).max = availableStats[key];
+                });
+            } else {
+                availableStats = {};
+                ['single','multi','fill','short','app'].forEach(k => document.getElementById('avail-'+k).textContent = '0');
+            }
+            updateScorePreview();
+        }
+
+        function validateCount(type) {
+            const key = type === 'app' ? 'application' : type;
+            const max = availableStats[key] || 999;
+            const input = document.getElementById('cnt-'+type);
+            let v = parseInt(input.value) || 0;
+            if (v > max) { v = max; input.value = max; }
+            if (v < 0) { v = 0; input.value = 0; }
+            updateScorePreview();
+        }
+
+        
+
+        async function startExam() {
+            const catId = document.getElementById('category-select').value;
+            if (!catId) { showToast('请选择分类','error'); return; }
+            const counts = {
+                single: parseInt(document.getElementById('cnt-single').value)||0,
+                multi: parseInt(document.getElementById('cnt-multi').value)||0,
+                fill: parseInt(document.getElementById('cnt-fill').value)||0,
+                short: parseInt(document.getElementById('cnt-short').value)||0,
+                application: parseInt(document.getElementById('cnt-app').value)||0  // ⭐ 大题数
+            };
+            if (Object.values(counts).reduce((a,b)=>a+b,0) === 0) { showToast('请至少设置一道题目','error'); return; }
+            
+            const totalScore = parseInt(document.getElementById('total-score').value) || 100;
+            totalScoreSet = totalScore;  
+            
+            try {
+                const res = await fetch('/nightmare/api/generate_exam', {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        category_id:parseInt(catId),
+                        question_counts:counts,
+                        pass_score:parseInt(document.getElementById('pass-score').value)||60,
+                        exam_time:parseInt(document.getElementById('exam-time').value)||120,
+                        total_score: totalScore  // ⭐ 传总分
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    examConfig = data.config;
+                    examQuestions = data.questions;
+                    userAnswers = {single:{},multi:{},fill:{},short:{},application:{}};
+                    isSubmitted = false;
+                    globalAppIdx = 0;
+                    switchPanel('panel-exam');
+                    renderExam();
+                    timeRemaining = examConfig.exam_time;
+                    updateTimerDisplay();
+                    timerInterval = setInterval(tickTimer, 1000);
+                    window.scrollTo(0,0);
+                    showToast('考试开始！','success');
+                } else showToast(data.message,'error');
+            } catch(e) { showToast('组卷失败','error'); }
+        }
+
+        function tickTimer() {
+            if (isSubmitted) return;
+            timeRemaining--;
+            updateTimerDisplay();
+            if (timeRemaining <= 0) { clearInterval(timerInterval); showToast('时间到！','error'); submitExam(); }
+        }
+
+        function updateTimerDisplay() {
+            const h = Math.floor(timeRemaining/3600), m = Math.floor((timeRemaining%3600)/60), s = timeRemaining%60;
+            const d = document.getElementById('timer-display');
+            d.textContent = `⏰ ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            d.classList.toggle('warning', timeRemaining < 300);
+        }
+
+        function renderExam() {
+            const container = document.getElementById('exam-questions');
+            container.innerHTML = '';
+            let globalIdx = 0;
+            globalAppIdx = 0;
+            
+            const typeConfigs = [
+                {key:'single',title:'一、单项选择题',icon:'📖'},
+                {key:'multi',title:'二、多项选择题',icon:'🔘'},
+                {key:'fill',title:'三、填空题',icon:'📝'},
+                {key:'short',title:'四、简答题',icon:'✏️'},
+                {key:'application',title:'五、应用题',icon:'📊'}
+            ];
+
+            typeConfigs.forEach(tc => {
+                const questions = examQuestions[tc.key];
+                if (!questions || questions.length === 0) return;
+
+                const typeTitle = document.createElement('div');
+                typeTitle.className = 'type-section-title';
+                typeTitle.textContent = `${tc.icon} ${tc.title}（共${questions.length}题）`;
+                container.appendChild(typeTitle);
+
+                if (tc.key === 'application') {
+                    const grouped = {};
+                    questions.forEach(q => {
+                        if (!grouped[q.parent_id]) grouped[q.parent_id] = {scenario:q.scenario, subs:[]};
+                        grouped[q.parent_id].subs.push(q);
+                    });
+                    Object.values(grouped).forEach(group => {
+                        const block = document.createElement('div');
+                        block.className = 'question-block';
+                        let html = `<div class="scenario-box">📋 ${escapeHtml(group.scenario)}</div>`;
+                        group.subs.forEach((q) => {
+                            const appIdx = globalAppIdx;  // 全局唯一索引
+                            globalAppIdx++;
+                            globalIdx++;
+                            html += `
+                                <div style="margin:12px 0;padding-left:15px;border-left:2px solid rgba(255,68,68,0.3);">
+                                    <div class="q-header"><span class="q-type-badge">应用</span><span>第${globalIdx}题 (${q.sub_index+1})</span></div>
+                                    <div class="q-content">${escapeHtml(q.sub_question)}</div>
+                                    <textarea class="answer-input" id="ans-app-${appIdx}" placeholder="请输入答案..." 
+                                        oninput="saveAnswer('application',${appIdx},this.value)" style="min-height:80px;"></textarea>
+                                </div>`;
+                        });
+                        block.innerHTML = html;
+                        container.appendChild(block);
+                    });
+                } else {
+                    questions.forEach((q, idx) => {
+                        globalIdx++;
+                        const block = document.createElement('div');
+                        block.className = 'question-block';
+                        block.id = `q-${tc.key}-${idx}`;
+
+                        if (tc.key === 'single') {
+                            const optsHtml = q.options.map((opt, oi) => `
+                                <div class="option-item" id="opt-${tc.key}-${idx}-${oi}" onclick="selectSingle('${tc.key}',${idx},${oi})">
+                                    ${String.fromCharCode(65+oi)}. ${escapeHtml(opt)}
+                                </div>`).join('');
+                            block.innerHTML = `<div class="q-header"><span class="q-type-badge">单选</span><span>第${globalIdx}题</span></div>
+                                <div class="q-content">${escapeHtml(q.question)}</div>${optsHtml}`;
+                        } else if (tc.key === 'multi') {
+                            const optsHtml = q.options.map((opt, oi) => `
+                                <div class="option-item" id="opt-${tc.key}-${idx}-${oi}" onclick="toggleMulti('${tc.key}',${idx},${oi})">
+                                    ${String.fromCharCode(65+oi)}. ${escapeHtml(opt)}
+                                </div>`).join('');
+                            block.innerHTML = `<div class="q-header"><span class="q-type-badge">多选</span><span>第${globalIdx}题</span></div>
+                                <div class="q-content">${escapeHtml(q.question)}</div>${optsHtml}`;
+                        } else if (tc.key === 'fill') {
+                            block.innerHTML = `<div class="q-header"><span class="q-type-badge">填空</span><span>第${globalIdx}题</span></div>
+                                <div class="q-content">${escapeHtml(q.question)}</div>
+                                <textarea class="answer-input" id="ans-${tc.key}-${idx}" placeholder="请输入答案..." 
+                                    oninput="saveAnswer('${tc.key}',${idx},this.value)"></textarea>`;
+                        } else if (tc.key === 'short') {
+                            block.innerHTML = `<div class="q-header"><span class="q-type-badge">简答</span><span>第${globalIdx}题</span></div>
+                                <div class="q-content">${escapeHtml(q.question)}</div>
+                                <textarea class="answer-input" id="ans-${tc.key}-${idx}" placeholder="请输入答案..." 
+                                    oninput="saveAnswer('${tc.key}',${idx},this.value)" style="min-height:120px;"></textarea>`;
+                        }
+                        container.appendChild(block);
+                    });
+                }
+            });
+        }
+
+        function selectSingle(type, idx, optIdx) {
+            document.querySelectorAll(`#q-${type}-${idx} .option-item`).forEach(o => o.classList.remove('selected'));
+            const opt = document.getElementById(`opt-${type}-${idx}-${optIdx}`);
+            if (opt) opt.classList.add('selected');
+            userAnswers[type][idx] = String(optIdx);
+        }
+
+        function toggleMulti(type, idx, optIdx) {
+            const opt = document.getElementById(`opt-${type}-${idx}-${optIdx}`);
+            if (!opt) return;
+            opt.classList.toggle('selected');
+            const sel = [];
+            document.querySelectorAll(`#q-${type}-${idx} .option-item.selected`).forEach(el => {
+                sel.push(parseInt(el.id.split('-').pop()));
+            });
+            userAnswers[type][idx] = sel.join(',');
+        }
+
+        function saveAnswer(type, idx, value) { userAnswers[type][idx] = value; }
+
+        async function submitExam() {
+            if (isSubmitted) return;
+            if (!confirm('确定要交卷吗？交卷后无法修改！')) return;
+            
+            isSubmitted = true;
+            clearInterval(timerInterval);
+            
+            try {
+                const res = await fetch('/nightmare/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        answers: userAnswers,
+                        questions: examQuestions,    // ⭐ 题目数据
+                        scores: examConfig.scores,   // ⭐ 分值配置
+                        pass_score: examConfig.pass_score  // ⭐ 及格线
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    switchPanel('panel-result');
+                    renderResult(data.result);
+                    window.scrollTo(0, 0);
+                } else {
+                    showToast(data.message, 'error');
+                    isSubmitted = false;
+                }
+            } catch(e) {
+                showToast('提交失败: ' + e.message, 'error');
+                isSubmitted = false;
+            }
+        }
+
+        function renderResult(result) {
+            const container = document.getElementById('result-content');
+            const passed = result.passed, totalScore = result.total_score;
+            let html = `
+                <div class="score-display">
+                    <div class="big-score ${passed?'passed':''}">${totalScore.toFixed(1)}</div>
+                    <div style="font-size:18px;color:#ccc;">满分 ${examConfig ? examConfig.total_score : 100} 分</div>
+                    <div class="pass-status" style="color:${passed?'#2ecc71':'#e74c3c'};">${passed?'🎉 恭喜通过！':'💀 很遗憾，未通过'}</div>
+                    <div style="color:#aaa;">及格线：${result.pass_score} 分</div>
+                </div>`;
+
+            const typeNames = {single:'单选题',multi:'多选题',fill:'填空题',short:'简答题',application:'应用题'};
+            html += '<div class="stats-grid">';
+            for (const [k, name] of Object.entries(typeNames)) {
+                const items = result[k] || [];
+                const t = items.reduce((s,q)=>s+(q.score||0),0);
+                const f = items.reduce((s,q)=>s+(q.full_score||0),0);
+                html += `<div class="stat-item"><div class="stat-name">${name}</div><div class="stat-score">${t.toFixed(1)}</div><div class="stat-full">/ ${f.toFixed(1)} 分</div></div>`;
+            }
+            html += '</div><hr style="border-color:rgba(255,255,255,0.1);margin:20px 0;">';
+            html += '<div style="font-size:18px;font-weight:bold;color:#ff4444;margin-bottom:15px;">📋 答题详情</div>';
+
+            let qNum = 0;
+            ['single','multi','fill','short','application'].forEach(key => {
+                (result[key]||[]).forEach(q => {
+                    qNum++;
+                    const isC = q.is_correct===true, isP = q.is_correct==='partial';
+                    const cls = isC?'correct':(isP?'partial':'wrong');
+                    const bCls = isC?'badge-correct':(isP?'badge-partial':'badge-wrong');
+                    const st = isC?'✓ 正确':(isP?'△ 部分正确':'✗ 错误');
+                    const tnMap = {single:'单选',multi:'多选',fill:'填空',short:'简答',application:'应用'};
+
+                    html += `<div class="question-block ${cls}">
+                        <div class="q-header"><span class="q-type-badge ${bCls}">${tnMap[key]}</span>
+                        <span>第${qNum}题 - ${st}</span>
+                        <span class="q-score-tag">${q.score?.toFixed(1)||0} / ${q.full_score?.toFixed(1)||0} 分</span></div>
+                        <div class="q-content">${escapeHtml(q.question||q.sub_question||'')}</div>`;
+
+                    if (q.options) {
+                        q.options.forEach((opt, oi) => {
+                            const uSel = Array.isArray(q.user_selected)?q.user_selected:[q.user_selected];
+                            const cor = Array.isArray(q.correct_answers)?q.correct_answers:[q.correct_answer];
+                            let oc = '';
+                            if (cor.includes(opt) && uSel.includes(opt)) oc = 'correct-ans';
+                            else if (cor.includes(opt) && !uSel.includes(opt)) oc = 'missed-ans';
+                            else if (!cor.includes(opt) && uSel.includes(opt)) oc = 'wrong-ans';
+                            html += `<div class="option-item disabled ${oc}">${String.fromCharCode(65+oi)}. ${escapeHtml(opt)}</div>`;
+                        });
+                    } else {
+                        html += `<div class="answer-label">你的答案：</div><div class="answer-text user">${escapeHtml(q.user_answer||'(未填写)')}</div>`;
+                        html += `<div class="answer-label" style="margin-top:8px;">参考答案：</div><div class="answer-text correct-ans-text">${escapeHtml(q.correct_answer||'')}</div>`;
+                        if (q.similarity !== undefined) html += `<div style="font-size:12px;color:#00bcd4;">相似度：${(q.similarity*100).toFixed(1)}%</div>`;
+                    }
+                    if (q.explanation) html += `<div class="explanation-box">📖 解析：${escapeHtml(q.explanation)}</div>`;
+                    html += '</div>';
+                });
+            });
+
+            html += `<div style="text-align:center;margin-top:25px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+                <button class="btn btn-warning" onclick="switchPanel('panel-setup')" style="font-size:16px;">🔄 重新组卷</button>
+                <a href="/" class="btn btn-back" style="font-size:16px;padding:10px 30px;">🏠 返回主菜单</a>
+            </div>`;
+            container.innerHTML = html;
+        }
+
+        function switchPanel(id) {
+            document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id==='panel-setup') { loadCategories(); updateScorePreview(); }
+            window.scrollTo(0,0);
+        }
+
+        function escapeHtml(t) {
+            if (!t) return '';
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function showToast(m, t) {
+            const el = document.createElement('div');
+            el.className = `toast toast-${t}`;
+            el.textContent = m;
+            document.body.appendChild(el);
+            setTimeout(()=>el.remove(),3000);
+        }
+    </script>
+</body>
+</html>

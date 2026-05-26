@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>万圣之夜 - 考试</title>
+    <style>
+        :root {
+            --orange: #ff6b35; --gold: #ffd700; --crystal: #00ffff;
+            --candy: #ff66cc; --green: #2ecc71; --red: #e74c3c;
+            --blue: #3498db; --purple: #9b59b6; --bg: #1a1a2a;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:"Microsoft YaHei","微软雅黑",sans-serif;
+            background:linear-gradient(135deg,#0c0c1d,#1a0a2e,#0d1b2a,#1a1a3e);
+            min-height:100vh;color:#fff;overflow-x:hidden;
+            user-select:none;-webkit-user-select:none;
+        }
+        .header{
+            background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);
+            padding:10px 20px;display:flex;justify-content:space-between;
+            align-items:center;z-index:100;position:relative;
+            border-bottom:1px solid rgba(255,107,53,0.3);
+        }
+        .header h1{font-size:1.3em;color:var(--orange);}
+        .header-stats{display:flex;gap:20px;align-items:center;margin-left:auto;margin-right:20px;}
+        .header-stat{display:flex;align-items:center;gap:5px;font-size:0.9em;font-weight:bold;}
+        .h-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+        .h-crystal{background:var(--crystal);box-shadow:0 0 6px var(--crystal);}
+        .h-candy{background:var(--candy);box-shadow:0 0 6px var(--candy);}
+        .h-unknown{background:#888;box-shadow:0 0 6px #888;}
+        .back-btn{color:#aaa;text-decoration:none;padding:5px 14px;border-radius:20px;background:rgba(255,255,255,0.1);font-size:0.85em;flex-shrink:0;}
+        .back-btn:hover{background:rgba(255,255,255,0.2);color:#fff;}
+        
+        .main-wrap{max-width:1400px;margin:0 auto;padding:10px;position:relative;z-index:1;}
+        .panel{
+            background:rgba(26,26,42,0.95);border-radius:14px;padding:18px;
+            margin-bottom:10px;border:1px solid rgba(255,255,255,0.1);
+        }
+        .panel h2{color:var(--orange);margin-bottom:14px;font-size:1.4em;text-align:center;}
+        
+        .select-row{display:flex;gap:15px;margin-bottom:14px;justify-content:center;flex-wrap:wrap;}
+        .select-group{min-width:280px;text-align:left;position:relative;}
+        .select-group label{display:block;color:var(--orange);margin-bottom:4px;font-weight:bold;font-size:0.85em;}
+        .select-group input{width:100%;padding:10px;border-radius:8px;background:#1e1e3a;color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:0.9em;}
+        .select-group input:focus{outline:none;border-color:var(--orange);}
+        .dropdown{position:absolute;top:100%;left:0;right:0;max-height:180px;overflow-y:auto;background:#1e1e3a;border:1px solid rgba(255,255,255,0.2);border-radius:0 0 8px 8px;z-index:50;display:none;}
+        .dropdown div{padding:8px 10px;cursor:pointer;font-size:0.85em;}
+        .dropdown div:hover{background:rgba(255,107,53,0.3);}
+        
+        .btn{padding:10px 22px;border:none;border-radius:8px;cursor:pointer;font-size:0.9em;font-weight:bold;transition:all 0.3s;color:#fff;}
+        .btn:hover{transform:translateY(-2px);}
+        .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+        .btn-orange{background:var(--orange);}
+        .btn-green{background:var(--green);}
+        .btn-purple{background:var(--purple);}
+        .btn-gold{background:var(--gold);color:#000;}
+        
+        .hidden{display:none!important;}
+        .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+        
+        .word-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px;}
+        .word-card{background:#1a1a30;border-radius:8px;padding:10px 6px;text-align:center;border:2px solid #333;}
+        .word-card .w-num{font-size:0.7em;color:#888;}
+        .word-card .w-word{font-size:0.9em;font-weight:bold;color:var(--gold);margin:3px 0;}
+        .word-card .w-pos{font-size:0.7em;color:var(--blue);margin-bottom:5px;}
+        .word-card input{width:100%;padding:5px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:0.8em;text-align:center;}
+        
+        .correction-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px;}
+        .correction-card{background:#1a1a30;border-radius:8px;padding:6px;text-align:center;border:3px solid transparent;}
+        .correction-card.border-green{border-color:var(--green);background:#1a2a1a;}
+        .correction-card.border-red{border-color:var(--red);background:#2a1a1a;}
+        .correction-card.border-yellow{border-color:var(--gold);background:#2a2a1a;}
+        .correction-card .c-word{font-weight:bold;color:var(--gold);font-size:0.8em;}
+        .correction-card .c-user{font-size:0.75em;margin:2px 0;}
+        .correction-card .c-answer{font-size:0.75em;color:var(--green);margin-bottom:4px;}
+        .correction-card .c-btns{display:flex;gap:3px;justify-content:center;}
+        .correction-card .c-btns button{padding:2px 6px;font-size:0.65em;border-radius:4px;border:none;cursor:pointer;color:#fff;}
+        .btn-correct{background:#555;}.btn-correct.active{background:var(--green);}
+        .btn-wrong{background:#555;}.btn-wrong.active{background:var(--red);}
+        
+        .game-panel{padding:10px;}
+        .game-top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;}
+        .game-round{color:var(--orange);font-size:1.1em;font-weight:bold;background:rgba(255,107,53,0.1);padding:6px 14px;border-radius:6px;}
+        .game-stats{display:flex;gap:15px;align-items:center;}
+        .game-stat{text-align:center;font-size:0.85em;}
+        .game-stat .sv{font-size:1.2em;font-weight:bold;}
+        .sc{color:var(--crystal);}.sy{color:var(--candy);}.su{color:#aaa;}
+        .effect-bar{text-align:center;min-height:22px;color:var(--orange);font-weight:bold;font-size:0.85em;margin-bottom:6px;}
+        
+        .canvas-wrap{position:relative;width:100%;background:var(--bg);border-radius:10px;border:2px solid rgba(255,107,53,0.3);overflow:hidden;}
+        #gameCanvas{display:block;width:100%;cursor:default;touch-action:none;}
+        
+        .selection-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;display:flex;align-items:center;justify-content:center;}
+        .selection-box{background:#1a1a2a;border-radius:16px;padding:25px;border:3px solid var(--purple);box-shadow:0 0 40px rgba(155,89,182,0.5);text-align:center;}
+        .selection-box h3{color:var(--purple);margin-bottom:18px;font-size:1.2em;}
+        .selection-options{display:flex;gap:15px;justify-content:center;flex-wrap:wrap;}
+        .selection-option{padding:12px 22px;border-radius:10px;border:2px solid var(--purple);background:rgba(155,89,182,0.1);cursor:pointer;transition:all 0.3s;font-size:0.95em;font-weight:bold;color:#fff;min-width:130px;}
+        .selection-option:hover{background:rgba(155,89,182,0.3);transform:scale(1.05);}
+        
+        .final-summary{text-align:center;}
+        .score-big{font-size:2.5em;font-weight:bold;margin:8px 0;}
+        .score-pass{color:var(--green);}.score-fail{color:var(--red);}
+        .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0;text-align:left;}
+        .detail-item{background:rgba(255,255,255,0.05);padding:8px 10px;border-radius:6px;}
+        .detail-label{color:var(--blue);font-weight:bold;font-size:0.8em;}
+        .detail-value{color:#fff;font-size:0.9em;}
+        
+        .report-table-wrap{max-height:55vh;overflow-y:auto;background:#1a1a30;border-radius:8px;}
+        .report-table{width:100%;border-collapse:collapse;font-size:0.7em;}
+        .report-table th{background:#2a2a3a;padding:4px 2px;position:sticky;top:0;z-index:1;border:1px solid rgba(255,255,255,0.2);}
+        .report-table td{padding:3px 2px;text-align:center;border:1px solid rgba(255,255,255,0.15);}
+        .td-green{color:var(--green);font-weight:bold;}.td-red{color:var(--red);font-weight:bold;}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🎃 万圣之夜</h1>
+    <div class="header-stats" id="headerStats" style="display:none;">
+        <div class="header-stat"><span class="h-dot h-crystal"></span>水晶:<span id="hCrystals">50</span></div>
+        <div class="header-stat"><span class="h-dot h-candy"></span>糖果:<span id="hCandies">0</span></div>
+        <div class="header-stat"><span class="h-dot h-unknown"></span>未知:<span id="hUnknown">0</span></div>
+    </div>
+    <a href="/" class="back-btn">← 返回主菜单</a>
+</div>
+<div class="main-wrap">
+
+<div class="panel" id="s1">
+    <h2>🎃 万圣之夜 · 考试设置</h2>
+    <div class="select-row">
+        <div class="select-group"><label>📅 今日单词组</label><input type="text" id="todayInput" placeholder="选择或搜索..." oninput="filterGroups('today')" onfocus="showDropdown('today')" autocomplete="off"><div class="dropdown" id="todayDropdown"></div></div>
+        <div class="select-group"><label>📅 昨日单词组</label><input type="text" id="yesterdayInput" placeholder="选择或搜索..." oninput="filterGroups('yesterday')" onfocus="showDropdown('yesterday')" autocomplete="off"><div class="dropdown" id="yesterdayDropdown"></div></div>
+    </div>
+    <div style="text-align:center"><button class="btn btn-orange" id="btnStart" onclick="startExam()">开始考试</button></div>
+</div>
+
+<div class="panel hidden" id="s2">
+    <h2>📝 基础词汇（30个）</h2>
+    <div class="word-grid" id="basicGrid"></div>
+    <div style="text-align:center"><button class="btn btn-green" onclick="submitBasic()">进入批改</button></div>
+</div>
+
+<div class="panel hidden" id="s3">
+    <h2>📝 批改基础词汇</h2>
+    <div class="correction-grid" id="basicCorrGrid"></div>
+    <div style="text-align:center;font-size:1.1em;margin:8px 0;">得分: <span id="basicScore" style="color:#2ecc71;font-weight:bold;">0</span>/30</div>
+    <div class="btn-row"><button class="btn btn-orange" onclick="initGame()">🎃 进入万圣之夜 →</button></div>
+</div>
+
+<div class="panel game-panel hidden" id="s4">
+    <div class="game-top-bar">
+        <div class="game-round" id="roundIndicator">第 1/30 轮</div>
+        <div class="game-stats">
+            <div class="game-stat"><div class="sv sc">💎 <span id="gCrystals">50</span></div></div>
+            <div class="game-stat"><div class="sv sy">🍬 <span id="gCandies">0</span></div></div>
+            <div class="game-stat"><div class="sv su">❓ <span id="gUnknown">0</span></div></div>
+            <div class="game-stat"><div style="font-size:0.75em;color:#aaa;">牌库</div><div class="sv" style="color:#fff;" id="gDeck">30</div></div>
+        </div>
+    </div>
+    <div class="effect-bar" id="effectInfo"></div>
+    <div class="canvas-wrap"><canvas id="gameCanvas"></canvas></div>
+</div>
+
+<div class="panel hidden" id="s5">
+    <div class="final-summary">
+        <h2 style="color:var(--orange);">🎃 万圣之夜 · 游戏结束</h2>
+        <div id="finalResult" style="font-size:1.2em;margin:8px 0;"></div>
+        <div class="score-big" id="finalScoreBig"></div>
+        <div class="detail-grid" id="finalDetail"></div>
+        <div style="margin:8px 0;"><span>伊芙琳的堕落之血:</span><span id="finalEvelyn" style="font-weight:bold;"></span></div>
+        <button class="btn btn-purple" onclick="showTotalReport()">📊 查看总成绩报告</button>
+    </div>
+</div>
+
+<div class="panel hidden" id="s6">
+    <h2 style="color:var(--orange);text-align:center;margin-bottom:10px;">📊 万圣之夜考试总成绩报告</h2>
+    <div class="report-table-wrap"><table class="report-table"><thead><tr>
+        <th style="background:#1a1a2a;color:var(--blue);">行号</th><th style="background:var(--orange);">单词</th><th style="background:var(--blue);">词性</th><th>汉译</th><th>得分</th><th style="width:3px;"></th>
+        <th style="background:var(--orange);">单词</th><th style="background:var(--blue);">词性</th><th>汉译</th><th>得分</th><th style="width:3px;"></th>
+        <th style="background:var(--orange);">单词</th><th style="background:var(--blue);">词性</th><th>汉译</th><th>得分</th>
+    </tr></thead><tbody id="reportBody"></tbody></table></div>
+    <div class="btn-row" style="margin-top:10px;"><button class="btn btn-green" onclick="location.reload()">🔄 重新考试</button><button class="btn btn-outline" onclick="window.location.href='/'">🏠 返回主菜单</button></div>
+</div>
+
+<div class="selection-overlay hidden" id="selectionOverlay"><div class="selection-box"><h3 id="selectionTitle">请选择效果</h3><div class="selection-options" id="selectionOptions"></div></div></div>
+</div>
+
+<script>
+var PASS_SCORE=43;
+var allGroups=[{% for g in groups %}"{{g}}",{% endfor %}];
+var examId='',basicWords=[],basicResults=[],basicScore=0;
+var selectedToday='',selectedYesterday='',finalReportData=null;
+
+var GS={round:1,total:30,crystals:50,candies:0,unknown:0,deck_count:30,slots:[],phase:'waiting',demon:false,yuboyan:false,nospell:false,emptyhint:false};
+var handCards=[];
+var canvas,ctx,CW,CH,cardW=140,cardH=190;
+var hPos=[],mSlots=[];
+var cardImgs={},IMG_PATH='/static/images/万圣之夜/';
+var dragCard=null,dragging=false,doffX=0,doffY=0;
+var midCards=[];
+
+// 背景粒子
+(function(){
+    var c=document.createElement('div');c.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+    var cols=['#ff6b35','#ffd700','#00ffff','#ff66cc','#9b59b6','#2ecc71'];
+    for(var i=0;i<30;i++){
+        var p=document.createElement('div');
+        p.style.cssText='position:absolute;border-radius:50%;animation:floatUp linear infinite;opacity:0;left:'+Math.random()*100+'%;width:'+(Math.random()*3+1.5)+'px;height:'+(Math.random()*3+1.5)+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';animation-duration:'+(Math.random()*12+8)+'s;animation-delay:'+(Math.random()*12)+'s;';
+        c.appendChild(p);
+    }
+    var s=document.createElement('style');s.textContent='@keyframes floatUp{0%{opacity:0;transform:translateY(100vh) scale(0);}10%{opacity:0.6;}90%{opacity:0.1;}100%{opacity:0;transform:translateY(-10vh) scale(1.5);}}';
+    document.head.appendChild(s);document.body.appendChild(c);
+})();
+
+// 下拉
+function filterGroups(t){
+    var v=document.getElementById(t+'Input').value.toLowerCase();
+    document.getElementById(t+'Dropdown').innerHTML=allGroups.filter(function(g){return g.toLowerCase().indexOf(v)>=0;}).map(function(g){return'<div onclick="selectGroup(\''+t+'\',\''+g.replace(/'/g,"\\'")+'\')">'+g+'</div>';}).join('');
+    document.getElementById(t+'Dropdown').style.display='block';
+}
+function showDropdown(t){filterGroups(t);}
+function selectGroup(t,n){document.getElementById(t+'Input').value=n;document.getElementById(t+'Dropdown').style.display='none';if(t==='today')selectedToday=n;else selectedYesterday=n;}
+document.addEventListener('click',function(e){if(!e.target.closest('.select-group'))document.querySelectorAll('.dropdown').forEach(function(d){d.style.display='none';});});
+
+function switchStage(id){['s1','s2','s3','s4','s5','s6'].forEach(function(s){document.getElementById(s).classList.toggle('hidden',s!==id);});}
+function updateHStats(){
+    document.getElementById('headerStats').style.display='flex';
+    document.getElementById('hCrystals').textContent=GS.crystals;
+    document.getElementById('hCandies').textContent=GS.candies;
+    document.getElementById('hUnknown').textContent=GS.unknown;
+}
+
+// 基础词汇
+function renderWordGrid(gid,words,pre){
+    document.getElementById(gid).innerHTML=words.map(function(w,i){return'<div class="word-card"><div class="w-num">'+(i+1)+'</div><div class="w-word">'+w.word+'</div><div class="w-pos">'+w.pos+'</div><input type="text" id="'+pre+i+'" placeholder="中文意思"></div>';}).join('');
+}
+async function startExam(){
+    if(!selectedToday||!selectedYesterday)return alert('请选择今日和昨日单词组');
+    var btn=document.getElementById('btnStart');btn.disabled=true;btn.textContent='正在出题...';
+    try{
+        var r=await fetch('/api/halloween/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({today_group:selectedToday,yesterday_group:selectedYesterday})});
+        var d=await r.json();
+        if(!d.success){alert(d.message);btn.disabled=false;btn.textContent='开始考试';return;}
+        examId=d.exam_id;basicWords=d.words;switchStage('s2');renderWordGrid('basicGrid',basicWords,'a');
+    }catch(e){alert('加载失败');btn.disabled=false;btn.textContent='开始考试';}
+}
+async function submitBasic(){
+    var ans={};basicWords.forEach(function(w,i){var e=document.getElementById('a'+i);ans[i]=e?e.value:'';});
+    var r=await fetch('/api/halloween/submit_basic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,answers:ans})});
+    var d=await r.json();if(!d.success)return alert(d.message);
+    basicResults=d.results;basicScore=d.score;switchStage('s3');
+    document.getElementById('basicCorrGrid').innerHTML=basicResults.map(function(r,i){
+        var bc=r.auto_status==='correct'?'border-green':(r.auto_status==='wrong'?'border-red':'border-yellow');
+        return'<div class="correction-card '+bc+'" id="bc'+i+'"><div class="c-word">'+(i+1)+'. '+r.word+'</div><div class="c-user" style="color:'+(r.is_correct?'#2ecc71':'#e74c3c')+'">你的:'+(r.user_answer||'(未作答)')+'</div><div class="c-answer">答案:'+r.meaning+'</div><div class="c-btns"><button class="btn-correct'+(r.is_correct?' active':'')+'" onclick="bmc('+i+')">正确</button><button class="btn-wrong'+(!r.is_correct?' active':'')+'" onclick="bmw('+i+')">错误</button></div></div>';
+    }).join('');
+    document.getElementById('basicScore').textContent=basicScore;
+}
+function bmc(i){if(!basicResults[i].is_correct){basicResults[i].is_correct=true;basicScore++;}updateBasicCard(i);}
+function bmw(i){if(basicResults[i].is_correct){basicResults[i].is_correct=false;basicScore--;}updateBasicCard(i);}
+function updateBasicCard(i){
+    var c=document.getElementById('bc'+i),r=basicResults[i];
+    r.score=r.is_correct?'1.00':'0.00';
+    c.className='correction-card '+(r.is_correct?'border-green':'border-red');
+    c.querySelector('.btn-correct').classList.toggle('active',r.is_correct);
+    c.querySelector('.btn-wrong').classList.toggle('active',!r.is_correct);
+    document.getElementById('basicScore').textContent=basicScore;
+}
+
+// ==================== 游戏 ====================
+async function initGame(){
+    var corrections={};
+    for(var i=0;i<basicResults.length;i++){if(basicResults[i].is_correct!==(basicResults[i].auto_status==='correct'))corrections[i]=basicResults[i].is_correct;}
+    var r=await fetch('/api/halloween/init_game',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,corrections:corrections})});
+    var d=await r.json();if(!d.success)return alert(d.message);
+    basicScore=d.basic_score;
+    switchStage('s4');updateHStats();
+    initCanvas();await loadImages();await startRound();
+}
+
+function initCanvas(){
+    canvas=document.getElementById('gameCanvas');ctx=canvas.getContext('2d');
+    var wrap=canvas.parentElement;
+    var cssW=wrap.clientWidth-4;
+    var ratio=cssW/1290;
+    CW=Math.floor(cssW);CH=Math.floor(860*ratio);
+    canvas.width=CW*2;canvas.height=CH*2;
+    canvas.style.width=CW+'px';canvas.style.height=CH+'px';
+    ctx.scale(2,2);
+    
+    cardW=140;cardH=190;
+    var hgap=15;
+    var htw=cardW*6+hgap*5;var hsx=(CW-htw)/2;
+    var hy=CH-220;
+    hPos=[];
+    for(var i=0;i<6;i++){hPos.push({x:hsx+i*(cardW+hgap)+cardW/2,y:hy+cardH/2,w:cardW,h:cardH});}
+    
+    var mgap=15;
+    var mtw=cardW*5+mgap*4;var msx=(CW-mtw)/2;
+    var my=CH*0.36;
+    mSlots=[];
+    for(var i=0;i<5;i++){mSlots.push({x:msx+i*(cardW+mgap)+cardW/2,y:my,w:cardW,h:cardH});}
+    
+    canvas.addEventListener('mousedown',onMD);canvas.addEventListener('mousemove',onMM);
+    canvas.addEventListener('mouseup',onMU);canvas.addEventListener('mouseleave',onMU);
+    canvas.addEventListener('touchstart',onTS,{passive:false});
+    canvas.addEventListener('touchmove',onTM,{passive:false});
+    canvas.addEventListener('touchend',onTE);
+}
+
+var ALL_CARDS=['开门','不开门','圣骑士的馈赠','云莱的蜜饯','小诗的悦耳琴音','枫恬恬的晚曦','梦柔柔的圣洁之光','复苏神女玛丽娜','启灵者伊丽莎白','布鲁斯的晚宴','聆妙奇幻时空','奥古斯丁的机械臂','蔡文姬的毒药','魔域领主','盗窃者罗娜','盗窃者律法','影月的毁灭之镰','九幽的邪恶道士','伊芙琳的堕落之血','玉皇大帝','宇伯言的阴阳置换','伊格尼丝诡异契约','刺客双鱼座','汐羽的绝对领域','伽顿法术反制','杰克的未知奥秘','枯木逢春','枫恬恬的裁决','玛丽娜的赐福','布鲁斯的黑暗料理'];
+
+async function loadImages(){
+    var ps=ALL_CARDS.map(function(n){return new Promise(function(res){var img=new Image();img.onload=function(){cardImgs[n]=img;res();};img.onerror=function(){res();};img.src=IMG_PATH+n+'.png';});});
+    await Promise.all(ps);
+}
+
+async function startRound(){
+    midCards=[];
+    var r=await fetch('/api/halloween/start_round',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
+    var d=await r.json();
+    if(d.game_over){await endGame();return;}
+    if(!d.success)return;
+    updateGS(d);renderCanvas();
+}
+
+function updateGS(d){
+    GS.round=d.round;GS.crystals=d.crystals;GS.candies=d.candies;
+    GS.unknown=d.unknown_cards;GS.deck_count=d.deck_count;
+    GS.slots=d.word_slots;GS.phase=d.game_phase;
+    GS.demon=d.demon_lord_active||false;GS.yuboyan=d.yuboyan_active||false;
+    GS.nospell=d.disable_spell||false;GS.emptyhint=d.empty_hints||false;
+    handCards=d.hand_cards||[];
+    
+    document.getElementById('roundIndicator').textContent='第 '+GS.round+'/30 轮';
+    document.getElementById('gCrystals').textContent=GS.crystals;
+    document.getElementById('gCandies').textContent=GS.candies;
+    document.getElementById('gUnknown').textContent=GS.unknown;
+    document.getElementById('gDeck').textContent=GS.deck_count;
+    var ef=[];
+    if(GS.demon)ef.push('⚠️ 魔域领主：不开门禁用');
+    if(GS.yuboyan)ef.push('🔄 宇伯言：选择反转');
+    if(GS.nospell)ef.push('🚫 汐羽：禁止法术卡');
+    if(GS.emptyhint)ef.push('👑 玉皇大帝：提示遮蔽');
+    document.getElementById('effectInfo').textContent=ef.join(' | ');
+    updateHStats();
+}
+
+// ==================== 渲染 ====================
+function renderCanvas(){
+    ctx.clearRect(0,0,CW,CH);
+    ctx.fillStyle='#1a1a2a';ctx.fillRect(0,0,CW,CH);
+    
+    var playY=20,playH=CH*0.44,handY=playY+playH+15;
+    
+    // 出牌区
+    ctx.fillStyle='rgba(42,42,58,0.4)';ctx.fillRect(0,playY,CW,playH);
+    ctx.strokeStyle='rgba(255,107,53,0.25)';ctx.lineWidth=1.5;
+    ctx.strokeRect(2,playY,CW-4,playH);
+    
+    // 分隔线
+    ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=2;ctx.setLineDash([8,4]);
+    ctx.beginPath();ctx.moveTo(0,handY);ctx.lineTo(CW,handY);ctx.stroke();ctx.setLineDash([]);
+    
+    // 手牌区
+    ctx.fillStyle='rgba(42,58,58,0.25)';ctx.fillRect(0,handY,CW,CH-handY);
+    
+    ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='11px "Microsoft YaHei"';ctx.textAlign='center';
+    ctx.fillText('出牌区 - 拖拽卡牌到此处释放',CW/2,playY+13);
+    ctx.fillText('手牌区',CW/2,handY+13);
+    
+    renderSlots();
+    renderMidCards();
+    renderHand();
+    if(dragCard)renderDrag();
+}
+
+function renderSlots(){
+    var slots=GS.slots;if(!slots||slots.length===0)return;
+    var sw=(CW-50)/5,sh=40,sy=CH*0.07,sx=20;
+    for(var i=0;i<5;i++){
+        var x=sx+i*(sw+5);
+        var slot=slots[i]||{};
+        if(i===0){ctx.fillStyle='#ADD8E6';ctx.strokeStyle='#3498db';}
+        else if(slot.slot_type==='emperor'||slot.slot_type==='augustine'){ctx.fillStyle='#3a1a1a';ctx.strokeStyle='#e74c3c';}
+        else{ctx.fillStyle='#2a2a3a';ctx.strokeStyle='#555';}
+        ctx.lineWidth=2;roundRect(x,sy,sw,sh,6);ctx.fill();ctx.stroke();
+        ctx.fillStyle=i===0?'#000':'#fff';
+        ctx.font=i===0?'bold 13px "Microsoft YaHei"':'12px "Microsoft YaHei"';
+        ctx.textAlign='center';
+        var t=slot.display_text||'';
+        ctx.fillText(t,x+sw/2,sy+sh/2+4);
+    }
+}
+
+function renderMidCards(){
+    var now=Date.now();
+    for(var i=midCards.length-1;i>=0;i--){
+        var mc=midCards[i];
+        if(now>mc.expire){midCards.splice(i,1);continue;}
+        var slot=mSlots[mc.slot];if(!slot)continue;
+        var img=cardImgs[mc.name];if(!img)continue;
+        var alpha=1;
+        if(now>mc.expire-400)alpha=Math.max(0,(mc.expire-now)/400);
+        ctx.save();ctx.globalAlpha=alpha;
+        ctx.drawImage(img,slot.x-slot.w/2,slot.y-slot.h/2,slot.w,slot.h);
+        ctx.restore();
+    }
+}
+
+function renderHand(){
+    for(var i=0;i<handCards.length;i++){
+        var hc=handCards[i];
+        var pos=hPos[hc.position];if(!pos)continue;
+        if(dragCard&&dragCard.position===hc.position)continue;
+        var img=cardImgs[hc.card_name];
+        if(img){
+            if(hc.disabled)ctx.globalAlpha=0.4;
+            ctx.drawImage(img,pos.x-pos.w/2,pos.y-pos.h/2,pos.w,pos.h);
+            ctx.globalAlpha=1;
+        }else{
+            ctx.fillStyle=hc.card_type==='法术卡'?'#4a6fa5':'#c9a84c';
+            roundRect(pos.x-pos.w/2,pos.y-pos.h/2,pos.w,pos.h,10);ctx.fill();
+            ctx.fillStyle='#fff';ctx.font='bold 12px "Microsoft YaHei"';ctx.textAlign='center';
+            ctx.fillText(hc.card_name,pos.x,pos.y);
+        }
+    }
+}
+
+function renderDrag(){
+    if(!dragCard)return;
+    var img=cardImgs[dragCard.card_name];if(!img)return;
+    var pos=hPos[dragCard.position];if(!pos)return;
+    ctx.save();ctx.globalAlpha=0.85;ctx.shadowColor='rgba(255,107,53,0.6)';ctx.shadowBlur=25;
+    ctx.drawImage(img,dragCard.x-pos.w/2,dragCard.y-pos.h/2,pos.w,pos.h);
+    ctx.restore();
+}
+
+// ==================== 拖拽 ====================
+function getPos(e){
+    var rect=canvas.getBoundingClientRect();
+    return{x:(e.clientX-rect.left)*(CW/rect.width),y:(e.clientY-rect.top)*(CH/rect.height)};
+}
+function onMD(e){
+    if(GS.phase!=='choose_door')return;
+    var p=getPos(e);
+    for(var i=0;i<handCards.length;i++){
+        var hc=handCards[i];if(hc.disabled)continue;
+        var hp=hPos[hc.position];if(!hp)continue;
+        if(p.x>=hp.x-hp.w/2&&p.x<=hp.x+hp.w/2&&p.y>=hp.y-hp.h/2&&p.y<=hp.y+hp.h/2){
+            dragCard={position:hc.position,card_name:hc.card_name,card_type:hc.card_type,x:p.x,y:p.y};
+            doffX=hp.x-p.x;doffY=hp.y-p.y;
+            dragging=true;canvas.style.cursor='grabbing';renderCanvas();return;
+        }
+    }
+}
+function onMM(e){if(!dragging||!dragCard)return;var p=getPos(e);dragCard.x=p.x+doffX;dragCard.y=p.y+doffY;renderCanvas();}
+function onMU(e){
+    if(!dragging||!dragCard){dragging=false;dragCard=null;canvas.style.cursor='default';return;}
+    var p=getPos(e);var card=dragCard;
+    dragging=false;dragCard=null;canvas.style.cursor='default';
+    var handY=CH*0.44+20+15;
+    if(p.y<handY){useCard(card);}else{renderCanvas();}
+}
+function onTS(e){e.preventDefault();if(e.touches.length===1){var t=e.touches[0];onMD({clientX:t.clientX,clientY:t.clientY});}}
+function onTM(e){e.preventDefault();if(e.touches.length===1){var t=e.touches[0];onMM({clientX:t.clientX,clientY:t.clientY});}}
+function onTE(e){onMU({});}
+
+// ==================== 使用卡牌 ====================
+async function useCard(card){
+    if(GS.phase!=='choose_door'){renderCanvas();return;}
+    handCards=handCards.filter(function(h){return h.position!==card.position;});
+    if(card.card_type==='选择卡')await makeChoice(card.card_name);
+    else await useSpell(card.card_name,card.position);
+    renderCanvas();
+}
+
+// 开门/不开门 - 卡牌显示在出牌区(中间卡槽)
+async function makeChoice(choice){
+    var r=await fetch('/api/halloween/make_choice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,choice:choice})});
+    var d=await r.json();
+    if(!d.success){alert(d.message);renderCanvas();return;}
+    
+    if(choice==='开门'&&d.card_drawn){
+        var dn=d.card_drawn;
+        var UNK=['蔡文姬的毒药','九幽的邪恶道士','伊芙琳的堕落之血','宇伯言的阴阳置换','伊格尼丝诡异契约','伽顿法术反制'];
+        if(UNK.indexOf(d.card_drawn)>=0)dn='杰克的未知奥秘';
+        showMid('开门',4,3000);   // 开门卡在位置4
+        showMid(dn,0,3000);       // 抽到的卡在位置0
+    }
+    if(choice==='不开门')showMid('不开门',4,3000);
+    
+    upAfter(d);renderCanvas();
+    if(d.next_action==='wait_for_next_round')setTimeout(async function(){await nextRound();},3000);
+}
+
+// 法术卡 - 在出牌区位置4显示
+async function useSpell(name,pos){
+    var r=await fetch('/api/halloween/use_spell',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,card_name:name,position:pos})});
+    var d=await r.json();
+    if(!d.success){alert(d.message);renderCanvas();return;}
+    if(d.countered){showMid('伽顿法术反制',0,3000);showMid(name,1,3000);}
+    else{showMid(name,4,2000);}
+    upAfter(d);renderCanvas();
+}
+
+function showMid(name,slot,dur){
+    var et=Date.now()+dur;
+    midCards.push({name:name,slot:slot,expire:et});
+    renderCanvas();
+    setTimeout(function(){midCards=midCards.filter(function(m){return m.expire>Date.now();});renderCanvas();},dur+100);
+}
+
+function upAfter(d){
+    if(d.new_crystals!==undefined){GS.crystals=d.new_crystals;document.getElementById('gCrystals').textContent=d.new_crystals;}
+    if(d.new_candies!==undefined){GS.candies=d.new_candies;document.getElementById('gCandies').textContent=d.new_candies;}
+    if(d.new_unknown!==undefined){GS.unknown=d.new_unknown;document.getElementById('gUnknown').textContent=d.new_unknown;}
+    if(d.new_hand)handCards=d.new_hand.map(function(n,i){return{position:i,card_name:n,card_type:'法术卡',disabled:false};});
+    if(d.need_selection)showSel(d.selection_options||[]);
+    updateHStats();
+}
+
+function showSel(opts){
+    document.getElementById('selectionOptions').innerHTML=opts.map(function(o){return'<div class="selection-option" onclick="makeSel(\''+o+'\')">'+o+'</div>';}).join('');
+    document.getElementById('selectionOverlay').classList.remove('hidden');
+}
+function hideSel(){document.getElementById('selectionOverlay').classList.add('hidden');}
+async function makeSel(choice){
+    hideSel();
+    var r=await fetch('/api/halloween/make_selection',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,choice:choice})});
+    var d=await r.json();if(!d.success)return;
+    upAfter(d);renderCanvas();
+}
+
+// 下一轮
+async function nextRound(){
+    midCards=[];
+    var r=await fetch('/api/halloween/next_round',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
+    var d=await r.json();
+    if(d.game_over){await endGame();return;}
+    updateGS(d);renderCanvas();
+}
+
+// 结束
+async function endGame(){
+    var r=await fetch('/api/halloween/end_game',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
+    var d=await r.json();if(!d.success)return;
+    finalReportData=d;switchStage('s5');
+    var p=d.is_passed;
+    document.getElementById('finalResult').innerHTML=p?'<span style="color:#2ecc71;">🎉 恭喜通过！</span>':'<span style="color:#e74c3c;">😔 很遗憾，未通过</span>';
+    document.getElementById('finalScoreBig').innerHTML='<span class="'+(p?'score-pass':'score-fail')+'">'+d.total_score.toFixed(2)+'/50</span>';
+    document.getElementById('finalDetail').innerHTML=
+        '<div class="detail-item"><div class="detail-label">基础词汇得分</div><div class="detail-value">'+d.basic_score.toFixed(2)+'/30</div></div>'+
+        '<div class="detail-item"><div class="detail-label">万圣之夜加权</div><div class="detail-value">'+d.weighted_score.toFixed(2)+'/30</div></div>'+
+        '<div class="detail-item"><div class="detail-label">游戏得分</div><div class="detail-value">'+d.game_score+'/20</div></div>'+
+        '<div class="detail-item"><div class="detail-label">获得糖果</div><div class="detail-value">'+d.candies+'颗</div></div>'+
+        '<div class="detail-item"><div class="detail-label">开门/不开门</div><div class="detail-value">'+(d.door_counts['开门']||0)+'/'+(d.door_counts['不开门']||0)+'</div></div>'+
+        '<div class="detail-item"><div class="detail-label">正确/错误/跳过</div><div class="detail-value">'+(d.result_counts['正确']||0)+'/'+(d.result_counts['错误']||0)+'/'+(d.result_counts['跳过']||0)+'</div></div>';
+    document.getElementById('finalEvelyn').textContent=d.evelyn_triggered?'已触发':'未触发';
+    document.getElementById('finalEvelyn').style.color=d.evelyn_triggered?'#e74c3c':'#2ecc71';
+}
+
+async function showTotalReport(){
+    var r=await fetch('/api/halloween/final_report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
+    var d=await r.json();if(!d.success)return;switchStage('s6');
+    var aw=[];
+    (d.basic_results||[]).forEach(function(r){aw.push({word:r.word,pos:r.pos,meaning:r.meaning,score:r.score,cls:r.is_correct?'td-green':'td-red'});});
+    while(aw.length<30)aw.push({word:'-',pos:'-',meaning:'-',score:'0.00',cls:'td-red'});
+    var gr=d.game_records_detail||[],added=0;
+    for(var i=0;i<gr.length&&added<20;i++){var rec=gr[i];if(rec.question_word&&rec.question_word!=='-'){aw.push({word:rec.question_word,pos:rec.card||'-',meaning:rec.result||'-',score:rec.result==='正确'?'1.00':'0.00',cls:rec.result==='正确'?'td-green':'td-red'});added++;}}
+    while(aw.length<50)aw.push({word:'-',pos:'-',meaning:'-',score:'0.00',cls:'td-red'});
+    var h='';
+    for(var row=0;row<17;row++){h+='<tr><td style="color:var(--blue);font-weight:bold;">'+((row+1)<10?'0':'')+(row+1)+'</td>';for(var c=0;c<3;c++){var idx=row*3+c;if(idx<aw.length){var w=aw[idx];h+='<td class="'+w.cls+'">'+w.word+'</td><td style="color:var(--blue);">'+w.pos+'</td><td>'+w.meaning+'</td><td class="'+w.cls+'">'+w.score+'</td>';}else{h+='<td>-</td><td>-</td><td>-</td><td>-</td>';}}h+='</tr>';}
+    document.getElementById('reportBody').innerHTML=h;
+}
+
+function roundRect(x,y,w,h,r){
+    ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+filterGroups('today');filterGroups('yesterday');
+</script>
+</body>
+</html>

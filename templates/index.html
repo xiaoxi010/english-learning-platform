@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语学习平台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- 用户信息和登录状态栏 -->
+    <div class="user-bar">
+        <div class="user-info">
+            {% if logged_in_user %}
+                <span class="user-name">欢迎，{{ logged_in_user.name }}！</span>
+                <span class="user-id">{{ logged_in_user.email }}</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">🚪 登出</a>
+            {% else %}
+                <span class="user-name">未登录</span>
+                <a href="{{ url_for('login') }}" class="login-btn">🔐 登录</a>
+            {% endif %}
+        </div>
+        <div class="settings-area">
+            <span class="local-user">{{ user_name }}</span>
+            {% if student_id %}
+            <span class="user-id">{{ student_id }}</span>
+            {% endif %}
+            <a href="/settings" class="user-login-btn">⚙️ 设置</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        
+        <!-- ========== 主菜单 ========== -->
+        {% if page == 'main_menu' %}
+        <h1 class="page-title">🏴‍☠️ 英语学习平台</h1>
+        <p class="subtitle">选择你要进入的模块</p>
+        <div class="menu-grid">
+            <a href="{{ url_for('word_exam') }}" class="menu-card card-red">
+                <span class="card-icon">📝</span>
+                <span class="card-title">单词考察</span>
+                <span class="card-desc">12种考试版型</span>
+            </a>
+            <a href="{{ url_for('database_options') }}" class="menu-card card-teal">
+                <span class="card-icon">🗄️</span>
+                <span class="card-title">数据库选项</span>
+                <span class="card-desc">管理系统数据</span>
+            </a>
+            <a href="{{ url_for('start_exam', exam_type='exam_database') }}" class="menu-card card-green">
+                <span class="card-icon">📊</span>
+                <span class="card-title">考试数据库</span>
+                <span class="card-desc">查看成绩记录</span>
+            </a>
+            <a href="{{ url_for('start_exam', exam_type='word_recitation') }}" class="menu-card card-yellow">
+                <span class="card-icon">📖</span>
+                <span class="card-title">单词背诵</span>
+                <span class="card-desc">背诵单词库</span>
+            </a>
+            <a href="{{ url_for('other_projects') }}" class="menu-card card-purple">
+                <span class="card-icon">🎯</span>
+                <span class="card-title">其他项目</span>
+                <span class="card-desc">更多挑战</span>
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- ========== 单词考察 ========== -->
+        {% if page == 'word_exam' %}
+        <h1 class="page-title">📝 选择考试版型</h1>
+        <div class="card-grid">
+            {% for exam in exams %}
+            <a href="{{ url_for('start_exam', exam_type=exam.route) }}" 
+               class="small-card" style="background: {{ exam.color }};">
+                {{ exam.name }}
+            </a>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('index') }}" class="back-link">← 返回主菜单</a>
+        {% endif %}
+
+        <!-- ========== 数据库选项 ========== -->
+        {% if page == 'database_options' %}
+        <h1 class="page-title">🗄️ 数据库选项</h1>
+        <div class="list-menu">
+            {% for opt in options %}
+            <a href="{{ url_for('start_exam', exam_type=opt.route) }}" 
+               class="list-card" style="border-left: 5px solid {{ opt.color }};">
+                {{ opt.name }}
+            </a>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('index') }}" class="back-link">← 返回主菜单</a>
+        {% endif %}
+
+        <!-- ========== 其他项目 ========== -->
+        {% if page == 'other_projects' %}
+        <h1 class="page-title">🎯 其他项目</h1>
+        <div class="list-menu">
+            {% for proj in projects %}
+            <a href="{{ url_for('start_exam', exam_type=proj.route) }}" 
+               class="list-card" style="border-left: 5px solid {{ proj.color }};">
+                {{ proj.name }}
+            </a>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('index') }}" class="back-link">← 返回主菜单</a>
+        {% endif %}
+
+        <!-- ========== 占位页面 ========== -->
+        {% if page == 'exam_placeholder' %}
+        <div class="placeholder-box">
+            <span class="big-icon">🚧</span>
+            <h2>{{ exam_name }}</h2>
+            <p>该模块正在转换中，敬请期待网页版...</p>
+            <a href="{{ url_for('index') }}" class="btn-primary">返回主菜单</a>
+        </div>
+        {% endif %}
+
+        <!-- ========== 即将推出 ========== -->
+        {% if page == 'coming_soon' %}
+        <div class="placeholder-box">
+            <span class="big-icon">🚀</span>
+            <h2>{{ exam_name }}</h2>
+            <p>该版型开发中，即将推出！</p>
+            <a href="{{ url_for('index') }}" class="btn-primary">返回主菜单</a>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- 移除旧的登录弹窗，改用 Logto 登录 -->
+</body>
+</html>
