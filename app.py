@@ -96,9 +96,9 @@ logto_client = LogtoClient(logto_config)
 # =====================================
 
 # 注册所有蓝图
-app.register_blueprint(vocabulary_bp)
+#app.register_blueprint(vocabulary_bp)
 app.register_blueprint(recitation_bp)
-app.register_blueprint(exam_bp)
+#app.register_blueprint(exam_bp)
 app.register_blueprint(past_light_bp)
 app.register_blueprint(shadow_bp)
 app.register_blueprint(seventy_two_bp)
@@ -107,9 +107,9 @@ app.register_blueprint(treasure_bp)
 app.register_blueprint(halloween_bp)  
 app.register_blueprint(shadow_hunter_bp) 
 app.register_blueprint(shadow_hunter_png_bp)
-app.register_blueprint(skill_db_bp, url_prefix='/skill_db')
+#app.register_blueprint(skill_db_bp, url_prefix='/skill_db')
 app.register_blueprint(nightmare_bp, url_prefix='/nightmare')
-app.register_blueprint(settings_bp)
+#app.register_blueprint(settings_bp)
 
 # ========== Logto 登录路由 ==========
 @app.route('/login')
