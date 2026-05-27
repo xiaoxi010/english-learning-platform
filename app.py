@@ -27,7 +27,7 @@ app = Flask(__name__)
 app.secret_key = 'english-platform-secret-key'
 
 # ========== Supabase 数据库配置 ==========
-DATABASE_URL = "postgresql://postgres:WqP9V1bZJjBiOfvv@db.trkqbyuwwchmoijcmeas.supabase.co:5432/postgres"
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:WqP9V1bZJjBiOfvv@db.trkqbyuwwchmoijcmeas.supabase.co:5432/postgres')
 
 def get_db_connection():
     """获取数据库连接"""
