@@ -123,42 +123,65 @@ def login():
 
 @app.route('/callback')
 def callback():
-    """Logto 登录成功后的回调"""
+    """Logto 登录成功后的回调 - 简化版"""
     try:
+        print("=== 收到回调请求 ===")
+        print(f"完整URL: {request.url}")
+        
+        # 获取回调 URL
         callback_uri = request.url
+        print(f"callback_uri: {callback_uri}")
+        
+        # 处理回调
         async_to_sync(logto_client.handleSignInCallback)(callback_uri)
-        user_info_obj = async_to_sync(logto_client.fetchUserInfo)()
+        print("handleSignInCallback 成功")
         
-        # UserInfoResponse 对象需要用属性访问
-        user_id = user_info_obj.sub
-        user_email = user_info_obj.email if hasattr(user_info_obj, 'email') else ''
-        # 临时方案：直接用邮箱作为显示名称
-        user_name = user_email if user_email else '用户'
+        # 获取用户信息
+        user_info = async_to_sync(logto_client.fetchUserInfo)()
+        print(f"user_info: {user_info}")
         
+        # 获取用户标识
+        user_id = getattr(user_info, 'sub', None)
+        user_email = getattr(user_info, 'email', '')
+        
+        if not user_id:
+            print("错误：未获取到用户ID")
+            return redirect(url_for('index'))
+        
+        # 存入 session
         session['user'] = {
             'id': user_id,
-            'name': user_name,      # 现在会显示邮箱地址
+            'name': user_email or f"用户_{user_id[:8]}",
             'email': user_email,
         }
         
-        # 检查数据库中是否有该用户的设置记录
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT user_id FROM settings WHERE user_id = %s", (user_id,))
-        existing = cur.fetchone()
-        if not existing:
-            cur.execute(
-                "INSERT INTO settings (user_id, user_name, student_id) VALUES (%s, %s, %s)",
-                (user_id, user_name, '')
-            )
-            conn.commit()
-        cur.close()
-        conn.close()
+        # 创建用户设置记录
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute("SELECT user_id FROM settings WHERE user_id = %s", (user_id,))
+            existing = cur.fetchone()
+            if not existing:
+                cur.execute(
+                    "INSERT INTO settings (user_id, user_name, student_id) VALUES (%s, %s, %s)",
+                    (user_id, session['user']['name'], '')
+                )
+                conn.commit()
+            cur.close()
+            conn.close()
+        except Exception as db_err:
+            print(f"数据库操作出错: {db_err}")
         
+        # 跳转回首页
         next_url = session.pop('next_url', url_for('index'))
+        print(f"跳转到: {next_url}")
         return redirect(next_url)
+        
     except Exception as e:
-        print(f"登录回调出错: {e}")
+        print(f"Callback 错误: {e}")
+        import traceback
+        traceback.print_exc()
+        # 出错时也返回首页，不显示错误页面
         return redirect(url_for('index'))
 
 @app.route('/logout')
