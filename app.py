@@ -8,9 +8,9 @@ from logto import LogtoClient, LogtoConfig
 from asgiref.sync import async_to_sync
 import psycopg2
 from psycopg2.extras import RealDictCursor
-#from vocabulary_web import vocabulary_bp
+from vocabulary_web import vocabulary_bp
 from recitation_web import recitation_bp
-#from exam_web import exam_bp
+from exam_web import exam_bp
 from past_light_web import past_light_bp
 from shadow_exam_web import shadow_bp
 from seventy_two_web import seventy_two_bp
@@ -19,9 +19,9 @@ from treasure_web import treasure_bp
 from halloween_web import halloween_bp  
 from shadow_hunter_web import shadow_hunter_bp
 from shadow_hunter_png import shadow_hunter_png_bp
-#from skill_db_web import skill_db_bp
+from skill_db_web import skill_db_bp
 from nightmare_exam_web import nightmare_bp
-#from settings_web import settings_bp, get_all_settings
+from settings_web import settings_bp, get_all_settings
 
 app = Flask(__name__)
 app.secret_key = 'english-platform-secret-key'
@@ -96,9 +96,9 @@ logto_client = LogtoClient(logto_config)
 # =====================================
 
 # 注册所有蓝图
-#app.register_blueprint(vocabulary_bp)
+app.register_blueprint(vocabulary_bp)
 app.register_blueprint(recitation_bp)
-#app.register_blueprint(exam_bp)
+app.register_blueprint(exam_bp)
 app.register_blueprint(past_light_bp)
 app.register_blueprint(shadow_bp)
 app.register_blueprint(seventy_two_bp)
@@ -107,9 +107,9 @@ app.register_blueprint(treasure_bp)
 app.register_blueprint(halloween_bp)  
 app.register_blueprint(shadow_hunter_bp) 
 app.register_blueprint(shadow_hunter_png_bp)
-#app.register_blueprint(skill_db_bp, url_prefix='/skill_db')
+app.register_blueprint(skill_db_bp, url_prefix='/skill_db')
 app.register_blueprint(nightmare_bp, url_prefix='/nightmare')
-#app.register_blueprint(settings_bp)
+app.register_blueprint(settings_bp)
 
 # ========== Logto 登录路由 ==========
 @app.route('/login')
