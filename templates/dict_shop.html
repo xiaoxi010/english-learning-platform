@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>词库商城 - 英语学习平台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .shop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .shop-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .shop-header h1 {
+            font-size: 2.5em;
+            color: #ffd93d;
+        }
+        .shop-header p {
+            color: #aaa;
+        }
+        .dict-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .dict-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .dict-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .dict-icon {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .dict-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #ffd93d;
+        }
+        .dict-desc {
+            color: #ccc;
+            font-size: 0.9em;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            min-height: 2.8em;
+        }
+        .dict-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+        .dict-info span {
+            color: #ffd93d;
+            font-weight: bold;
+        }
+        .buy-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6c5ce7, #5a4bd1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .buy-btn:hover:not(:disabled) {
+            opacity: 0.8;
+        }
+        .buy-btn:disabled,
+        .buy-btn.owned {
+            background: #555;
+            cursor: default;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #aaa;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="shop-container">
+        <div class="shop-header">
+            <h1>📖 词库商城</h1>
+            <p>从商城数据库挑选词典，一键导入到你的词汇数据库</p>
+        </div>
+
+        <div class="dict-grid" id="dictGrid">
+            <div style="text-align: center; grid-column: 1/-1;">加载中...</div>
+        </div>
+
+        <a href="{{ url_for('index') }}" class="back-link">← 返回首页</a>
+    </div>
+
+    <script>
+        async function loadDictShop() {
+            try {
+                const resp = await fetch('/api/dict_shop/list');
+                const result = await resp.json();
+                if (result.success) {
+                    renderDicts(result.data);
+                } else {
+                    document.getElementById('dictGrid').innerHTML = '<div style="text-align: center;">加载失败</div>';
+                }
+            } catch (e) {
+                document.getElementById('dictGrid').innerHTML = '<div style="text-align: center;">加载失败</div>';
+            }
+        }
+
+        function renderDicts(dicts) {
+            const grid = document.getElementById('dictGrid');
+            if (!dicts || dicts.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">商城暂无词典，请先在「商城数据库」中添加</div>';
+                return;
+            }
+
+            grid.innerHTML = dicts.map(d => {
+                const owned = d.owned;
+                const price = d.price || 0;
+                const btnText = owned ? '已拥有' : (price === 0 ? '免费获取' : `购买 (${price} 积分)`);
+                return `
+                <div class="dict-card">
+                    <div class="dict-icon">${escapeHtml(d.icon || '📚')}</div>
+                    <div class="dict-name">${escapeHtml(d.dict_name)}</div>
+                    <div class="dict-desc">${escapeHtml(d.description || '暂无描述')}</div>
+                    <div class="dict-info">
+                        <span>📊 ${d.word_count || 0} 词</span>
+                        <span>💰 ${price} 积分</span>
+                    </div>
+                    <button class="buy-btn ${owned ? 'owned' : ''}"
+                            data-name="${escapeAttr(d.dict_name)}"
+                            ${owned ? 'disabled' : ''}>
+                        ${btnText}
+                    </button>
+                </div>`;
+            }).join('');
+
+            document.querySelectorAll('.buy-btn:not(.owned)').forEach(btn => {
+                btn.addEventListener('click', () => buyDict(btn.dataset.name, btn));
+            });
+        }
+
+        async function buyDict(dictName, btn) {
+            if (!confirm(`确定要将「${dictName}」导入到词汇数据库吗？`)) return;
+            btn.disabled = true;
+            btn.textContent = '导入中...';
+            try {
+                const resp = await fetch('/api/dict_shop/buy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dict_name: dictName }),
+                });
+                const result = await resp.json();
+                alert(result.message);
+                if (result.success) {
+                    loadDictShop();
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = '免费获取';
+                }
+            } catch (e) {
+                alert('导入失败: ' + e.message);
+                btn.disabled = false;
+                btn.textContent = '免费获取';
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function escapeAttr(text) {
+            return String(text || '').replace(/"/g, '&quot;');
+        }
+
+        loadDictShop();
+    </script>
+</body>
+</html>

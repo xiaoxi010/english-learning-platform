@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Database - 商城数据库</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #0c0c1d, #1a1a3e, #0d1b2a, #1b0a2e);
+            min-height: 100vh; color: #fff;
+        }
+        .header { background: rgba(0,0,0,0.4); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 1.5em; color: #ffd93d; }
+        .back-btn { color: #aaa; text-decoration: none; font-size: 1em; padding: 8px 16px; border-radius: 20px; background: rgba(255,255,255,0.1); }
+        .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        .container { display: flex; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; height: calc(100vh - 70px); }
+        .left-panel { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; }
+        .panel { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; }
+        .panel h3 { font-size: 1em; color: #ffd93d; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .dict-list { max-height: 250px; overflow-y: auto; }
+        .dict-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; margin: 3px 0; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .dict-item:hover { background: rgba(255,255,255,0.1); }
+        .dict-item.selected { background: rgba(108,92,231,0.3); border: 1px solid #6c5ce7; }
+        .dict-name { font-size: 0.9em; flex: 1; }
+        .dict-status { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; transition: transform 0.2s; flex-shrink: 0; margin-left: 8px; }
+        .dict-status:hover { transform: scale(1.2); }
+        .dict-status.active { background: #2ed573; }
+        .dict-status.inactive { background: #e74c3c; }
+        .dict-status.locked { background: #8e44ad; cursor: not-allowed; }
+        .dict-actions { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+        .btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; transition: background 0.2s; }
+        .btn-sm { padding: 4px 8px; font-size: 0.8em; }
+        .btn-primary { background: #6c5ce7; color: white; }
+        .btn-primary:hover { background: #5a4bd1; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-success { background: #00b894; color: white; }
+        .btn-success:hover { background: #008b74; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-warning:hover { background: #d68910; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        .btn-info { background: #3498db; color: white; }
+        .btn-info:hover { background: #2980b9; }
+        .right-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; overflow: hidden; }
+        .tabs { display: flex; gap: 5px; }
+        .tab { padding: 10px 20px; border-radius: 10px 10px 0 0; cursor: pointer; background: rgba(255,255,255,0.05); border: none; color: #aaa; font-size: 0.9em; }
+        .tab.active { background: rgba(255,255,255,0.1); color: #ffd93d; }
+        .tab-content { display: none; flex: 1; overflow-y: auto; }
+        .tab-content.active { display: block; }
+        .sort-bar { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+        .sort-btn { padding: 5px 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #aaa; cursor: pointer; font-size: 0.85em; }
+        .sort-btn.active { background: #6c5ce7; border-color: #6c5ce7; color: white; }
+        .group-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; margin: 5px 0; border-radius: 10px; background: rgba(255,255,255,0.03); cursor: pointer; transition: background 0.2s; }
+        .group-item:hover { background: rgba(255,255,255,0.08); }
+        .group-item.selected { background: rgba(108,92,231,0.2); }
+        .group-info { flex: 1; }
+        .group-name { font-weight: bold; font-size: 1em; }
+        .group-meta { font-size: 0.8em; color: #aaa; margin-top: 3px; }
+        .group-count { background: #6c5ce7; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .search-box input { flex: 1; min-width: 200px; padding: 10px 15px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-size: 1em; }
+        .search-box input:focus { outline: none; border-color: #6c5ce7; }
+        .search-box select { padding: 10px; border-radius: 25px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .word-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .word-table th { text-align: left; padding: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); color: #ffd93d; font-size: 0.9em; position: sticky; top: 0; background: #1a1a3e; }
+        .word-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9em; }
+        .word-table tr:hover td { background: rgba(255,255,255,0.03); }
+        .word-table tr.row-green td { background: rgba(46,204,113,0.15) !important; }
+        .word-table tr.row-red td { background: rgba(231,76,60,0.15) !important; }
+        .word-table .word-clickable { cursor: pointer; font-weight: bold; }
+        .word-table .meaning-cell { cursor: pointer; }
+        .word-table .meaning-hidden { color: transparent; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.show { display: flex; }
+        .modal-box { background: #1e1e3a; padding: 25px; border-radius: 15px; width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal-box h3 { color: #ffd93d; margin-bottom: 15px; }
+        .modal-box input, .modal-box textarea { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white; font-size: 0.9em; }
+        .modal-box textarea { height: 150px; resize: vertical; font-family: monospace; }
+        .modal-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; }
+        .result-count { color: #aaa; font-size: 0.9em; margin-bottom: 10px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #ffd93d; }
+        .stat-label { font-size: 0.85em; color: #aaa; margin-top: 5px; }
+        .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+        .detail-header h3 { color: #ffd93d; margin: 0; padding: 0; border: none; }
+        .detail-info { color: #aaa; font-size: 0.85em; }
+        .detail-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+        .dict-list::-webkit-scrollbar, .tab-content::-webkit-scrollbar, .modal-box::-webkit-scrollbar { width: 0px; }
+        .dict-list:hover::-webkit-scrollbar, .tab-content:hover::-webkit-scrollbar, .modal-box:hover::-webkit-scrollbar { width: 4px; }
+        .dict-list::-webkit-scrollbar-thumb, .tab-content::-webkit-scrollbar-thumb, .modal-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        select { background: rgba(30,30,58,0.95) !important; color: white !important; }
+        select option { background: #1e1e3a; color: white; }
+    </style>
+</head>
+<body>
+<div class="header"><h1>📚 商城数据库 Shop Database</h1><a href="/" class="back-btn">← 返回主菜单</a></div>
+<div class="container">
+    <div class="left-panel">
+        <div class="panel"><h3>📖 词典列表</h3><div class="dict-list" id="dictList"></div>
+            <div class="dict-actions"><button class="btn btn-primary btn-sm" onclick="showAddDictModal()">+ 添加</button><button class="btn btn-warning btn-sm" onclick="showRenameDictModal()">✏️ 修改</button><button class="btn btn-danger btn-sm" onclick="deleteDict()">删除</button></div>
+        </div>
+        <div class="panel"><h3>🔍 搜索单词组</h3><input type="text" id="groupSearch" placeholder="输入关键词筛选..." style="width:100%;padding:8px 10px;border-radius:8px;background:#1e1e3a;color:#fff;border:1px solid rgba(255,255,255,0.2);font-size:0.9em;" oninput="filterGroups()"></div>
+        <div class="panel"><h3>⚡ 操作</h3>
+            <button class="btn btn-success" style="width:100%;margin-bottom:8px;" onclick="showAddGroupModal()">+ 添加单词组</button>
+            <button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="document.getElementById('importFile').click()">📥 导入Excel</button>
+            <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none;" onchange="importExcel()">
+            <button class="btn btn-secondary" style="width:100%;margin-bottom:8px;" onclick="exportExcel()">📤 导出Excel</button>
+            <button class="btn btn-secondary" style="width:100%;" onclick="showStats()">📊 查看统计</button>
+        </div>
+    </div>
+    <div class="right-panel">
+        <div class="tabs"><button class="tab active" onclick="switchTab('groups')">单词组列表</button><button class="tab" onclick="switchTab('search')">单词搜索</button><button class="tab" id="tabDetail" onclick="switchTab('detail')">单词组详情</button></div>
+        <div class="tab-content active" id="tab-groups">
+            <div class="sort-bar"><span style="color:#aaa;font-size:0.9em;">排序:</span><button class="sort-btn active" onclick="sortGroups('name')">按名称</button><button class="sort-btn" onclick="sortGroups('date')">按时间</button><button class="sort-btn" onclick="sortGroups('dict')">按词典</button><button class="btn btn-danger btn-sm" style="margin-left:auto;" onclick="deleteGroup()">删除选中组</button></div>
+            <div class="group-list" id="groupList"></div>
+        </div>
+        <div class="tab-content" id="tab-search">
+            <div class="search-box"><input type="text" id="searchInput" placeholder="输入关键词搜索..." oninput="doSearch()"><select id="searchBy" onchange="doSearch()"><option value="all">全部搜索</option><option value="word">按单词</option><option value="meaning">按中文</option></select><label style="display:flex;align-items:center;gap:5px;color:#aaa;font-size:0.9em;"><input type="checkbox" id="dedupCheck" checked onchange="doSearch()"> 去重</label></div>
+            <div class="result-count" id="resultCount"></div><div id="searchResults"></div>
+        </div>
+        <div class="tab-content" id="tab-detail"><div id="groupDetail"></div></div>
+    </div>
+</div>
+
+<!-- 弹窗部分保持不变 -->
+<div class="modal" id="addDictModal"><div class="modal-box"><h3>添加词典</h3><input type="text" id="newDictName" placeholder="词典名称"><input type="text" id="newDictDesc" placeholder="描述（可选）"><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('addDictModal')">取消</button><button class="btn btn-primary" onclick="addDictionary()">添加</button></div></div></div>
+<div class="modal" id="renameDictModal"><div class="modal-box"><h3>修改词典名称</h3><p style="color:#aaa;margin-bottom:10px;">当前词典: <strong id="oldDictName" style="color:#ffd93d;"></strong></p><input type="text" id="newDictName2" placeholder="新名称"><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('renameDictModal')">取消</button><button class="btn btn-primary" onclick="renameDictionary()">保存</button></div></div></div>
+<div class="modal" id="addGroupModal"><div class="modal-box"><h3>添加单词组到 <span id="addTargetDict">（请先选择词典）</span></h3><input type="text" id="newGroupName" placeholder="组名"><textarea id="newGroupWords" placeholder="每行一个单词，格式：单词 词性 中文意思&#10;例如：&#10;apple n. 苹果&#10;run v. 跑步"></textarea><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('addGroupModal')">取消</button><button class="btn btn-primary" onclick="addGroup()">添加</button></div></div></div>
+<div class="modal" id="statsModal"><div class="modal-box" style="width:600px;"><h3>📊 统计信息</h3><div id="statsContent"></div><div class="modal-btns"><button class="btn btn-secondary" onclick="closeModal('statsModal')">关闭</button></div></div></div>
+
+<script>
+const API_BASE='/vocabulary_shop';
+let currentDict='',currentSort='name',currentGroup=null,allGroupsData=[],hiddenMeanings={},wordColorStates={};
+
+async function init(){await loadDictionaries();await loadGroups();}
+
+// ========== 词典 ==========
+async function loadDictionaries(){
+    const resp=await fetch(`${API_BASE}/api/dictionaries`);const dicts=await resp.json();
+    if(dicts.length&&!dicts.some(d=>d.name===currentDict)){currentDict=dicts[0].name;document.getElementById('addTargetDict').textContent=currentDict;}
+    if(!dicts.length){currentDict='';document.getElementById('addTargetDict').textContent='（请先添加词典）';}
+    document.getElementById('dictList').innerHTML=dicts.length?dicts.map(d=>`<div class="dict-item ${d.name===currentDict?'selected':''}" onclick="selectDict('${d.name}')"><span class="dict-name">${d.name}</span><span class="dict-status ${d.is_active?'active':'inactive'}" onclick="event.stopPropagation();toggleDict('${d.name}',${d.is_active})" title="${d.is_active?'使用中':'未使用'}"></span></div>`).join(''):'<p style="color:#aaa;font-size:0.85em;padding:8px;">暂无词典，请点击「+ 添加」</p>';
+}
+function selectDict(name){currentDict=name;document.getElementById('addTargetDict').textContent=name;loadDictionaries();loadGroups();}
+async function toggleDict(name,st){const r=await fetch(`${API_BASE}/api/dictionary/toggle`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,is_active:!st})});if((await r.json()).success){loadDictionaries();loadGroups();}}
+function showAddDictModal(){document.getElementById('addDictModal').classList.add('show');}
+function showRenameDictModal(){if(!currentDict)return alert('请先选择一个词典');document.getElementById('oldDictName').textContent=currentDict;document.getElementById('newDictName2').value=currentDict;document.getElementById('renameDictModal').classList.add('show');}
+async function renameDictionary(){const o=currentDict,n=document.getElementById('newDictName2').value.trim();if(!n)return alert('请输入新名称');if(n===o){closeModal('renameDictModal');return;}const r=await fetch(`${API_BASE}/api/dictionary/rename`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({old_name:o,new_name:n})});const d=await r.json();alert(d.message);if(d.success){closeModal('renameDictModal');currentDict=n;document.getElementById('addTargetDict').textContent=n;loadDictionaries();loadGroups();}}
+async function addDictionary(){const n=document.getElementById('newDictName').value.trim(),d=document.getElementById('newDictDesc').value.trim();if(!n)return alert('请输入词典名称');const r=await fetch(`${API_BASE}/api/dictionary/add`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,description:d})});const j=await r.json();alert(j.message);if(j.success){closeModal('addDictModal');document.getElementById('newDictName').value='';document.getElementById('newDictDesc').value='';currentDict=n;document.getElementById('addTargetDict').textContent=n;loadDictionaries();loadGroups();}}
+async function deleteDict(){if(!currentDict)return alert('请先选择一个词典');if(!confirm(`确定要删除词典 "${currentDict}" 吗？`))return;const r=await fetch(`${API_BASE}/api/dictionary/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:currentDict})});const d=await r.json();alert(d.message);if(d.success){currentDict='';loadDictionaries();loadGroups();}}
+
+// ========== 单词组 ==========
+async function loadGroups(){const r=await fetch(`${API_BASE}/api/groups?sort=${currentSort}`);const g=await r.json();allGroupsData=g;renderGroupList(g);}
+function filterGroups(){const kw=document.getElementById('groupSearch').value.toLowerCase();renderGroupList(kw?allGroupsData.filter(g=>g.group_name.toLowerCase().includes(kw)||g.dict_name.toLowerCase().includes(kw)):allGroupsData);}
+function renderGroupList(groups){document.getElementById('groupList').innerHTML=groups.map(g=>`<div class="group-item" ondblclick="viewGroupDetail('${g.dict_name}','${g.group_name}')" onclick="selectGroup(this,'${g.dict_name}','${g.group_name}')"><div class="group-info"><div class="group-name">${g.group_name}</div><div class="group-meta">${g.dict_name} · ${g.created_time}</div></div><span class="group-count">${g.word_count} 词</span></div>`).join('');}
+function selectGroup(el,dn,gn){document.querySelectorAll('.group-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected');currentGroup={dictName:dn,groupName:gn};}
+function sortGroups(s){currentSort=s;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');loadGroups();}
+function showAddGroupModal(){if(!currentDict)return alert('请先添加并选择一个词典');document.getElementById('addTargetDict').textContent=currentDict;document.getElementById('addGroupModal').classList.add('show');}
+async function addGroup(){const n=document.getElementById('newGroupName').value.trim(),t=document.getElementById('newGroupWords').value.trim();if(!currentDict)return alert('请先选择词典');if(!n)return alert('请输入组名');if(!t)return alert('请输入单词');const r=await fetch(`${API_BASE}/api/group/add`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({group_name:n,dict_name:currentDict,words_text:t})});const d=await r.json();alert(d.message);if(d.success){closeModal('addGroupModal');document.getElementById('newGroupName').value='';document.getElementById('newGroupWords').value='';loadGroups();loadDictionaries();}}
+async function deleteGroup(){if(!currentGroup)return alert('请先选择一个单词组');if(!confirm(`确定要删除 "${currentGroup.groupName}" 吗？`))return;const r=await fetch(`${API_BASE}/api/group/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({group_name:currentGroup.groupName,dict_name:currentGroup.dictName})});const d=await r.json();alert(d.message);if(d.success){currentGroup=null;document.getElementById('groupDetail').innerHTML='';document.getElementById('tabDetail').textContent='单词组详情';loadGroups();loadDictionaries();}}
+
+// ========== 单词组详情（新功能） ==========
+async function viewGroupDetail(dictName,groupName){
+    currentGroup={dictName,groupName};
+    const r=await fetch(`${API_BASE}/api/group/${encodeURIComponent(dictName)}/${encodeURIComponent(groupName)}`);
+    const g=await r.json();
+    if(g.error)return;
+    document.getElementById('tabDetail').textContent=`📝 ${g.group_name}`;
+    hiddenMeanings={};wordColorStates={};
+    document.getElementById('groupDetail').innerHTML=`
+        <div class="detail-header">
+            <h3>📝 ${g.group_name}</h3>
+            <span class="detail-info">${g.dict_name} · ${g.word_count}个单词 · ${g.created_time}</span>
+            <div class="detail-btns">
+                <button class="btn btn-sm btn-secondary" onclick="resetColors()">🔄 重置颜色</button>
+                <button class="btn btn-sm btn-warning" onclick="toggleAllMeanings()">🙈 隐藏汉译</button>
+            </div>
+        </div>
+        <table class="word-table" id="wordDetailTable">
+            <tr><th>#</th><th>单词</th><th>词性</th><th>汉译</th></tr>
+            ${g.words.map((w,i)=>`
+                <tr id="wrow_${i}">
+                    <td>${i+1}</td>
+                    <td class="word-clickable" onclick="markWordGreen(${i})" ondblclick="markWordRed(${i})" title="单击绿色 双击红色">${w.word}</td>
+                    <td>${w.part_of_speech}</td>
+                    <td class="meaning-cell" id="mcell_${i}" ondblclick="toggleMeaning(${i})" title="双击显示/隐藏汉译"><span id="mtxt_${i}">${w.chinese_meaning}</span></td>
+                </tr>`).join('')}
+        </table>`;
+    switchTab('detail');
+}
+function markWordGreen(i){
+    const row=document.getElementById('wrow_'+i);
+    if(!row)return;
+    if(wordColorStates[i]==='green'){row.classList.remove('row-green');delete wordColorStates[i];}
+    else{row.classList.remove('row-red');row.classList.add('row-green');wordColorStates[i]='green';}
+}
+function markWordRed(i){
+    const row=document.getElementById('wrow_'+i);
+    if(!row)return;
+    if(wordColorStates[i]==='red'){row.classList.remove('row-red');delete wordColorStates[i];}
+    else{row.classList.remove('row-green');row.classList.add('row-red');wordColorStates[i]='red';}
+}
+function resetColors(){document.querySelectorAll('#wordDetailTable tr').forEach(r=>{r.classList.remove('row-green','row-red');});wordColorStates={};}
+function toggleMeaning(i){
+    const el=document.getElementById('mtxt_'+i);
+    if(!el)return;
+    if(hiddenMeanings[i]){el.style.color='';hiddenMeanings[i]=false;}
+    else{el.style.color='transparent';hiddenMeanings[i]=true;}
+}
+function toggleAllMeanings(){
+    const btn=event.target;
+    const allHidden=Object.values(hiddenMeanings).every(v=>v);
+    for(let i=0;i<100;i++){
+        const el=document.getElementById('mtxt_'+i);
+        if(!el)break;
+        if(allHidden){el.style.color='';hiddenMeanings[i]=false;}
+        else{el.style.color='transparent';hiddenMeanings[i]=true;}
+    }
+    btn.textContent=allHidden?'🙈 隐藏汉译':'👁 显示汉译';
+}
+
+// ========== 搜索 ==========
+async function doSearch(){
+    const kw=document.getElementById('searchInput').value.trim();
+    if(!kw){document.getElementById('searchResults').innerHTML='';document.getElementById('resultCount').textContent='';return;}
+    const by=document.getElementById('searchBy').value,dedup=document.getElementById('dedupCheck').checked;
+    const r=await fetch(`${API_BASE}/api/search?keyword=${encodeURIComponent(kw)}&by=${by}&dedup=${dedup}`);
+    const d=await r.json();
+    document.getElementById('resultCount').textContent=`搜索 "${kw}"，找到 ${d.count} 个结果${dedup?'（已去重）':''}`;
+    document.getElementById('searchResults').innerHTML=d.results.length===0?'<p style="color:#aaa;text-align:center;padding:30px;">未找到匹配的单词</p>':`<table class="word-table"><tr><th>单词</th><th>词性</th><th>中文意思</th><th>所属组</th><th>所属词典</th></tr>${d.results.map(r=>`<tr><td style="font-weight:bold;">${r.word}</td><td>${r.part_of_speech}</td><td>${r.chinese_meaning}</td><td>${r.group_name}</td><td>${r.dict_name}</td></tr>`).join('')}</table>`;
+}
+
+// ========== 统计 ==========
+async function showStats(){
+    const r=await fetch(`${API_BASE}/api/statistics`);const s=await r.json();
+    document.getElementById('statsContent').innerHTML=`<div class="stats-grid"><div class="stat-card"><div class="stat-number">${s.active_dictionaries?.length||0}</div><div class="stat-label">激活词典</div></div><div class="stat-card"><div class="stat-number">${s.total_groups||0}</div><div class="stat-label">单词组</div></div><div class="stat-card"><div class="stat-number">${s.total_words||0}</div><div class="stat-label">总单词数</div></div></div><h4 style="color:#ffd93d;margin-bottom:10px;">词典详情</h4>${s.dictionary_statistics?.map(d=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);"><span>${d.is_active?'✅':'❌'} ${d.dict_name}</span><span style="color:#aaa;">${d.word_count} 词 · ${d.group_count} 组</span></div>`).join('')}`;
+    document.getElementById('statsModal').classList.add('show');
+}
+
+// ========== Excel ==========
+async function exportExcel(){window.location.href=`${API_BASE}/api/export/excel`;}
+async function importExcel(){
+    const fi=document.getElementById('importFile'),f=fi.files[0];if(!f)return;
+    if(!confirm(`确定要从 "${f.name}" 导入数据到词典 "${currentDict}" 吗？\n\n"确定"=导入到当前词典，"取消"=按Excel中的词典名称导入。`)){if(!confirm('将按照Excel文件中的词典名称导入，继续吗？')){fi.value='';return;}var td='';}else{var td=currentDict;}
+    const fd=new FormData();fd.append('file',f);fd.append('dict_name',td);
+    try{const r=await fetch(`${API_BASE}/api/import/excel`,{method:'POST',body:fd});const d=await r.json();alert(d.message);if(d.success){loadDictionaries();loadGroups();}}catch(e){alert('导入失败: '+e.message);}fi.value='';
+}
+
+// ========== 工具 ==========
+function switchTab(tab){document.querySelectorAll('.tab').forEach((t,i)=>{t.classList.toggle('active',(tab==='groups'&&i===0)||(tab==='search'&&i===1)||(tab==='detail'&&i===2));});document.getElementById('tab-groups').classList.toggle('active',tab==='groups');document.getElementById('tab-search').classList.toggle('active',tab==='search');document.getElementById('tab-detail').classList.toggle('active',tab==='detail');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+init();
+</script>
+</body>
+</html>

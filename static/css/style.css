@@ -168,6 +168,8 @@ body {
 .card-green { background: linear-gradient(135deg, #2ed573, #1e8e4e); }
 .card-yellow { background: linear-gradient(135deg, #f39c12, #d68910); }
 .card-purple { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+.card-blue { background: linear-gradient(135deg, #3498db, #2980b9); }
+.card-orange { background: linear-gradient(135deg, #e67e22, #d35400); }
 
 /* 考试版型小卡片网格 */
 .card-grid {

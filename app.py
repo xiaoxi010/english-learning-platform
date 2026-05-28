@@ -22,6 +22,8 @@ from shadow_hunter_png import shadow_hunter_png_bp
 from skill_db_web import skill_db_bp
 from nightmare_exam_web import nightmare_bp
 from settings_web import settings_bp, get_all_settings
+from vocabulary_shop_web import vocabulary_shop_bp
+from dict_shop_web import dict_shop_bp
 
 app = Flask(__name__)
 app.secret_key = 'english-platform-secret-key'
@@ -110,6 +112,8 @@ app.register_blueprint(shadow_hunter_png_bp)
 app.register_blueprint(skill_db_bp, url_prefix='/skill_db')
 app.register_blueprint(nightmare_bp, url_prefix='/nightmare')
 app.register_blueprint(settings_bp)
+app.register_blueprint(vocabulary_shop_bp)
+app.register_blueprint(dict_shop_bp)
 
 # ========== Logto 登录路由 ==========
 @app.route('/login')
@@ -171,6 +175,13 @@ def callback():
             conn.close()
         except Exception as db_err:
             print(f"数据库操作出错: {db_err}")
+        
+        # 初始化用户词汇库（创建默认词典和错题词典）
+        try:
+            from vocabulary_manager import init_user_vocabulary
+            init_user_vocabulary(user_id)
+        except Exception as vocab_err:
+            print(f"初始化词汇库出错: {vocab_err}")
         
         # 跳转回首页
         next_url = session.pop('next_url', url_for('index'))
