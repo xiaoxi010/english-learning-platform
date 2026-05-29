@@ -13,6 +13,7 @@ _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DB_PATH = os.path.join(_BASE_DIR, 'vocabulary.db')
 WRONG_BOOK_COUNT = 5
 WRONG_BOOK_MAX_WORDS = 50
+_wrong_book_initialized_paths: set[str] = set()
 
 
 def init_user_vocabulary(user_id: str) -> bool:
@@ -191,7 +192,9 @@ class VocabularyManager:
     
 
     def init_wrong_book_system(self):
-        """初始化错题本系统"""
+        """初始化错题本系统（每个数据库仅执行一次）"""
+        if self.db_path in _wrong_book_initialized_paths:
+            return
         try:
             # 确保错题词典始终为激活状态且不可手动修改
             conn = sqlite3.connect(self.db_path)
@@ -219,7 +222,7 @@ class VocabularyManager:
 
             self._remove_extra_wrong_books()
 
-            print("错题本系统初始化完成")
+            _wrong_book_initialized_paths.add(self.db_path)
 
         except Exception as e:
             print(f"初始化错题本系统失败: {e}")
@@ -248,7 +251,6 @@ class VocabularyManager:
                         (group_name, dict_id, '系统错题本，自动管理')
                     )
                     conn.commit()
-                    print(f"已创建 {group_name}")
 
             conn.close()
             return True
@@ -589,7 +591,6 @@ class VocabularyManager:
             # 获取当前可用的错题本
             current_book = self.get_current_wrong_book()
             if not current_book:
-                print("所有错题本已满，无法添加")
                 return False
 
             conn = sqlite3.connect(self.db_path)
@@ -619,8 +620,6 @@ class VocabularyManager:
             ''', (word,))
 
             if cursor.fetchone():
-                # 单词已存在于某个错题本中，不重复添加
-                print(f"单词 '{word}' 已在错题本中存在，跳过添加")
                 conn.close()
                 return True
 
@@ -633,7 +632,6 @@ class VocabularyManager:
             conn.commit()
             conn.close()
 
-            print(f"单词 '{word}' 已添加到 {current_book}")
             return True
 
         except Exception as e:
@@ -661,8 +659,6 @@ class VocabularyManager:
             conn.commit()
             conn.close()
 
-            if rows_deleted > 0:
-                print(f"单词 '{word}' 已从错题本中删除")
             return rows_deleted > 0
 
         except Exception as e:

@@ -79,12 +79,22 @@ def api_records():
 @exam_bp.route('/api/exam/record/<int:record_id>')
 def api_record_detail(record_id):
     """获取单条记录详情"""
-    records = get_exam_stats_db().get_all_exam_records(limit=1000)
-    for r in records:
-        if r['id'] == record_id:
-            r['is_passed'] = bool(r['is_passed'])
-            return jsonify(r)
-    return jsonify({'error': '未找到记录'}), 404
+    record = get_exam_stats_db().get_exam_record_by_id(record_id)
+    if not record:
+        return jsonify({'error': '未找到记录'}), 404
+    record['is_passed'] = bool(record['is_passed'])
+    return jsonify(record)
+
+
+@exam_bp.route('/api/exam/record/<int:record_id>/update', methods=['POST'])
+def api_record_update(record_id):
+    """更新考核记录"""
+    data = request.get_json() or {}
+    updated = get_exam_stats_db().update_exam_record(record_id, data)
+    if not updated:
+        return jsonify({'success': False, 'message': '更新失败或记录不存在'}), 404
+    updated['is_passed'] = bool(updated['is_passed'])
+    return jsonify({'success': True, 'record': updated})
 
 
 @exam_bp.route('/api/exam/summary')

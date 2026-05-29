@@ -14,7 +14,6 @@
         <span class="user-id" title="剩余积分">💰 {{ credits }}</span>
         <a href="{{ url_for('logout') }}" class="logout-btn">登出</a>
         {% else %}
-        <span class="user-name">未登录</span>
         <a href="{{ url_for('login') }}" class="login-btn">登录</a>
         {% endif %}
     </div>

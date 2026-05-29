@@ -10,7 +10,6 @@
 {% set show_sidebar = (page == 'main_menu') %}
 {% set active_nav = active_nav | default('home') %}
 {% set page_title = '主页' if page == 'main_menu' else '' %}
-{% set page_subtitle = '选择功能模块开始学习' if page == 'main_menu' else '' %}
 {% include 'partials/app_shell_open.html' %}
 
                 {% if page == 'main_menu' %}
@@ -25,6 +24,7 @@
                         <a href="{{ url_for('start_exam', exam_type='seventy_two') }}" class="item-card">七十二变</a>
                         <a href="{{ url_for('start_exam', exam_type='treasure_master') }}" class="item-card">盗宝大师</a>
                         <a href="{{ url_for('start_exam', exam_type='shadow_exam') }}" class="item-card">诡影重重</a>
+                        <a href="{{ url_for('start_exam', exam_type='shadow_hunter') }}" class="item-card">阴影迷踪</a>
                     </div>
                 </section>
 
@@ -35,7 +35,6 @@
                     </div>
                     <div class="item-grid">
                         <a href="{{ url_for('start_exam', exam_type='word_recitation') }}" class="item-card">单词背诵</a>
-                        <a href="{{ url_for('vocabulary.vocabulary_page', sidebar=0) }}" class="item-card">词汇数据库</a>
                     </div>
                 </section>
 

@@ -1,4 +1,5 @@
 import sqlite3
+import json
 from datetime import datetime
 from typing import Dict, List, Optional
 import os
@@ -20,7 +21,8 @@ class ExamStatsDB:
             "意言译语": 40,
             "三十六计": 47,
             "七十二变": 47,
-            "万圣之夜": 43
+            "万圣之夜": 43,
+            "阴影迷踪": 45,
         }
         self.full_score = 50  # 满分
 
@@ -83,7 +85,8 @@ class ExamStatsDB:
         conn.close()
         print("数据库初始化完成")
 
-    def calculate_exam_gpa(self, score: float, pattern_name: str, is_passed: bool) -> float:
+    def calculate_exam_gpa(self, score: float, pattern_name: str, is_passed: bool,
+                           pass_score_override: float = None) -> float:
         """
         计算单次考试的绩点（基于版型）
         绩点=（得分-通过分）/（满分-通过分）*5
@@ -92,9 +95,12 @@ class ExamStatsDB:
         if not is_passed:
             return 0.0
 
-        pass_score = self.pass_scores.get(pattern_name)
+        if pass_score_override is not None:
+            pass_score = pass_score_override
+        else:
+            pass_score = self.pass_scores.get(pattern_name)
         if pass_score is None:
-            pass_score = 50
+            pass_score = 45
 
         gpa = (score - pass_score) / (self.full_score - pass_score) * 5
         return round(max(0, min(gpa, 5)), 2)
@@ -133,7 +139,8 @@ class ExamStatsDB:
             "意言译语": 0,
             "三十六计": 0,
             "七十二变": 0,
-            "万圣之夜": 0
+            "万圣之夜": 0,
+            "阴影迷踪": 0,
         }
 
         cursor.execute('''
@@ -158,13 +165,16 @@ class ExamStatsDB:
         return integrals
 
     def update_or_create_stats(self, group_name: str, dictionary_name: str,
-                               score: float, passed: bool, pattern_name: str = None) -> Dict:
+                               score: float, passed: bool, pattern_name: str = None,
+                               pass_score_override: float = None) -> Dict:
         """更新或创建单词组统计记录"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
         # 计算本次考试的绩点
-        exam_gpa = self.calculate_exam_gpa(score, pattern_name, passed) if pattern_name else 0
+        exam_gpa = self.calculate_exam_gpa(
+            score, pattern_name, passed, pass_score_override=pass_score_override
+        ) if pattern_name else 0
 
         cursor.execute('''
             SELECT challenge_count, pass_count, highest_score, gpa, earliest_pass_time
@@ -249,12 +259,15 @@ class ExamStatsDB:
     def add_exam_record(self, group_name: str, dictionary_name: str,
                         pattern_name: str, score: float, is_passed: bool,
                         basic_score: float = None, shadow_score: float = None,
-                        total_score: float = None, record_details: str = None) -> Dict:
+                        total_score: float = None, record_details: str = None,
+                        pass_score_override: float = None) -> Dict:
         """添加详细考核记录"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        exam_gpa = self.calculate_exam_gpa(score, pattern_name, is_passed)
+        exam_gpa = self.calculate_exam_gpa(
+            score, pattern_name, is_passed, pass_score_override=pass_score_override
+        )
 
         cursor.execute('''
             INSERT INTO exam_records 
@@ -508,6 +521,150 @@ class ExamStatsDB:
         except Exception as e:
             print(f"清空记录失败: {e}")
             return False
+
+
+    def update_exam_record(self, record_id: int, updates: Dict) -> Optional[Dict]:
+        """更新考核记录（支持修改分数并重新计算绩点）"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute('''
+                SELECT id, group_name, dictionary_name, pattern_name, score, is_passed,
+                       basic_score, shadow_score, total_score, record_details
+                FROM exam_records WHERE id = ?
+            ''', (record_id,))
+            row = cursor.fetchone()
+            if not row:
+                conn.close()
+                return None
+
+            group_name = updates.get('group_name', row[1])
+            dictionary_name = updates.get('dictionary_name', row[2])
+            pattern_name = updates.get('pattern_name', row[3])
+            score = float(updates.get('score', row[4]))
+            basic_score = updates.get('basic_score', row[6])
+            shadow_score = updates.get('shadow_score', row[7])
+            total_score = updates.get('total_score', row[8])
+            if basic_score is not None:
+                basic_score = float(basic_score)
+            if shadow_score is not None:
+                shadow_score = float(shadow_score)
+            if total_score is not None:
+                total_score = float(total_score)
+            else:
+                total_score = score
+
+            is_passed = updates.get('is_passed', row[5])
+            if isinstance(is_passed, str):
+                is_passed = is_passed.lower() in ('1', 'true', 'yes', 'on')
+            else:
+                is_passed = bool(is_passed)
+
+            record_details = updates.get('record_details', row[9])
+            pass_score_override = None
+            if record_details:
+                try:
+                    details = json.loads(record_details) if isinstance(record_details, str) else record_details
+                    if details.get('pass_score') is not None:
+                        pass_score_override = float(details['pass_score'])
+                except Exception:
+                    pass
+
+            exam_gpa = self.calculate_exam_gpa(
+                score, pattern_name, is_passed, pass_score_override=pass_score_override
+            )
+
+            cursor.execute('''
+                UPDATE exam_records
+                SET group_name = ?, dictionary_name = ?, pattern_name = ?,
+                    score = ?, is_passed = ?, gpa = ?,
+                    basic_score = ?, shadow_score = ?, total_score = ?,
+                    record_details = ?
+                WHERE id = ?
+            ''', (
+                group_name, dictionary_name, pattern_name,
+                score, is_passed, exam_gpa,
+                basic_score, shadow_score, total_score,
+                record_details if isinstance(record_details, str) else json.dumps(record_details, ensure_ascii=False),
+                record_id,
+            ))
+            conn.commit()
+            conn.close()
+            self.rebuild_group_stats(group_name, dictionary_name)
+            if (group_name, dictionary_name) != (row[1], row[2]):
+                self.rebuild_group_stats(row[1], row[2])
+            return self.get_exam_record_by_id(record_id)
+        except Exception as e:
+            print(f'更新考核记录失败: {e}')
+            return None
+
+    def get_exam_record_by_id(self, record_id: int) -> Optional[Dict]:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id, group_name, dictionary_name, pattern_name, score, is_passed,
+                   gpa, exam_time, basic_score, shadow_score, total_score, record_details
+            FROM exam_records WHERE id = ?
+        ''', (record_id,))
+        row = cursor.fetchone()
+        conn.close()
+        if not row:
+            return None
+        return {
+            'id': row[0],
+            'group_name': row[1],
+            'dictionary_name': row[2],
+            'pattern_name': row[3],
+            'score': row[4],
+            'is_passed': bool(row[5]),
+            'gpa': row[6],
+            'exam_time': row[7],
+            'basic_score': row[8],
+            'shadow_score': row[9],
+            'total_score': row[10],
+            'record_details': row[11],
+        }
+
+    def rebuild_group_stats(self, group_name: str, dictionary_name: str) -> None:
+        """根据 exam_records 重新汇总单词组统计（编辑记录后同步）"""
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT COUNT(*), SUM(CASE WHEN is_passed = 1 THEN 1 ELSE 0 END),
+                   MAX(score), MAX(CASE WHEN is_passed = 1 THEN gpa ELSE NULL END),
+                   MIN(CASE WHEN is_passed = 1 THEN exam_time ELSE NULL END)
+            FROM exam_records
+            WHERE group_name = ? AND dictionary_name = ?
+        ''', (group_name, dictionary_name))
+        row = cursor.fetchone()
+        challenge_count = row[0] or 0
+        if challenge_count == 0:
+            cursor.execute(
+                'DELETE FROM word_group_stats WHERE group_name = ? AND dictionary_name = ?',
+                (group_name, dictionary_name),
+            )
+        else:
+            pass_count = row[1] or 0
+            highest_score = row[2] or 0
+            gpa = row[3] or 0
+            earliest_pass_time = row[4]
+            now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            cursor.execute('''
+                INSERT INTO word_group_stats
+                (group_name, dictionary_name, challenge_count, pass_count,
+                 highest_score, gpa, earliest_pass_time, last_updated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(group_name, dictionary_name) DO UPDATE SET
+                    challenge_count = excluded.challenge_count,
+                    pass_count = excluded.pass_count,
+                    highest_score = excluded.highest_score,
+                    gpa = excluded.gpa,
+                    earliest_pass_time = excluded.earliest_pass_time,
+                    last_updated = excluded.last_updated
+            ''', (group_name, dictionary_name, challenge_count, pass_count,
+                  highest_score, gpa, earliest_pass_time, now))
+        conn.commit()
+        conn.close()
 
 
 def get_exam_stats_db():

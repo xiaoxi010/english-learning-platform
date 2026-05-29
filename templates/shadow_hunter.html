@@ -53,6 +53,18 @@
         .result-cell .r-user { font-size:0.8em; margin-bottom:2px; }
         .result-cell .r-answer { font-size:0.8em; color:#ffd700; margin-bottom:2px; }
         .result-cell .r-score { font-size:0.85em; font-weight:bold; }
+        .correction-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
+        .correction-card { background:var(--bg-secondary); border-radius:8px; padding:8px; text-align:center; border:3px solid transparent; }
+        .correction-card.border-green { border-color:#ffd700; background:#1a2a1a; }
+        .correction-card.border-gold { border-color:#ffd700; background:#2a2a00; }
+        .correction-card.border-red { border-color:#e74c3c; background:#2a1a1a; }
+        .correction-card .c-word { font-weight:bold; color:#ffd700; font-size:0.9em; margin-bottom:4px; }
+        .correction-card .c-user { font-size:0.8em; margin-bottom:2px; }
+        .correction-card .c-answer { font-size:0.8em; color:#ffd700; margin-bottom:6px; }
+        .correction-card .c-score { font-size:0.8em; font-weight:bold; }
+        .match-card.word-card-style { border-color:#ffd700; }
+        .match-card.meaning-card-style { border-color:#f1c40f; }
+        .match-status { text-align:center; color:#ffd700; margin:8px 0; font-size:0.9em; }
         .score-bar { text-align:center; font-size:1.2em; margin:10px 0; }
         .hidden { display:none !important; }
         .btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
@@ -79,18 +91,18 @@
         .skill-grid { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin:20px 0; }
         .skill-card { background:var(--bg-secondary); border-radius:16px; padding:30px 20px; text-align:center; border:2px solid #444; cursor:pointer; transition:all 0.3s; width:220px; min-height:160px; }
         .skill-card:hover { border-color:#ffd700; transform:translateY(-5px); box-shadow:0 10px 30px rgba(255,215,0,0.15); }
-        .skill-card.selected { border-color:#ffd700; background:rgba(255,215,0,0.15); box-shadow:0 0 30px rgba(255,215,0,0.15); }
+        .skill-card.selected { border-color:#ff6b35; background:#2a1a10; box-shadow:0 0 30px rgba(255,107,53,0.3); }
         .skill-card .sk-name { color:#ffd700; font-weight:bold; font-size:1.2em; margin-bottom:10px; }
         .skill-card .sk-desc { color:var(--text-secondary); font-size:0.85em; line-height:1.5; }
         .treasure-row { display:flex; gap:20px; justify-content:center; margin:25px 0; flex-wrap:wrap; }
-        .treasure-card { background:var(--bg-secondary); border-radius:16px; padding:20px 15px; text-align:center; border:3px solid #ffd700; cursor:pointer; transition:all 0.3s; width:190px; min-height:260px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        .treasure-card { background:#1a1a30; border-radius:16px; padding:20px 15px; text-align:center; border:3px solid #ffd700; cursor:pointer; transition:all 0.3s; width:190px; min-height:260px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; align-items:center; }
         .treasure-card:hover:not(.empty-card):not(.selected-card):not(.disabled-card) { border-color:var(--theme); transform:translateY(-8px) scale(1.02); box-shadow:0 0 30px var(--theme),0 15px 40px var(--theme); }
         .treasure-card.empty-card { border-color:#333; opacity:0.5; cursor:not-allowed; }
         .treasure-card.empty-card:hover { transform:none; box-shadow:none; }
-        .treasure-card.selected-card { border-color:#ffd700; background:rgba(255,215,0,0.15); box-shadow:0 0 50px #ffd700; }
+        .treasure-card.selected-card { border-color:#ff6b35; background:#2a1a10; box-shadow:0 0 50px rgba(255,107,53,0.6); }
         .treasure-card.disabled-card { pointer-events:none; }
         .treasure-card.flashing { animation:flashCard 0.3s ease-in-out; }
-        @keyframes flashCard { 0%{border-color:#ffd700;box-shadow:0 0 30px rgba(255,0,0,0.8);} 50%{border-color:#ffd700;box-shadow:0 0 50px rgba(255,0,0,0.5);} 100%{border-color:#ffd700;box-shadow:0 0 30px rgba(255,0,0,0.8);} }
+        @keyframes flashCard { 0%{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.8);} 50%{border-color:#ff4444;box-shadow:0 0 50px rgba(255,0,0,0.5);} 100%{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.8);} }
         .treasure-card .tc-name { color:var(--theme); font-weight:bold; font-size:1.1em; position:absolute; top:12px; left:0; right:0; text-align:center;}
         .treasure-card .tc-meaning { color:#ddd; font-size:0.85em; line-height:1.4; padding:0 10px; word-break:break-all;display:flex; align-items:center; justify-content:center; min-height:60px; margin-top:20px;}
         .treasure-card .tc-empty { color:#555; font-size:0.85em; display:flex; align-items:center; justify-content:center; min-height:60px;}
@@ -101,11 +113,43 @@
         .stat-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:15px 0; }
         .stat-card { background:var(--bg-secondary); border-radius:12px; padding:15px; text-align:center; border:2px solid #444; cursor:pointer; transition:all 0.3s; }
         .stat-card:hover { border-color:#ffd700; }
-        .stat-card.dig-selected { border-color:#ffd700; background:rgba(255,215,0,0.15); }
+        .stat-card.dig-selected { border-color:#ff6b35; background:#2a1a10; }
         .stat-card.flashing { animation:flashCard 0.3s ease-in-out; }
         .stat-card .st-name { color:#ffd700; font-weight:bold; font-size:1.1em; }
         .stat-card .st-info { color:var(--text-secondary); font-size:0.85em; margin-top:5px; }
-        .btn-blue { background:#ffd700; }
+        .btn-blue { background:#3498db; color:#fff; }
+        .stage-indicator { text-align:center; color:#ffd700; font-size:1.1em; margin-bottom:10px; }
+        .round-words-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; margin:10px 0; }
+        .round-word-card { background:var(--bg-secondary); border-radius:8px; padding:8px; text-align:center; border:2px solid #ffd700; font-size:0.78em; cursor:pointer; transition:all 0.2s; }
+        .round-word-card:hover { border-color:#ff6b35; }
+        .round-word-card.insight-green { border-color:#2ecc71; }
+        .round-word-card.insight-red { border-color:#e74c3c; }
+        .round-word-card.tech-selected { border-color:#3498db; }
+        .round-word-card.maple-green { border-color:#2ecc71; }
+        .round-word-card.maple-red { border-color:#e74c3c; }
+        .skill-bar { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0; }
+        .skill-btn { padding:10px 18px; border-radius:8px; border:none; cursor:pointer; font-size:0.9em; font-weight:bold; transition:all 0.2s; color:#fff; position:relative; display:inline-flex; align-items:center; gap:6px; background:#6c5ce7; }
+        .skill-btn.ready { background:#f0e68c; color:#333; }
+        .skill-btn.used-up { background:#808080; cursor:not-allowed; opacity:0.7; }
+        .skill-btn .skill-dot { width:14px; height:14px; border-radius:50%; display:inline-block; background:#808080; flex-shrink:0; }
+        .skill-btn .skill-dot.green { background:#2ecc71; }
+        .skill-btn .skill-dot.yellow { background:#f1c40f; }
+        .skill-btn .skill-dot.red { background:#e74c3c; }
+        .final-summary { text-align:center; }
+        .final-summary .skill-badge { display:inline-block; padding:6px 14px; border-radius:6px; font-weight:bold; margin:3px; font-size:0.9em; }
+        .final-summary .skill-badge.green { background:#2ecc71; color:#fff; }
+        .final-summary .skill-badge.red { background:#e74c3c; color:#fff; }
+        .pattern-panel { background:var(--bg-card); border:1px solid var(--border-color); }
+        .meaning-grid-36, .meaning-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+        .meaning-area { background:var(--bg-secondary); border-radius:8px; padding:10px; text-align:center; border:2px solid #444; min-height:110px; cursor:pointer; transition:all 0.2s; }
+        .meaning-area:hover { border-color:#ffd700; }
+        .meaning-area .m-title { color:#ffd700; font-weight:bold; font-size:0.85em; margin-bottom:5px; }
+        .meaning-area .m-word { background:var(--bg-secondary); padding:4px 8px; border-radius:4px; font-size:0.8em; color:#ffd700; margin:2px 0; }
+        .hand-cards { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; min-height:90px; padding:10px; background:#111; border-radius:8px; margin-top:10px; }
+        .hand-card { background:var(--bg-secondary); border-radius:8px; padding:60px 22px; text-align:center; border:2px solid #555; cursor:pointer; transition:all 0.2s; min-width:130px; }
+        .hand-card:hover { border-color:#ffd700; background:#3a3020; }
+        .hand-card.selected { border-color:#ffd700 !important; background:#3a3020 !important; }
+        .hand-card .hc-word { font-weight:bold; color:#ffd700; font-size:1.1em; }
 
         /* 三十六计完整样式 */
         .strategy-container { display:flex; flex-direction:column; gap:15px; }
@@ -162,7 +206,7 @@
     <p class="instruction" style="font-size:0.8em;color:#888;">🟢 1.00分 | 🟡 0.75分 | 🟠 0.25-0.5分 | 🔴 0分</p>
     <div class="result-grid" id="resultGrid"></div>
     <div class="score-bar">基础词汇得分: <span id="basicScore" style="color:#ffd700;">0</span>/30</div>
-    <div class="btn-row"><button class="btn btn-purple" onclick="goToDraw()">🎲 进入阴影迷踪 →</button></div>
+    <div class="btn-row"><button class="btn btn-purple" onclick="goToDraw()">🎲 进入版型抽取 →</button></div>
 </div>
 
 <!-- s4: 版型抽取 -->
@@ -170,17 +214,41 @@
     <h2 style="color:#ffd700;text-align:center;">🎲 抽取版型</h2>
     <p class="instruction">点击"开始"按钮，卡片将快速闪烁，点击"停止"抽取版型</p>
     <div class="pattern-row" id="patternCards">
-        <div class="pattern-card" id="pc_七十二变"><div class="pc-name">七十二变</div><div class="pc-score">通过: 47分</div></div>
         <div class="pattern-card" id="pc_三十六计"><div class="pc-name">三十六计</div><div class="pc-score">通过: 47分</div></div>
-        <div class="pattern-card" id="pc_盗宝大师"><div class="pc-name">盗宝大师</div><div class="pc-score">通过: 46分</div></div>
+        <div class="pattern-card" id="pc_七十二变"><div class="pc-name">七十二变</div><div class="pc-score">通过: 47分</div></div>
         <div class="pattern-card" id="pc_诡影重重"><div class="pc-name">诡影重重</div><div class="pc-score">通过: 45分</div></div>
+        <div class="pattern-card" id="pc_盗宝大师"><div class="pc-name">盗宝大师</div><div class="pc-score">通过: 46分</div></div>
     </div>
     <div class="btn-row"><button class="btn btn-orange" id="btnDraw" onclick="toggleDraw()">🎲 开始</button></div>
-    <div class="countdown-text hidden" id="drawCountdown"></div>
 </div>
 
 <!-- s5: 版型挑战（动态渲染） -->
 <div class="panel hidden" id="s5"></div>
+
+<!-- s6_tr: 盗宝大师统计阶段 -->
+<div class="panel pattern-panel hidden" id="s6_tr">
+    <div class="timer" id="statTimer">150</div>
+    <h2>📊 20轮选择情况</h2>
+    <div class="round-words-grid" id="roundWordsGrid"></div>
+    <h2 style="margin-top:15px;">🗺️ 宝藏卡</h2>
+    <div class="stat-grid" id="treasureStats"></div>
+    <div class="skill-bar" id="statSkillBar"></div>
+    <div style="text-align:center;margin-top:15px;"><button class="btn btn-orange" id="btnDig" disabled onclick="digTreasure()">⛏️ 挖宝</button></div>
+</div>
+
+<!-- s7_tr: 盗宝大师游戏结束 -->
+<div class="panel pattern-panel hidden" id="s7_tr">
+    <div class="final-summary">
+        <h2 style="color:#ffd700;">盗宝大师 - 游戏结束</h2>
+        <div id="finalResult" style="font-size:1.3em;margin:10px 0;"></div>
+        <div style="font-size:1.1em;">盗宝大师得分: <span id="finalTS" style="color:#ffd700;">0</span>/20</div>
+        <div style="font-size:1.2em;margin:5px 0;">总得分: <span id="finalTotal" style="color:#ffd700;">0</span>/50</div>
+        <div style="margin:8px 0;"><span style="color:#fff;">技能:</span> <span id="finalSkills"></span></div>
+        <div style="margin:8px 0;"><span style="color:#fff;">真宝藏:</span> <span id="finalTT" style="color:#ffd700;"></span></div>
+        <div class="round-words-grid" id="finalRoundGrid" style="margin-top:15px;"></div>
+        <div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看阴影迷踪总成绩报告</button></div>
+    </div>
+</div>
 
 <!-- s6: 总成绩报告 -->
 <div class="panel hidden" id="s6">
@@ -212,7 +280,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.select-grou
 
 // ============ 通用函数 ============
 function startTimer(el,cb,sec){timeLeft=sec||300;clearInterval(timerInterval);document.getElementById(el).textContent=timeLeft;document.getElementById(el).className='timer';timerInterval=setInterval(function(){timeLeft--;document.getElementById(el).textContent=timeLeft;if(timeLeft<=30)document.getElementById(el).className='timer warning';if(timeLeft<=0){clearInterval(timerInterval);cb();}},1000);}
-function switchStage(id){['s1','s2','s3','s4','s5','s6'].forEach(function(s){document.getElementById(s).classList.toggle('hidden',s!==id);});}
+function switchStage(id){['s1','s2','s3','s4','s5','s6','s6_tr','s7_tr'].forEach(function(s){var el=document.getElementById(s);if(el)el.classList.toggle('hidden',s!==id);});}
 function renderWordGrid(containerId,words,pre,isBasic){document.getElementById(containerId).innerHTML=words.map(function(w,i){return '<div class="word-card"><div class="w-num">'+(i+1)+'</div><div class="w-word">'+w.word+'</div><div class="w-pos">'+w.pos+'</div><input type="text" id="'+pre+i+'" placeholder="中文意思" onkeydown="hk(event,'+i+',\''+pre+'\','+(isBasic?'true':'false')+')"></div>';}).join('');}
 function hk(e,i,pre,isB){var n=i;if(e.key==='Enter'||e.key==='Tab'){e.preventDefault();n=i+1;}else if(e.key==='ArrowUp'){e.preventDefault();n=i-6;}else if(e.key==='ArrowDown'){e.preventDefault();n=i+6;}else if(e.key==='ArrowLeft'&&e.target.selectionStart===0){e.preventDefault();n=i-1;if(n%6===5)return;}else if(e.key==='ArrowRight'&&e.target.selectionStart===e.target.value.length){e.preventDefault();n=i+1;if(n%6===0)return;}else return;var ws=isB?basicWords:(window.shadowWords||[]);if(n>=0&&n<ws.length)document.getElementById(pre+n)&&document.getElementById(pre+n).focus();}
 
@@ -245,7 +313,7 @@ async function submitBasic(){
 
 // ============ 版型抽取 ============
 var drawInterval=null,isDrawing=false,drawStage='start',countdownId=null;
-function goToDraw(){switchStage('s4');drawStage='start';selectedPattern='';document.querySelectorAll('.pattern-card').forEach(function(c){c.classList.remove('flashing','won');});document.getElementById('btnDraw').textContent='🎲 开始';document.getElementById('btnDraw').className='btn btn-orange';document.getElementById('btnDraw').disabled=false;document.getElementById('btnDraw').style.opacity='1';document.getElementById('drawCountdown').classList.add('hidden');}
+function goToDraw(){switchStage('s4');drawStage='start';selectedPattern='';document.querySelectorAll('.pattern-card').forEach(function(c){c.classList.remove('flashing','won');});document.getElementById('btnDraw').textContent='🎲 开始';document.getElementById('btnDraw').className='btn btn-orange';document.getElementById('btnDraw').disabled=false;document.getElementById('btnDraw').style.opacity='1';}
 async function toggleDraw() {
     if (drawStage === 'start') {
         // 开始抽取
@@ -253,7 +321,6 @@ async function toggleDraw() {
         drawStage = 'drawing';
         document.getElementById('btnDraw').textContent = '✋ 停止';
         document.getElementById('btnDraw').className = 'btn btn-green';
-        document.getElementById('drawCountdown').classList.add('hidden');
         
         document.querySelectorAll('.pattern-card').forEach(function(c) { c.classList.remove('won'); });
         
@@ -274,8 +341,10 @@ async function toggleDraw() {
         var cards = document.querySelectorAll('.pattern-card');
         cards.forEach(function(c) { c.classList.remove('flashing'); });
         
-        document.getElementById('btnDraw').disabled = true;
-        document.getElementById('btnDraw').style.opacity = '0.5';
+        var btnDraw = document.getElementById('btnDraw');
+        btnDraw.disabled = true;
+        btnDraw.style.opacity = '0.5';
+        btnDraw.textContent = '请稍等，正在出题中···';
         
         // 调用后端API获取版型
         var r = await fetch('/api/shadow_hunter/draw_pattern', {
@@ -287,9 +356,9 @@ async function toggleDraw() {
         if (!d.success) { 
             alert(d.message); 
             drawStage = 'start';
-            document.getElementById('btnDraw').disabled = false;
-            document.getElementById('btnDraw').style.opacity = '1';
-            document.getElementById('btnDraw').textContent = '🎲 开始';
+            btnDraw.disabled = false;
+            btnDraw.style.opacity = '1';
+            btnDraw.textContent = '🎲 开始';
             return;
         }
         
@@ -299,14 +368,33 @@ async function toggleDraw() {
         var wonCard = document.getElementById('pc_' + selectedPattern);
         if (wonCard) { wonCard.classList.add('won'); }
         
-        document.getElementById('btnDraw').textContent = '🎯 ' + selectedPattern + ' (通过:' + patternPassScore + '分)';
-        
-        // 5秒倒计时
+        waitPatternReadyAndCountdown();
+    }
+}
+
+function waitPatternReadyAndCountdown() {
+    var btnDraw = document.getElementById('btnDraw');
+    function pollReady() {
+        fetch('/api/shadow_hunter/pattern_status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({exam_id: examId})
+        }).then(function(r) { return r.json(); }).then(function(st) {
+            if (!st.success) {
+                alert(st.message || '查询出题状态失败');
+                return;
+            }
+            if (!st.ready) {
+                btnDraw.textContent = '请稍等，正在出题中···';
+                setTimeout(pollReady, 500);
+            } else {
+                startEnterCountdown();
+            }
+        });
+    }
+    function startEnterCountdown() {
         var count = 5;
-        var countdownEl = document.getElementById('drawCountdown');
-        countdownEl.classList.remove('hidden');
-        countdownEl.textContent = count + '秒后自动进入版型考试...';
-        
+        btnDraw.textContent = count + '秒后，进入' + selectedPattern + '（通过分：' + patternPassScore + '）';
         clearInterval(countdownId);
         countdownId = setInterval(function() {
             count--;
@@ -314,10 +402,11 @@ async function toggleDraw() {
                 clearInterval(countdownId);
                 enterPatternExam();
             } else {
-                countdownEl.textContent = count + '秒后自动进入版型考试...';
+                btnDraw.textContent = count + '秒后，进入' + selectedPattern + '（通过分：' + patternPassScore + '）';
             }
         }, 1000);
     }
+    pollReady();
 }
 
 function enterPatternExam(){clearInterval(countdownId);switchStage('s5');loadPatternExam();}
@@ -329,54 +418,138 @@ function loadPatternExam(){
     else if(selectedPattern==='三十六计')loadThirtySixExam();
     else if(selectedPattern==='盗宝大师')loadTreasureExam();
 }
-// ============ 诡影重重 ============
-var shadowWords=[], shadowResults=[];
-function loadShadowExam(){
-    document.getElementById('s5').innerHTML='<div class="timer" id="timerShadow">300</div><p class="instruction" style="color:#ff6b6b;">注意：汉译之间不能有重复汉字！答案中去除\'的、地、了、是\'后计算分数</p><div class="word-grid" id="shadowGrid"></div><div style="text-align:center"><button class="btn btn-gold" onclick="submitShadow()">完成诡影重重</button></div>';
-    fetch('/api/shadow_hunter/shadow_start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})}).then(function(r){return r.json();}).then(function(d){if(!d.success){alert(d.message);return;}shadowWords=d.words;renderWordGrid('shadowGrid',shadowWords,'sh',false);startTimer('timerShadow',submitShadow,300);setTimeout(function(){document.getElementById('sh0')&&document.getElementById('sh0').focus();},100);});
+function setPatternSubmitting(btnId){
+    var btn=document.getElementById(btnId||'btnSubmitPattern');
+    if(!btn)return;
+    btn.disabled=true;
+    btn.textContent='请稍等，正在批卷中···';
 }
+
+// ============ 诡影重重（与独立20分版型一致：地名抽取 + 30词考试） ============
+var shadowWords=[], shadowResults=[], selectedPlace='';
+var shadowDrawStage='start', shadowDrawInterval=null, shadowWordsReady=false, shadowCountdownFinished=false, shadowDrawCountdownLeft=0, shadowCountdownId=null;
+
+function loadShadowExam(){goToShadowPlaceDraw();}
+
+function updateShadowDrawBtnText(){
+    var btn=document.getElementById('btnShadowDraw');
+    if(!btn)return;
+    if(!shadowWordsReady){btn.textContent='请稍等，正在出题中';}
+    else if(shadowDrawCountdownLeft>0){btn.textContent=shadowDrawCountdownLeft+'秒后，进入诡影重重考试';}
+}
+
+function tryEnterShadowExam(){
+    if(shadowCountdownFinished&&shadowWordsReady){enterShadowWordExam();}
+    else if(!shadowWordsReady){updateShadowDrawBtnText();}
+}
+
+async function prepareShadowWordsInBackground(){
+    shadowWordsReady=false;
+    var r=await fetch('/api/shadow_hunter/shadow_prepare_words',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
+    var d=await r.json();
+    if(!d.success){alert(d.message);return;}
+    shadowWords=d.words;shadowWordsReady=true;
+    if(shadowDrawStage==='result'){updateShadowDrawBtnText();tryEnterShadowExam();}
+}
+
+function goToShadowPlaceDraw(){
+    shadowDrawStage='start';selectedPlace='';shadowWordsReady=false;shadowCountdownFinished=false;shadowDrawCountdownLeft=0;
+    clearInterval(shadowDrawInterval);clearInterval(shadowCountdownId);
+    document.getElementById('s5').innerHTML='<h2>🗺️ 抽取地名</h2><p class="instruction">点击"开始"按钮，卡片将快速闪烁，点击"停止"抽取地名</p><div class="place-row" id="shadowPlaceCards">{% for p in place_names %}<div class="place-card" id="spc_{{ p }}"><div class="pc-name">{{ p }}</div><div class="pc-pos">{% if p == "牡丹镇" %}n. 名词{% elif p == "风信坞" %}v. 动词{% elif p == "茉莉城" %}adj. 形容词{% elif p == "铃兰乡" %}adv. 副词{% else %}其他词性{% endif %}</div></div>{% endfor %}</div><div class="btn-row"><button class="btn btn-orange" id="btnShadowDraw" onclick="toggleShadowDraw()">🎲 开始</button></div>';
+}
+
+async function toggleShadowDraw(){
+    if(shadowDrawStage==='start'){
+        shadowDrawStage='drawing';
+        document.getElementById('btnShadowDraw').textContent='✋ 停止';
+        document.getElementById('btnShadowDraw').className='btn btn-green';
+        document.querySelectorAll('#shadowPlaceCards .place-card').forEach(function(c){c.classList.remove('won');});
+        shadowDrawInterval=setInterval(function(){
+            var cards=document.querySelectorAll('#shadowPlaceCards .place-card');
+            cards.forEach(function(c){c.classList.remove('flashing');});
+            var count=Math.floor(Math.random()*2)+1;
+            var shuffled=Array.from(cards).sort(function(){return Math.random()-0.5;});
+            for(var i=0;i<count;i++){shuffled[i].classList.add('flashing');}
+        },100);
+    }else if(shadowDrawStage==='drawing'){
+        clearInterval(shadowDrawInterval);shadowDrawStage='result';
+        document.querySelectorAll('#shadowPlaceCards .place-card').forEach(function(c){c.classList.remove('flashing');});
+        document.getElementById('btnShadowDraw').disabled=true;
+        document.getElementById('btnShadowDraw').style.opacity='0.5';
+        var r=await fetch('/api/shadow_hunter/shadow_draw_place',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
+        var d=await r.json();
+        if(!d.success){alert(d.message);shadowDrawStage='start';document.getElementById('btnShadowDraw').disabled=false;document.getElementById('btnShadowDraw').style.opacity='1';document.getElementById('btnShadowDraw').textContent='🎲 开始';return;}
+        selectedPlace=d.place;
+        var wonCard=document.getElementById('spc_'+selectedPlace);
+        if(wonCard){wonCard.classList.add('won');}
+        shadowWordsReady=false;shadowCountdownFinished=false;
+        prepareShadowWordsInBackground();
+        shadowDrawCountdownLeft=5;
+        updateShadowDrawBtnText();
+        clearInterval(shadowCountdownId);
+        shadowCountdownId=setInterval(function(){
+            shadowDrawCountdownLeft--;
+            if(shadowDrawCountdownLeft<=0){clearInterval(shadowCountdownId);shadowCountdownFinished=true;tryEnterShadowExam();}
+            else{updateShadowDrawBtnText();}
+        },1000);
+    }
+}
+
+function enterShadowWordExam(){
+    clearInterval(shadowCountdownId);
+    document.getElementById('s5').innerHTML='<div class="stage-indicator">👻 诡影重重（'+selectedPlace+' · 30个单词）</div><div class="timer" id="timerShadow">300</div><p class="instruction" style="color:#ff6b6b;">注意：汉译之间不能有重复汉字！答案中去除\'的、地、了、是\'后计算分数</p><div class="word-grid" id="shadowGrid"></div><div style="text-align:center"><button class="btn btn-gold" id="btnSubmitPattern" onclick="submitShadow()">完成诡影重重，查看批改</button></div>';
+    renderWordGrid('shadowGrid',shadowWords,'sh',false);
+    startTimer('timerShadow',submitShadow,300);
+    setTimeout(function(){document.getElementById('sh0')&&document.getElementById('sh0').focus();},100);
+}
+
 async function submitShadow(){
+    setPatternSubmitting('btnSubmitPattern');
     clearInterval(timerInterval);var ans={};shadowWords.forEach(function(w,i){var e=document.getElementById('sh'+i);ans[i]=e?e.value:'';});
     var r=await fetch('/api/shadow_hunter/shadow_submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,answers:ans})});
     var d=await r.json();if(!d.success)return alert(d.message);
     shadowResults=d.results;patternScore=d.shadow_score;patternResults=d.results;
-    document.getElementById('s5').innerHTML='<h2>📝 诡影重重 - 批改结果</h2><div class="result-grid">'+shadowResults.map(function(r,i){var bc=r.score>=1?'border-green':(r.score>=0.75?'border-gold':'border-red');var sc=r.score>=1?'#2ecc71':(r.score>=0.75?'#ffd700':'#e74c3c');return '<div class="result-cell '+bc+'"><div class="r-num">'+(i+1)+'</div><div class="r-word">'+r.word+'</div><div class="r-pos">'+r.pos+'</div><div class="r-user" style="color:'+sc+'">你的: '+(r.user_answer||'(未作答)')+'</div><div class="r-answer">答案: '+r.meaning+'</div><div class="r-score" style="color:'+sc+'">'+r.score_display+'</div></div>';}).join('')+'</div><div class="score-bar">诡影重重得分: <span style="color:#ffd700;">'+patternScore.toFixed(2)+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
+    document.getElementById('s5').innerHTML='<h2>📝 诡影重重 - 自动批改结果</h2><p class="instruction" style="font-size:0.8em;color:#888;">🟢 1.00分 | 🟡 0.75分 | 🔴 0.00分</p><div class="correction-grid">'+shadowResults.map(function(r,i){var bc=r.score>=1?'border-green':(r.score>=0.75?'border-gold':'border-red');var sc=r.score>=1?'#2ecc71':(r.score>=0.75?'#ffd700':'#e74c3c');return '<div class="correction-card '+bc+'"><div class="c-word">'+(i+1)+'. '+r.word+'</div><div class="c-user" style="color:'+sc+'">你的: '+(r.user_answer||'(未作答)')+'</div><div class="c-answer">答案: '+r.meaning+'</div><div class="c-score" style="color:'+sc+'">得分: '+r.score_display+'</div></div>';}).join('')+'</div><div class="score-bar">诡影重重得分: <span style="color:#ffd700;">'+patternScore.toFixed(2)+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
 }
 
-// ============ 七十二变 ============
+// ============ 七十二变（与独立20分版型一致） ============
 var suffixWords=[],similarWords=[],suffixMeanings=[],similarMeanings=[],pairs72={},selectedMeaning72=null;
 function loadSeventyTwoExam(){
-    document.getElementById('s5').innerHTML='<div class="timer" id="timer72">420</div><p class="instruction">先点击含义卡片选中它，再点击单词卡片进行匹配。单击已匹配的单词可取消。</p><div class="score-bar">已匹配: <span id="matchCount72">0</span>/20</div><div class="four-col"><div class="col-panel"><h3>📝 同缀词单词</h3><div id="suffixWords"></div></div><div class="col-panel"><h3>📖 同缀词汉译</h3><div id="suffixMeanings"></div></div><div class="col-panel"><h3>📝 相似单词</h3><div id="similarWords"></div></div><div class="col-panel"><h3>📖 相似词汉译</h3><div id="similarMeanings"></div></div></div><div style="text-align:center;margin-top:15px;"><button class="btn btn-orange" onclick="submitSeventyTwo()">交 卷</button></div>';
+    document.getElementById('s5').innerHTML='<div class="stage-indicator">🔄 七十二变 - 单词匹配（20个单词）</div><div class="timer" id="timer72">420</div><p class="instruction">先点击一个含义卡片选中它，再点击单词卡片进行匹配。单击已匹配的单词可取消匹配。</p><div class="match-status">已匹配: <span id="matchCount72">0</span>/20</div><div class="four-col"><div class="col-panel"><h3>📝 第一题：同缀词单词</h3><div id="suffixWords"></div></div><div class="col-panel"><h3>📖 第一题汉译</h3><div id="suffixMeanings"></div></div><div class="col-panel"><h3>📝 第二题：相似单词</h3><div id="similarWords"></div></div><div class="col-panel"><h3>📖 第二题汉译</h3><div id="similarMeanings"></div></div></div><div style="text-align:center;margin-top:15px;"><button class="btn btn-orange" id="btnSubmitPattern" onclick="submitSeventyTwo()">交 卷</button></div>';
     fetch('/api/shadow_hunter/seventytwo_start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})}).then(function(r){return r.json();}).then(function(d){if(!d.success){alert(d.message);return;}suffixWords=d.suffix_words;similarWords=d.similar_words;suffixMeanings=d.suffix_meanings;similarMeanings=d.similar_meanings;pairs72={};selectedMeaning72=null;renderMatch72();startTimer('timer72',submitSeventyTwo,420);});
 }
 function renderMatch72(){
-    document.getElementById('suffixWords').innerHTML=suffixWords.map(function(w){var matched=pairs72[w.id];return '<div class="match-card'+(matched?' matched':'')+'" onclick="clickWord72(\''+w.id+'\',\'suffix\')">'+w.word+(matched?'<div class="matched-meaning">'+matched+'</div>':'')+'</div>';}).join('');
-    document.getElementById('suffixMeanings').innerHTML=suffixMeanings.map(function(m,i){var mid='sm_'+i;var matched=Object.values(pairs72).indexOf(m.text)>=0;return '<div class="match-card'+(matched?' matched':'')+(selectedMeaning72&&selectedMeaning72.id===mid?' selected':'')+'" id="'+mid+'" onclick="clickMeaning72(\''+mid+'\',\''+m.text+'\',\'suffix\')">'+m.text+'</div>';}).join('');
-    document.getElementById('similarWords').innerHTML=similarWords.map(function(w){var matched=pairs72[w.id];return '<div class="match-card'+(matched?' matched':'')+'" onclick="clickWord72(\''+w.id+'\',\'similar\')">'+w.word+(matched?'<div class="matched-meaning">'+matched+'</div>':'')+'</div>';}).join('');
-    document.getElementById('similarMeanings').innerHTML=similarMeanings.map(function(m,i){var mid='sm2_'+i;var matched=Object.values(pairs72).indexOf(m.text)>=0;return '<div class="match-card'+(matched?' matched':'')+(selectedMeaning72&&selectedMeaning72.id===mid?' selected':'')+'" id="'+mid+'" onclick="clickMeaning72(\''+mid+'\',\''+m.text+'\',\'similar\')">'+m.text+'</div>';}).join('');
+    document.getElementById('suffixWords').innerHTML=suffixWords.map(function(w){var matched=pairs72[w.id];return '<div class="match-card word-card-style'+(matched?' matched':'')+'" onclick="clickWord72(\''+w.id+'\',\'suffix\')">'+w.word+(matched?'<div class="matched-meaning">'+matched+'</div>':'')+'</div>';}).join('');
+    document.getElementById('suffixMeanings').innerHTML=suffixMeanings.map(function(m,i){var mid='suffix_m_'+i;var matched=Object.values(pairs72).indexOf(m.text)>=0;return '<div class="match-card meaning-card-style'+(matched?' matched':'')+(selectedMeaning72&&selectedMeaning72.id===mid?' selected':'')+'" id="'+mid+'" onclick="clickMeaning72(\''+mid+'\',\''+m.text.replace(/'/g,"\\'")+'\',\'suffix\')">'+m.text+'</div>';}).join('');
+    document.getElementById('similarWords').innerHTML=similarWords.map(function(w){var matched=pairs72[w.id];return '<div class="match-card word-card-style'+(matched?' matched':'')+'" onclick="clickWord72(\''+w.id+'\',\'similar\')">'+w.word+(matched?'<div class="matched-meaning">'+matched+'</div>':'')+'</div>';}).join('');
+    document.getElementById('similarMeanings').innerHTML=similarMeanings.map(function(m,i){var mid='similar_m_'+i;var matched=Object.values(pairs72).indexOf(m.text)>=0;return '<div class="match-card meaning-card-style'+(matched?' matched':'')+(selectedMeaning72&&selectedMeaning72.id===mid?' selected':'')+'" id="'+mid+'" onclick="clickMeaning72(\''+mid+'\',\''+m.text.replace(/'/g,"\\'")+'\',\'similar\')">'+m.text+'</div>';}).join('');
     document.getElementById('matchCount72').textContent=Object.keys(pairs72).length;
 }
 function clickMeaning72(id,text,type){if(Object.values(pairs72).indexOf(text)>=0)return;document.querySelectorAll('.match-card.selected').forEach(function(el){el.classList.remove('selected');});document.getElementById(id).classList.add('selected');selectedMeaning72={id:id,text:text,type:type};}
-function clickWord72(wordId,type){if(selectedMeaning72&&selectedMeaning72.type===type){pairs72[wordId]=selectedMeaning72.text;selectedMeaning72=null;renderMatch72();}else if(pairs72[wordId]){delete pairs72[wordId];selectedMeaning72=null;renderMatch72();}}
+function clickWord72(wordId,type){
+    if(selectedMeaning72&&selectedMeaning72.type===type){if(pairs72[wordId]){delete pairs72[wordId];}pairs72[wordId]=selectedMeaning72.text;selectedMeaning72=null;renderMatch72();}
+    else if(pairs72[wordId]){delete pairs72[wordId];selectedMeaning72=null;renderMatch72();}
+}
 async function submitSeventyTwo(){
+    setPatternSubmitting('btnSubmitPattern');
     clearInterval(timerInterval);
     var r=await fetch('/api/shadow_hunter/seventytwo_submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,pairs:pairs72})});
     var d=await r.json();if(!d.success)return alert(d.message);
     patternScore=d.strategy_score;patternResults=d.results;
-    document.getElementById('s5').innerHTML='<h2>📝 七十二变 - 批改结果</h2><div class="result-grid">'+patternResults.map(function(r,i){var bc=r.is_correct?'border-green':'border-red';return '<div class="result-cell '+bc+'"><div class="r-num">'+(i+1)+'</div><div class="r-word">'+r.word+'</div><div class="r-pos">'+(r.pos||'')+'</div><div class="r-user" style="color:'+(r.is_correct?'#2ecc71':'#e74c3c')+'">你的: '+(r.user_meaning||'未匹配')+'</div><div class="r-answer">答案: '+r.meaning+'</div></div>';}).join('')+'</div><div class="score-bar">七十二变得分: <span style="color:#ffd700;">'+patternScore+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
+    document.getElementById('s5').innerHTML='<h2>📝 七十二变 - 批改结果</h2><div class="correction-grid">'+patternResults.map(function(r,i){var isC=r.is_correct;var bc=isC?'border-green':'border-red';return '<div class="correction-card '+bc+'"><div class="c-word">'+(i+1)+'. '+r.word+'</div><div class="c-user" style="color:'+(isC?'#ffd700':'#e74c3c')+'">你的: '+(r.user_meaning||'未匹配')+'</div><div class="c-answer">答案: '+r.meaning+'</div></div>';}).join('')+'</div><div class="score-bar">七十二变得分: <span style="color:#ffd700;">'+patternScore+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
 }
 
-// ============ 三十六计（完整版） ============
-var meanings36=[],handCards36=[],placements36={},selectedCard36=null,allCards36={},strategyResults36=[],strategyScore36=0,areaCorrect36={};
+// ============ 三十六计（与独立20分版型一致） ============
+var meanings36=[],handCards36=[],placements36={},selectedCard36=null,allCards36={},strategyResults36=[],strategyScore36=0,areaCorrect36={},examData36=null;
 
 function loadThirtySixExam(){
-    document.getElementById('s5').innerHTML='<div class="timer" id="timer36">420</div><p class="instruction">点击手牌选中，再点击汉译区域放置。放置后不可移回！</p><div class="strategy-container"><div class="meaning-grid-36" id="meaningGrid36"></div><div class="hand-cards" id="handCards36"></div></div><div style="text-align:center;margin-top:15px;"><button class="btn btn-orange" onclick="submitThirtySix()">交 卷</button></div>';
+    document.getElementById('s5').innerHTML='<div class="stage-indicator">📊 三十六计</div><div class="timer" id="timer36">420</div><p class="instruction">点击手牌选中，再点击汉译区域放置。放置后不可移回！</p><div class="strategy-container"><div class="meaning-grid" id="meaningGrid36"></div><div class="hand-cards" id="handCards36"></div></div><div style="text-align:center;margin-top:15px;"><button class="btn btn-orange" id="btnSubmitPattern" onclick="submitThirtySix()">交 卷</button></div>';
     fetch('/api/shadow_hunter/thirtysix_start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})}).then(function(r){return r.json();}).then(function(d){if(!d.success){alert(d.message);return;}meanings36=d.meanings;handCards36=d.hand_cards;placements36=d.placements||{};selectedCard36=null;allCards36={};handCards36.forEach(function(c){allCards36[c.id]=c;});render36();startTimer('timer36',submitThirtySix,420);});
 }
 function render36(){
     var gh='';for(var i=0;i<10;i++){var m=meanings36[i];var pw=[];for(var k in placements36){if(placements36[k]===i&&allCards36[k])pw.push(allCards36[k].word);}gh+='<div class="meaning-area" onclick="placeCard36('+i+')"><div class="m-title">'+m.meaning+'</div>';for(var j=0;j<pw.length;j++)gh+='<div class="m-word">'+pw[j]+'</div>';gh+='</div>';}
     document.getElementById('meaningGrid36').innerHTML=gh;
-    document.getElementById('handCards36').innerHTML=handCards36.map(function(c){return '<div class="hand-card'+(selectedCard36===c.id?' selected':'')+'" onclick="selectHandCard36(\''+c.id+'\')">'+c.word+'</div>';}).join('');
+    document.getElementById('handCards36').innerHTML=handCards36.map(function(c){return '<div class="hand-card'+(selectedCard36===c.id?' selected':'')+'" onclick="selectHandCard36(\''+c.id+'\')"><div class="hc-word">'+c.word+'</div></div>';}).join('');
 }
 function selectHandCard36(id){selectedCard36=(selectedCard36===id?null:id);render36();}
 async function placeCard36(mi){if(!selectedCard36)return;
@@ -385,17 +558,16 @@ async function placeCard36(mi){if(!selectedCard36)return;
     handCards36=d.hand_cards;placements36=d.placements;selectedCard36=null;handCards36.forEach(function(c){allCards36[c.id]=c;});render36();
 }
 async function submitThirtySix(){
+    setPatternSubmitting('btnSubmitPattern');
     clearInterval(timerInterval);
     var r=await fetch('/api/shadow_hunter/thirtysix_submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId})});
     var d=await r.json();if(!d.success)return alert(d.message);
-    patternScore=d.strategy_score;patternResults=d.results;strategyResults36=d.results;strategyScore36=d.strategy_score;areaCorrect36=d.area_correct||{};
+    patternScore=d.strategy_score;patternResults=d.results;strategyResults36=d.results;strategyScore36=d.strategy_score;areaCorrect36=d.area_correct||{};examData36=d;
     render36Summary();
 }
 function render36Summary(){
     var h='<h2>📊 三十六计 - 版型考试总结</h2><div class="score-bar">版型得分: <span style="color:#ffd700;">'+strategyScore36+'</span>/20</div>';
-    // 标签页
     h+='<div class="tabs"><button class="tab-btn active" onclick="switch36Tab(\'areas\')">汉译区域得分</button><button class="tab-btn" onclick="switch36Tab(\'words\')">30个单词详情</button></div>';
-    // 区域得分
     h+='<div class="tab-content active" id="tab36-areas"><table class="summary-table"><tr><th>序号</th><th>汉译</th><th>放置的单词</th><th>正确单词</th><th>得分</th></tr>';
     for(var i=0;i<10;i++){
         var m=meanings36[i];var placedWords=[],correctWords=[];
@@ -406,12 +578,8 @@ function render36Summary(){
         h+='<tr><td>'+(i+1)+'</td><td>'+m.meaning+'</td><td style="color:#ffd700;">'+(placedWords.join(', ')||'无')+'</td><td style="color:#ffd700;">'+(correctWords.join(', ')||'无')+'</td><td style="color:'+(score>=2?'#ffd700':(score>=1?'#2ecc71':'#e74c3c'))+'">'+score+'分</td></tr>';
     }
     h+='</table></div>';
-    // 单词详情
     h+='<div class="tab-content" id="tab36-words"><table class="summary-table"><tr><th>序号</th><th>单词</th><th>词性</th><th>汉译</th><th>目标汉译</th></tr>';
-    for(var i=0;i<strategyResults36.length;i++){
-        var r=strategyResults36[i];
-        h+='<tr><td>'+(i+1)+'</td><td style="color:#ffd700;font-weight:bold;">'+r.word+'</td><td style="color:#ffd700;">'+r.pos+'</td><td>'+r.meaning+'</td><td style="color:#ffd700;">'+r.target_meaning+'</td></tr>';
-    }
+    for(var i=0;i<strategyResults36.length;i++){var r=strategyResults36[i];h+='<tr><td>'+(i+1)+'</td><td style="color:#ffd700;font-weight:bold;">'+r.word+'</td><td style="color:#ffd700;">'+r.pos+'</td><td>'+r.meaning+'</td><td style="color:#ffd700;">'+r.target_meaning+'</td></tr>';}
     h+='</table></div>';
     h+='<div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
     document.getElementById('s5').innerHTML=h;
@@ -435,9 +603,11 @@ function loadTreasureSkills(){
     var descs={'重置':'刷新当前轮单词和选项(3次)','翻牌':'查看一个宝藏卡的正确次数(1次)','预言':'查看真宝藏的正确次数(1次)','孤注一掷':'挖宝选错时25%概率重选(1次)','看破':'查验某轮选择是否正确(2次)','科技之星':'选4个轮次判定正确率(1次)','枫恬果实':'在统计阶段对某轮使用，正确+1分，错误显示答案(1次)'};
     var drawnSkills=allSkills.sort(function(){return Math.random()-0.5;}).slice(0,3);
     treasureSkills=[];digSelected=null;activeSkill=null;techSelectedRounds=[];finalReportData=null;
-    document.getElementById('s5').innerHTML='<h2>📜 盗宝大师 - 选择技能</h2><p class="instruction">5个位置（青山/寒山/沧山/暮山/尘山）只有一个真宝藏。20轮每轮正确+1分，正确最多的就是真宝藏。</p><div class="skill-grid">'+drawnSkills.map(function(s){return '<div class="skill-card" id="sk_'+s+'" onclick="toggleSkill(\''+s+'\')"><div class="sk-name">'+s+'</div><div class="sk-desc">'+descs[s]+'</div></div>';}).join('')+'</div><p class="instruction" style="color:#ffd700;">请选择2个技能（点击选中/取消）</p><div style="text-align:center"><button class="btn btn-gold" id="btnGoGame" disabled onclick="goToGame()">开始盗宝大师</button></div>';
+    document.getElementById('s5').innerHTML='<h2>📜 盗宝大师 - 选择技能</h2><p class="instruction">5个位置（青山/寒山/沧山/暮山/尘山）只有一个真宝藏。20轮每轮正确+1分，正确最多的就是真宝藏。</p><div class="skill-grid">'+drawnSkills.map(function(s){return '<div class="skill-card" id="sk_'+s+'" onclick="toggleSkill(\''+s+'\')"><div class="sk-name">'+s+'</div><div class="sk-desc">'+descs[s]+'</div></div>';}).join('')+'</div><p class="instruction" style="color:#ffd700;">请选择2个技能（点击选中/取消）</p><div class="score-bar">倒计时: <span id="skillTimer">30</span>秒</div><div style="text-align:center"><button class="btn btn-gold" id="btnGoGame" disabled onclick="goToGame()">开始盗宝大师</button></div>';
     document.getElementById('btnGoGame').disabled=true;
+    startTimer('skillTimer',autoGoGame,30);
 }
+async function autoGoGame(){if(treasureSkills.length===2)goToGame();}
 function toggleSkill(name){
     var idx=treasureSkills.indexOf(name);
     if(idx>=0){treasureSkills.splice(idx,1);document.getElementById('sk_'+name).classList.remove('selected');}
@@ -446,8 +616,12 @@ function toggleSkill(name){
     document.getElementById('btnGoGame').disabled=treasureSkills.length!==2;
 }
 async function goToGame(){
+    clearInterval(timerInterval);
+    var btn=document.getElementById('btnGoGame');
+    if(btn){btn.disabled=true;btn.textContent='请稍等，正在出题中···';}
     var r=await fetch('/api/shadow_hunter/treasure_start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,selected_skills:treasureSkills})});
-    var d=await r.json();if(!d.success)return alert(d.message);
+    var d=await r.json();
+    if(!d.success){if(btn){btn.disabled=false;btn.textContent='开始盗宝大师';}return alert(d.message);}
     skillRemaining=d.skill_remaining;currentRound=0;treasureScore=0;userChoices={};isSelecting=false;digSelected=null;activeSkill=null;techSelectedRounds=[];finalReportData=null;
     switchStage('s5');
     document.getElementById('s5').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="stage-indicator" id="roundIndicator" style="margin:0;">第 1/20 轮</div><div class="timer" id="roundTimer" style="margin:0;">16</div></div><div style="text-align:center;font-size:2.2em;color:#ffd700;font-weight:bold;margin:15px;" id="roundWord"></div><div class="treasure-row" id="treasureCards"></div><div class="skill-bar" id="examSkillBar"></div>';
@@ -533,7 +707,8 @@ function spawnParticles(el){
     var particleCount=150;
     for(var i=0;i<particleCount;i++){
         var p=document.createElement('div');p.className='particle';
-        p.style.left=(Math.random()*100)+'%';p.style.top='90%';
+        p.style.left=(Math.random()*100)+'%';
+        p.style.top='90%';
         var size=Math.random()*5+2;p.style.width=size+'px';p.style.height=size+'px';
         var hue=Math.random()*40+20;var sat=Math.random()*30+70;var light=Math.random()*30+50;
         p.style.background='hsl('+hue+','+sat+'%,'+light+'%)';p.style.boxShadow='0 0 '+Math.random()*4+2+'px hsl('+hue+','+sat+'%,'+light+'%)';
@@ -578,7 +753,7 @@ function showStatStage(){
     document.getElementById('btnDig').disabled=false;digSelected=null;
     startTimer('statTimer',autoSubmitDig,150);
 }
-function autoSubmitDig(){if(digSelected)digTreasure();}
+function autoSubmitDig(){if(digSelected)digTreasure();else showFinalSummary();}
 function renderStatSkills(){
     var ssb='';
     for(var j=0;j<treasureSkills.length;j++){
@@ -605,7 +780,7 @@ function toggleTechRound(i){
     var el=document.getElementById('rwc_'+i);if(!el)return;
     var idx=techSelectedRounds.indexOf(i);
     if(idx>=0){techSelectedRounds.splice(idx,1);el.classList.remove('tech-selected');el.style.borderColor=roundOriginalColors[i]||'#ffd700';}
-    else{if(techSelectedRounds.length>=4)return;roundOriginalColors[i]=el.style.borderColor||'#ffd700';techSelectedRounds.push(i);el.classList.add('tech-selected');el.style.borderColor='#ffff00';if(techSelectedRounds.length===4){useStatSkill('科技之星',{rounds:[...techSelectedRounds]});}}
+    else{if(techSelectedRounds.length>=4)return;roundOriginalColors[i]=el.style.borderColor||'#ffd700';techSelectedRounds.push(i);el.classList.add('tech-selected');el.style.borderColor='#3498db';if(techSelectedRounds.length===4){useStatSkill('科技之星',{rounds:[...techSelectedRounds]});}}
 }
 function selectDigTreasure(t){
     if(activeSkill==='翻牌'){useStatSkill('翻牌',{target:t});return;}
@@ -632,11 +807,13 @@ async function useStatSkill(skill,params){
     else if(skill==='预言'){finalReportData.skill_results['预言']={count:d.result.count};}
     else if(skill==='看破'){finalReportData.skill_results['看破']=finalReportData.skill_results['看破']||[];finalReportData.skill_results['看破'].push({round:params.round_idx+1,is_correct:d.result.is_correct});var el=document.getElementById('rwc_'+params.round_idx);if(el){el.classList.add(d.result.is_correct?'insight-green':'insight-red');roundOriginalColors[params.round_idx]=d.result.is_correct?'#2ecc71':'#e74c3c';}}
     else if(skill==='科技之星'){finalReportData.skill_results['科技之星']={rounds:params.rounds.map(function(x){return x+1;}),status:d.result.status,correct:d.result.correct};params.rounds.forEach(function(i){var el=document.getElementById('rwc_'+i);if(el){el.classList.remove('tech-selected');var origColor=roundOriginalColors[i];if(origColor&&origColor!=='#ffd700'){el.style.borderColor=origColor;}}});}
-    else if(skill==='枫恬果实'){finalReportData.skill_results['枫恬果实']={is_correct:d.result.is_correct,correct_card:d.result.correct_card,round:params.round_idx+1};var el2=document.getElementById('rwc_'+params.round_idx);if(el2){if(d.result.is_correct){el2.classList.add('maple-green');roundOriginalColors[params.round_idx]='#ffd700';}else{el2.classList.add('maple-red');roundOriginalColors[params.round_idx]='#e74c3c';}}}
+    else if(skill==='枫恬果实'){finalReportData.skill_results['枫恬果实']={is_correct:d.result.is_correct,correct_card:d.result.correct_card,round:params.round_idx+1};var el2=document.getElementById('rwc_'+params.round_idx);if(el2){if(d.result.is_correct){el2.classList.add('maple-green');roundOriginalColors[params.round_idx]='#2ecc71';}else{el2.classList.add('maple-red');roundOriginalColors[params.round_idx]='#e74c3c';}}}
     activeSkill=null;techSelectedRounds=[];renderStatSkills();
 }
 async function digTreasure(){
-    if(!digSelected)return;clearInterval(timerInterval);
+    if(!digSelected)return;
+    setPatternSubmitting('btnDig');
+    clearInterval(timerInterval);
     var r=await fetch('/api/shadow_hunter/treasure_dig',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,treasure:digSelected})});
     var d=await r.json();if(!d.success)return;
     if(d.gambled){skillRemaining['孤注一掷']=0;var flashDuration=5000+Math.floor(Math.random()*5000);await animateGambleFlash(flashDuration,d.selected,d.is_correct);}
@@ -648,7 +825,7 @@ function animateGambleFlash(duration,finalTreasure,isCorrect){
     return new Promise(function(resolve){
         var cards=document.querySelectorAll('.stat-card');var startTime=Date.now();var flashInterval=150;
         function flash(){var elapsed=Date.now()-startTime;
-            if(elapsed>=duration){cards.forEach(function(c){c.classList.remove('flashing');});var finalCard=document.getElementById('statCard_'+finalTreasure);if(finalCard){cards.forEach(function(c){c.classList.remove('dig-selected');});setTimeout(function(){if(isCorrect){finalCard.style.borderColor='#ffd700';finalCard.style.boxShadow='0 0 20px rgba(46,204,113,0.8)';}else{if(finalCard.style.borderColor!=='#e74c3c'){finalCard.style.borderColor='#e74c3c';finalCard.style.boxShadow='0 0 20px rgba(231,76,60,0.8)';}}setTimeout(function(){resolve();},1000);},250);}else{setTimeout(function(){resolve();},1250);}return;}
+            if(elapsed>=duration){cards.forEach(function(c){c.classList.remove('flashing');});var finalCard=document.getElementById('statCard_'+finalTreasure);if(finalCard){cards.forEach(function(c){c.classList.remove('dig-selected');});setTimeout(function(){if(isCorrect){finalCard.style.borderColor='#2ecc71';finalCard.style.boxShadow='0 0 20px rgba(46,204,113,0.8)';}else{if(finalCard.style.borderColor!=='#e74c3c'){finalCard.style.borderColor='#e74c3c';finalCard.style.boxShadow='0 0 20px rgba(231,76,60,0.8)';}}setTimeout(function(){resolve();},1000);},250);}else{setTimeout(function(){resolve();},1250);}return;}
             cards.forEach(function(c){c.classList.remove('flashing');});var randomCount=Math.floor(Math.random()*3)+1;var shuffled=Array.from(cards).sort(function(){return Math.random()-0.5;});for(var i=0;i<randomCount;i++){shuffled[i].classList.add('flashing');}setTimeout(flash,flashInterval);}
         flash();
     });
@@ -660,7 +837,7 @@ function showFinalSummary(){
     var sk='';for(var j=0;j<treasureSkills.length;j++){var s=treasureSkills[j];var left=skillRemaining[s]||0;sk+='<span class="skill-badge '+(left<=0?'red':'green')+'">'+s+'</span> ';}
     document.getElementById('finalSkills').innerHTML=sk;
     document.getElementById('finalTT').textContent=treasureNames[d.true_treasure-1]+' ('+(d.treasure_counts[d.true_treasure]||0)+'/20)';
-    var fg='';for(var i=0;i<d.rounds_detail.length;i++){var rd=d.rounds_detail[i];var cls=rd.is_correct?'style="border-color:#ffd700;"':'style="border-color:#e74c3c;"';fg+='<div class="round-word-card" '+cls+'><div>'+(i+1)+'. '+rd.word+'</div><div style="color:#ffd700;">✓'+treasureNames[rd.correct_card-1]+'</div><div style="color:#ffd700;">选:'+(rd.user_choice?treasureNames[rd.user_choice-1]:'空')+'</div></div>';}
+    var fg='';for(var i=0;i<d.rounds_detail.length;i++){var rd=d.rounds_detail[i];var cls=rd.is_correct?'style="border-color:#2ecc71;"':'style="border-color:#e74c3c;"';fg+='<div class="round-word-card" '+cls+'><div>'+(i+1)+'. '+rd.word+'</div><div style="color:#ffd700;">✓'+treasureNames[rd.correct_card-1]+'</div><div style="color:#ffd700;">选:'+(rd.user_choice?treasureNames[rd.user_choice-1]:'空')+'</div></div>';}
     document.getElementById('finalRoundGrid').innerHTML=fg;
 }
 
@@ -669,15 +846,25 @@ function showFinalReport(){
     switchStage('s6');
     var totalScore = basicScore + patternScore;
     var isPassed = totalScore >= patternPassScore;
+    if (selectedPattern === '盗宝大师' && finalReportData) {
+        isPassed = isPassed && !!finalReportData.found_true_treasure;
+        totalScore = finalReportData.total_score || totalScore;
+    }
     var tc = isPassed ? '#ffd700' : '#e74c3c';
+    
+    var extraRows = '';
+    if (selectedPattern === '盗宝大师' && finalReportData) {
+        extraRows = '<div class="r-row"><span class="r-label">真宝藏：</span><span style="color:#ffd700;">' + treasureNames[(finalReportData.true_treasure || 1) - 1] + '</span>  <span class="r-label">找到：</span><span style="color:' + (finalReportData.found_true_treasure ? '#2ecc71' : '#e74c3c') + ';">' + (finalReportData.found_true_treasure ? '是' : '否') + '</span></div>';
+    }
     
     document.getElementById('rinfo').innerHTML = 
         '<div class="r-row"><span class="r-label">姓名：</span>'+USER_NAME+'  <span class="r-label">学号：</span>'+STUDENT_ID+'</div>' +
         '<div class="r-row"><span class="r-label">今日组别：</span>' + selectedToday + '</div>' +
         '<div class="r-row"><span class="r-label">版型：</span>阴影迷踪</div>' +
-        '<div class="r-row"><span class="r-label">抽取版型：</span>' + selectedPattern + '</div>' +
+        '<div class="r-row"><span class="r-label">抽取版型：</span>' + selectedPattern + (selectedPattern === '诡影重重' && selectedPlace ? '（' + selectedPlace + '）' : '') + '</div>' +
         '<div class="r-row"><span class="r-label">基础词汇：</span><span style="color:' + (basicScore >= 18 ? '#ffd700' : '#e74c3c') + ';font-weight:bold;">' + basicScore.toFixed(2) + '/30</span></div>' +
         '<div class="r-row"><span class="r-label">' + selectedPattern + '：</span><span style="color:' + (patternScore >= 15 ? '#ffd700' : '#e74c3c') + ';font-weight:bold;">' + patternScore.toFixed(2) + '/20</span></div>' +
+        extraRows +
         '<div class="r-row"><span class="r-label">总得分：</span><span style="color:' + tc + ';font-weight:bold;font-size:1.1em;">' + totalScore.toFixed(2) + '/50</span></div>' +
         '<div class="r-row"><span class="r-label">通过标准：</span>' + patternPassScore + '分</div>';
     
@@ -732,6 +919,17 @@ function showFinalReport(){
             });
         });
         while (all.length < 60) {
+            all.push({word: '-', pos: '-', meaning: '-', score: '0.00', cls: 'td-red'});
+        }
+    } else if (selectedPattern === '盗宝大师' && finalReportData && finalReportData.rounds_detail) {
+        finalReportData.rounds_detail.forEach(function(r) {
+            all.push({
+                word: r.word, pos: r.pos || '', meaning: r.meaning,
+                score: r.is_correct ? '1.00' : '0.00',
+                cls: r.is_correct ? 'td-green' : 'td-red'
+            });
+        });
+        while (all.length < 50) {
             all.push({word: '-', pos: '-', meaning: '-', score: '0.00', cls: 'td-red'});
         }
     } else if (selectedPattern === '盗宝大师') {

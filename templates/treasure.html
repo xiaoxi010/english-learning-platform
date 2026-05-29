@@ -106,7 +106,7 @@
         .pattern-panel .round-word-card:hover { border-color:#ff6b35; }
         .pattern-panel .round-word-card.insight-green { border-color:#2ecc71; }
         .pattern-panel .round-word-card.insight-red { border-color:#e74c3c; }
-        .pattern-panel .round-word-card.tech-selected { border-color:#ffff00; }
+        .pattern-panel .round-word-card.tech-selected { border-color:#3498db; }
         .pattern-panel .round-word-card.maple-green { border-color:#2ecc71; }
         .pattern-panel .round-word-card.maple-red { border-color:#e74c3c; }
         .pattern-panel .skill-bar { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0; }
@@ -551,7 +551,7 @@ function toggleTechRound(i){
     var el=document.getElementById('rwc_'+i);if(!el)return;
     var idx=techSelectedRounds.indexOf(i);
     if(idx>=0){techSelectedRounds.splice(idx,1);el.classList.remove('tech-selected');el.style.borderColor=roundOriginalColors[i]||'#ffd700';}
-    else{if(techSelectedRounds.length>=4)return;roundOriginalColors[i]=el.style.borderColor||'#ffd700';techSelectedRounds.push(i);el.classList.add('tech-selected');el.style.borderColor='#ffff00';if(techSelectedRounds.length===4){useStatSkill('科技之星',{rounds:[...techSelectedRounds]});}}
+    else{if(techSelectedRounds.length>=4)return;roundOriginalColors[i]=el.style.borderColor||'#ffd700';techSelectedRounds.push(i);el.classList.add('tech-selected');el.style.borderColor='#3498db';if(techSelectedRounds.length===4){useStatSkill('科技之星',{rounds:[...techSelectedRounds]});}}
 }
 function selectDigTreasure(t){
     if(activeSkill==='翻牌'){useStatSkill('翻牌',{target:t});return;}

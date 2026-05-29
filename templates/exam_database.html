@@ -77,6 +77,13 @@
         .detail-item { display: flex; }
         .detail-label { color: #3498db; width: 80px; flex-shrink: 0; }
         .detail-value { color: #fff; }
+        .detail-input {
+            background: #1e1e3a; color: white; padding: 4px 8px;
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
+            width: 100%; font-size: 0.85em;
+        }
+        .btn-save { background: #2ed573; margin-left: 8px; }
+        .btn-save:hover { background: #26b862; }
         
         .stats-box { font-size: 0.85em; line-height: 1.8; }
         .stats-box .highlight { color: #ffd93d; font-weight: bold; }
@@ -181,6 +188,7 @@
                 <div class="detail-grid" id="detailContent"></div>
                 <div style="margin-top:10px;">
                     <button class="btn btn-export" id="btnExportPng" disabled onclick="exportPng()">📸 导出PNG</button>
+                    <button class="btn btn-save" id="btnSaveRecord" onclick="saveRecord()">💾 保存修改</button>
                 </div>
             </div>
         </div>
@@ -191,6 +199,7 @@
         let currentSort = 'group_name';
         let currentTab = 'stats';
         let selectedRecordId = null;
+        let currentRecord = null;
 
         async function init() {
             await loadDictionaries();
@@ -230,6 +239,7 @@
                 <div>意言译语: <span class="highlight">${(s.pattern_integrals?.['意言译语'] || 0).toFixed(1)}</span></div>
                 <div>三十六计: <span class="highlight">${(s.pattern_integrals?.['三十六计'] || 0).toFixed(1)}</span></div>
                 <div>七十二变: <span class="highlight">${(s.pattern_integrals?.['七十二变'] || 0).toFixed(1)}</span></div>
+                <div>阴影迷踪: <span class="highlight">${(s.pattern_integrals?.['阴影迷踪'] || 0).toFixed(1)}</span></div>
                 <div>万圣之夜: <span class="highlight">${(s.pattern_integrals?.['万圣之夜'] || 0).toFixed(1)}</span></div>
             `;
         }
@@ -278,19 +288,29 @@
         async function loadRecords() {
             const resp = await fetch(`/api/exam/records?dict=${currentDict}`);
             const records = await resp.json();
-            document.getElementById('recordsBody').innerHTML = records.map((r, i) => `
+            document.getElementById('recordsBody').innerHTML = records.map((r, i) => {
+                let patternDisplay = r.pattern_name;
+                if (r.record_details) {
+                    try {
+                        const d = JSON.parse(r.record_details);
+                        if (d.exam_type === '阴影迷踪') {
+                            patternDisplay = '阴影迷踪 (' + (d.drawn_pattern || d.pattern_name || r.pattern_name) + ')';
+                        }
+                    } catch (e) {}
+                }
+                return `
                 <tr ondblclick="showRecordDetail(${r.id})">
                     <td>${i + 1}</td>
                     <td>${r.exam_time}</td>
                     <td>${r.group_name}</td>
                     <td>${r.dictionary_name}</td>
-                    <td>${r.pattern_name}</td>
+                    <td>${patternDisplay}</td>
                     <td>${r.score?.toFixed(1)}</td>
                     <td>${r.gpa?.toFixed(2)}</td>
                     <td class="${r.is_passed ? 'pass-green' : 'pass-red'}">${r.is_passed ? '✓ 通过' : '✗ 未通过'}</td>
                     <td><button class="btn btn-export btn-sm" onclick="event.stopPropagation();exportPngById(${r.id})">📸</button></td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
         }
 
         async function showRecordDetail(id) {
@@ -299,21 +319,67 @@
             if (r.error) return;
             
             selectedRecordId = id;
+            currentRecord = r;
+            let drawnPattern = '', passScore = '', examTypeLabel = '';
+            if (r.record_details) {
+                try {
+                    const d = JSON.parse(r.record_details);
+                    drawnPattern = d.drawn_pattern || d.pattern_name || '';
+                    passScore = d.pass_score != null ? d.pass_score : '';
+                    if (d.exam_type === '阴影迷踪') examTypeLabel = '阴影迷踪';
+                } catch (e) {}
+            }
             const panel = document.getElementById('detailPanel');
             panel.style.display = 'block';
             document.getElementById('detailContent').innerHTML = `
                 <div class="detail-item"><span class="detail-label">时间:</span><span class="detail-value">${r.exam_time}</span></div>
-                <div class="detail-item"><span class="detail-label">组名:</span><span class="detail-value">${r.group_name}</span></div>
-                <div class="detail-item"><span class="detail-label">词典:</span><span class="detail-value">${r.dictionary_name}</span></div>
-                <div class="detail-item"><span class="detail-label">版型:</span><span class="detail-value">${r.pattern_name}</span></div>
-                <div class="detail-item"><span class="detail-label">得分:</span><span class="detail-value">${r.score?.toFixed(1)}</span></div>
-                <div class="detail-item"><span class="detail-label">绩点:</span><span class="detail-value">${r.gpa?.toFixed(2)}</span></div>
-                <div class="detail-item"><span class="detail-label">结果:</span><span class="detail-value ${r.is_passed ? 'pass-green' : 'pass-red'}">${r.is_passed ? '通过' : '未通过'}</span></div>
-                <div class="detail-item"><span class="detail-label">基础分:</span><span class="detail-value">${r.basic_score?.toFixed(1) || '-'}</span></div>
-                <div class="detail-item"><span class="detail-label">版型分:</span><span class="detail-value">${r.shadow_score?.toFixed(1) || '-'}</span></div>
-                <div class="detail-item"><span class="detail-label">总分:</span><span class="detail-value">${r.total_score?.toFixed(1) || '-'}</span></div>
+                <div class="detail-item"><span class="detail-label">组名:</span><input class="detail-input" id="editGroup" value="${r.group_name}"></div>
+                <div class="detail-item"><span class="detail-label">词典:</span><input class="detail-input" id="editDict" value="${r.dictionary_name}"></div>
+                <div class="detail-item"><span class="detail-label">版型:</span><input class="detail-input" id="editPattern" value="${r.pattern_name}"></div>
+                ${examTypeLabel ? `<div class="detail-item"><span class="detail-label">考试:</span><span class="detail-value">${examTypeLabel}</span></div>` : ''}
+                ${drawnPattern ? `<div class="detail-item"><span class="detail-label">抽取:</span><span class="detail-value">${drawnPattern}${passScore ? ' (通过' + passScore + '分)' : ''}</span></div>` : ''}
+                <div class="detail-item"><span class="detail-label">得分:</span><input class="detail-input" id="editScore" type="number" step="0.1" value="${r.score?.toFixed(1)}"></div>
+                <div class="detail-item"><span class="detail-label">绩点:</span><span class="detail-value" id="displayGpa">${r.gpa?.toFixed(2)}</span></div>
+                <div class="detail-item"><span class="detail-label">结果:</span>
+                    <select class="detail-input" id="editPassed">
+                        <option value="true" ${r.is_passed ? 'selected' : ''}>通过</option>
+                        <option value="false" ${!r.is_passed ? 'selected' : ''}>未通过</option>
+                    </select>
+                </div>
+                <div class="detail-item"><span class="detail-label">基础分:</span><input class="detail-input" id="editBasic" type="number" step="0.1" value="${r.basic_score != null ? r.basic_score.toFixed(1) : ''}"></div>
+                <div class="detail-item"><span class="detail-label">版型分:</span><input class="detail-input" id="editShadow" type="number" step="0.1" value="${r.shadow_score != null ? r.shadow_score.toFixed(1) : ''}"></div>
+                <div class="detail-item"><span class="detail-label">总分:</span><input class="detail-input" id="editTotal" type="number" step="0.1" value="${r.total_score != null ? r.total_score.toFixed(1) : r.score?.toFixed(1)}"></div>
             `;
             document.getElementById('btnExportPng').disabled = false;
+        }
+
+        async function saveRecord() {
+            if (!selectedRecordId) return;
+            const payload = {
+                group_name: document.getElementById('editGroup').value.trim(),
+                dictionary_name: document.getElementById('editDict').value.trim(),
+                pattern_name: document.getElementById('editPattern').value.trim(),
+                score: parseFloat(document.getElementById('editScore').value),
+                is_passed: document.getElementById('editPassed').value === 'true',
+                basic_score: document.getElementById('editBasic').value ? parseFloat(document.getElementById('editBasic').value) : null,
+                shadow_score: document.getElementById('editShadow').value ? parseFloat(document.getElementById('editShadow').value) : null,
+                total_score: document.getElementById('editTotal').value ? parseFloat(document.getElementById('editTotal').value) : null,
+            };
+            const resp = await fetch(`/api/exam/record/${selectedRecordId}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const result = await resp.json();
+            if (result.success) {
+                alert('保存成功');
+                document.getElementById('displayGpa').textContent = result.record.gpa?.toFixed(2);
+                loadRecords();
+                loadStats();
+                loadSummary();
+            } else {
+                alert(result.message || '保存失败');
+            }
         }
 
         function exportPng() {

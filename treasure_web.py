@@ -70,108 +70,60 @@ def has_too_many_common_chars(text1, text2):
     return len(common) >= 2
 
 # ============ 新增：生成错误汉译（复刻Tkinter版） ============
-def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, used_wrong_meanings):
+def build_words_pool():
+    """一次性加载全部单词，避免每轮重复查库"""
+    words = []
+    for g in get_vocab_manager().get_all_groups():
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
+        if gdata and 'words' in gdata:
+            words.extend(gdata['words'])
+    return words
+
+
+def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, used_wrong_meanings, words_pool=None):
     """生成错误答案 - 优先满足条件，如果找不到就放宽条件"""
-    all_groups = get_vocab_manager().get_all_groups()
+    if words_pool is None:
+        words_pool = build_words_pool()
+
     candidate_meanings = []
     used_meanings = set()
+    current_lower = current_word.lower()
 
-    shuffled_groups = all_groups.copy()
-    random.shuffle(shuffled_groups)
-
-    # 第一轮：严格条件（字母重复率>0.7，词性相同，重复字<2）
-    for group in shuffled_groups:
-        gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-        if gdata and 'words' in gdata:
-            shuffled_words = gdata['words'].copy()
-            random.shuffle(shuffled_words)
-            for word in shuffled_words:
-                if word.get('part_of_speech', '') != correct_pos:
-                    continue
-                candidate_word = word['word'].lower()
-                if candidate_word == current_word.lower():
-                    continue
-                similarity = calculate_word_similarity(current_word.lower(), candidate_word)
-                if similarity < 0.7:
-                    continue
-                candidate_meaning = word.get('chinese_meaning', '')
-                if (candidate_meaning == correct_meaning or
-                        candidate_meaning in used_meanings or
-                        candidate_meaning in used_wrong_meanings):
-                    continue
-                if has_too_many_common_chars(candidate_meaning, correct_meaning):
-                    continue
-                candidate_meanings.append(candidate_meaning)
-                used_meanings.add(candidate_meaning)
-                if len(candidate_meanings) >= 3:
-                    break
-        if len(candidate_meanings) >= 3:
-            break
-
-    # 第二轮：放宽字母重复率条件（只要求词性相同和重复字<2）
-    if len(candidate_meanings) < 3:
-        random.shuffle(shuffled_groups)
-        for group in shuffled_groups:
-            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-            if gdata and 'words' in gdata:
-                shuffled_words = gdata['words'].copy()
-                random.shuffle(shuffled_words)
-                for word in shuffled_words:
-                    if word.get('part_of_speech', '') != correct_pos:
-                        continue
-                    candidate_word = word['word'].lower()
-                    if candidate_word == current_word.lower():
-                        continue
-                    candidate_meaning = word.get('chinese_meaning', '')
-                    if (candidate_meaning == correct_meaning or
-                            candidate_meaning in used_meanings or
-                            candidate_meaning in used_wrong_meanings):
-                        continue
-                    if has_too_many_common_chars(candidate_meaning, correct_meaning):
-                        continue
-                    candidate_meanings.append(candidate_meaning)
-                    used_meanings.add(candidate_meaning)
-                    if len(candidate_meanings) >= 3:
-                        break
+    def scan_words(check_similarity=False, check_common_chars=True, require_pos=True):
+        shuffled = words_pool.copy()
+        random.shuffle(shuffled)
+        for word in shuffled:
+            if require_pos and word.get('part_of_speech', '') != correct_pos:
+                continue
+            if word['word'].lower() == current_lower:
+                continue
+            if check_similarity and calculate_word_similarity(current_lower, word['word'].lower()) < 0.7:
+                continue
+            candidate_meaning = word.get('chinese_meaning', '')
+            if (candidate_meaning == correct_meaning or
+                    candidate_meaning in used_meanings or
+                    candidate_meaning in used_wrong_meanings):
+                continue
+            if check_common_chars and has_too_many_common_chars(candidate_meaning, correct_meaning):
+                continue
+            candidate_meanings.append(candidate_meaning)
+            used_meanings.add(candidate_meaning)
             if len(candidate_meanings) >= 3:
                 break
 
-    # 第三轮：只要求词性相同
+    scan_words(check_similarity=True, check_common_chars=True, require_pos=True)
     if len(candidate_meanings) < 3:
-        random.shuffle(shuffled_groups)
-        for group in shuffled_groups:
-            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-            if gdata and 'words' in gdata:
-                shuffled_words = gdata['words'].copy()
-                random.shuffle(shuffled_words)
-                for word in shuffled_words:
-                    if word.get('part_of_speech', '') != correct_pos:
-                        continue
-                    candidate_meaning = word.get('chinese_meaning', '')
-                    if (candidate_meaning == correct_meaning or
-                            candidate_meaning in used_meanings or
-                            candidate_meaning in used_wrong_meanings):
-                        continue
-                    candidate_meanings.append(candidate_meaning)
-                    used_meanings.add(candidate_meaning)
-                    if len(candidate_meanings) >= 3:
-                        break
-            if len(candidate_meanings) >= 3:
-                break
-
-    # 第四轮：使用所有可用的不同含义
+        scan_words(check_similarity=False, check_common_chars=True, require_pos=True)
+    if len(candidate_meanings) < 3:
+        scan_words(check_similarity=False, check_common_chars=False, require_pos=True)
     if len(candidate_meanings) < 3:
         all_meanings = set()
-        random.shuffle(shuffled_groups)
-        for group in shuffled_groups:
-            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-            if gdata and 'words' in gdata:
-                for word in gdata['words']:
-                    cm = word.get('chinese_meaning', '')
-                    if (cm != correct_meaning and
-                            cm not in used_meanings and
-                            cm not in used_wrong_meanings):
-                        all_meanings.add(cm)
+        for word in words_pool:
+            cm = word.get('chinese_meaning', '')
+            if (cm != correct_meaning and
+                    cm not in used_meanings and
+                    cm not in used_wrong_meanings):
+                all_meanings.add(cm)
         available = list(all_meanings - used_meanings)
         if available:
             needed = 3 - len(candidate_meanings)
@@ -179,7 +131,6 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
             candidate_meanings.extend(additional)
             used_meanings.update(additional)
 
-    # 最终保证有3个
     if len(candidate_meanings) < 3:
         generic = ["错误翻译", "不正确", "意思不对", "不匹配", "翻译错误", "错误意思"]
         for g in generic:
@@ -189,7 +140,6 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
                 candidate_meanings.append(g)
                 used_meanings.add(g)
 
-    # 将本轮使用的错误汉译添加到全局记录
     used_wrong_meanings.update(used_meanings)
 
     if len(candidate_meanings) > 3:
@@ -201,7 +151,8 @@ def generate_treasure_answers(words):
     treasure_counts = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     answers = {}
     meanings = {}
-    used_wrong_meanings = set()  # 全局汉译去重
+    used_wrong_meanings = set()
+    words_pool = build_words_pool()
 
     for i, w in enumerate(words):
         empty_card = empty_seq[i % 5]
@@ -224,7 +175,7 @@ def generate_treasure_answers(words):
         meanings[i][str(empty_card)] = None
 
         # 使用新的错误汉译生成函数
-        wrong_meanings = generate_wrong_meanings_for_web(cm, correct_pos, current_word, used_wrong_meanings)
+        wrong_meanings = generate_wrong_meanings_for_web(cm, correct_pos, current_word, used_wrong_meanings, words_pool)
 
         # 分配答案到宝藏卡
         available_cards = [c for c in range(1, 6) if c != empty_card]

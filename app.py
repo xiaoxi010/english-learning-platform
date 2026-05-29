@@ -265,11 +265,11 @@ def word_exam():
         {"name": "骗子酒馆", "color": "#5352ed", "route": "coming_soon"},
         {"name": "七十二变", "color": "#ff6348", "route": "seventy_two"},
         {"name": "三十六计", "color": "#2ed573", "route": "thirty_six"},
-        {"name": "阴影迷踪", "color": "#1e90ff", "route": "shadow_hunter"},
         {"name": "决战之夜", "color": "#e056a0", "route": "final_night"},
         {"name": "万圣之夜", "color": "#ff7f50", "route": "halloween_night"},
         {"name": "流光符印", "color": "#a29bfe", "route": "glowing_card"},
-        {"name": "盗宝大师", "color": "#fdcb6e", "route": "treasure_master"}
+        {"name": "盗宝大师", "color": "#fdcb6e", "route": "treasure_master"},
+        {"name": "阴影迷踪", "color": "#a55eea", "route": "shadow_hunter"}
     ]
     logged_in_user = session.get('user')
     return render_template('index.html', page='word_exam', exams=exams, logged_in_user=logged_in_user)

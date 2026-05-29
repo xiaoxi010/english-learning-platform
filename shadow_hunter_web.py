@@ -1,34 +1,221 @@
 # shadow_hunter_web.py - 阴影迷踪网页版（完整版）
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
+from functools import wraps
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
 from vocabulary_manager import get_vocab_manager
 from exam_stats_db import get_exam_stats_db
-import random, os, uuid, json, sqlite3, re, difflib, math
+import random, os, uuid, json, sqlite3, re, difflib, math, threading
 from ai_correct import ai_corrector
 from settings_web import get_all_settings
+from shadow_exam_web import (
+    prepare_shadow_words as prepare_shadow_words_by_place,
+    calc_shadow_score,
+    PLACE_NAMES,
+    PLACE_WEIGHTS,
+)
+from seventy_two_web import (
+    prepare_strategy_words as prepare_strategy_words_72_full,
+    build_meaning_options as build_meaning_options_72_full,
+)
+from thirty_six_web import prepare_strategy_words as prepare_strategy_words_36_full
+from treasure_web import (
+    prepare_treasure_words,
+    generate_treasure_answers,
+    generate_wrong_meanings_for_web,
+    build_words_pool,
+)
+from vocabulary_manager import VocabularyManager
 shadow_hunter_bp = Blueprint('shadow_hunter', __name__)
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            session['next_url'] = request.url
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@shadow_hunter_bp.before_request
+def require_login():
+    if 'user' not in session:
+        session['next_url'] = request.url
+        return redirect(url_for('login'))
 
 
 def get_stats_db():
     return get_exam_stats_db()
 
-PATTERN_PASS_SCORES = {"盗宝大师": 46, "诡影重重": 45, "三十六计": 47, "七十二变": 47}
+PATTERN_PASS_SCORES = {"盗宝大师": 46, "诡影重重": 45, "三十六计": 47, "七十二变": 47, "阴影迷踪": 45}
 FULL_SCORE = 50
 BASIC_FULL = 30
-PATTERNS = ["七十二变", "三十六计", "盗宝大师", "诡影重重"]
-PATTERN_WEIGHTS = [0, 0, 1, 0]
+PATTERNS = ["三十六计", "七十二变", "诡影重重", "盗宝大师"]
+PATTERN_WEIGHTS = [1, 1, 1, 1]
 TREASURE_NAMES = ['青山', '寒山', '沧山', '暮山', '尘山']
 
 exam_sessions = {}
 
+
+def _prepare_pattern(es, pattern_name):
+    """后台预准备单个版型的出题数据"""
+    today, yesterday = es['today'], es['yesterday']
+    try:
+        if pattern_name == '三十六计':
+            strategy_data, error = None, '出题失败'
+            for _ in range(5):
+                strategy_data, error = prepare_strategy_words_36_full(today, yesterday)
+                if not error:
+                    break
+            if error:
+                return {'ready': False, 'error': error, 'data': None}
+            return {'ready': True, 'error': None, 'data': strategy_data}
+
+        if pattern_name == '七十二变':
+            suffix_words, similar_words, suffix_extra, similar_extra, error = prepare_strategy_words_72_full(
+                today, yesterday
+            )
+            if error:
+                return {'ready': False, 'error': error, 'data': None}
+            suffix_meanings = build_meaning_options_72_full(suffix_words, suffix_extra or [])
+            similar_meanings = build_meaning_options_72_full(similar_words, similar_extra or [])
+            return {
+                'ready': True, 'error': None,
+                'data': {
+                    'suffix_words': suffix_words,
+                    'similar_words': similar_words,
+                    'suffix_meanings': suffix_meanings,
+                    'similar_meanings': similar_meanings,
+                },
+            }
+
+        if pattern_name == '诡影重重':
+            place = random.choices(PLACE_NAMES, weights=PLACE_WEIGHTS, k=1)[0]
+            shadow_words, place, error = prepare_shadow_words_by_place(today, yesterday, place)
+            if error:
+                return {'ready': False, 'error': error, 'data': None}
+            return {
+                'ready': True, 'error': None,
+                'data': {
+                    'selected_place': place,
+                    'shadow_words': [
+                        {'word': w['word'], 'pos': w['pos'], 'meaning': w['meaning']}
+                        for w in shadow_words
+                    ],
+                },
+            }
+
+        if pattern_name == '盗宝大师':
+            treasure_words, error = prepare_treasure_words(today, yesterday)
+            if error:
+                return {'ready': False, 'error': error, 'data': None}
+            words_pool = build_words_pool()
+            answers, meanings, true_treasure, treasure_counts = generate_treasure_answers(treasure_words)
+            return {
+                'ready': True, 'error': None,
+                'data': {
+                    'treasure_words_raw': treasure_words,
+                    'treasure_words': [
+                        {'word': w['word'], 'pos': w.get('part_of_speech', ''), 'meaning': w.get('chinese_meaning', '')}
+                        for w in treasure_words
+                    ],
+                    'treasure_answers': answers,
+                    'treasure_meanings': meanings,
+                    'true_treasure': true_treasure,
+                    'treasure_counts': treasure_counts,
+                    'words_pool': words_pool,
+                },
+            }
+    except Exception as e:
+        return {'ready': False, 'error': str(e), 'data': None}
+    return {'ready': False, 'error': '未知版型', 'data': None}
+
+
+def _apply_pattern_cache(es):
+    """将预准备的版型题目写入会话"""
+    pattern_name = es.get('selected_pattern') or es.get('predetermined_pattern')
+    prep = es.get('pattern_prep') or {}
+    if not prep.get('ready') or not prep.get('data'):
+        return False
+    data = prep['data']
+
+    if pattern_name == '三十六计':
+        es['meanings_36'] = data['meanings']
+        es['card_pool_36'] = data['card_pool']
+        es['hand_cards_36'] = data['card_pool'][:7]
+        es['pool_index_36'] = 7
+        es['placements_36'] = {}
+    elif pattern_name == '七十二变':
+        es['suffix_words'] = data['suffix_words']
+        es['similar_words'] = data['similar_words']
+        es['suffix_meanings'] = data['suffix_meanings']
+        es['similar_meanings'] = data['similar_meanings']
+        es['strategy_ready'] = True
+    elif pattern_name == '诡影重重':
+        es['selected_place'] = data['selected_place']
+        es['shadow_words'] = data['shadow_words']
+    elif pattern_name == '盗宝大师':
+        es['treasure_words'] = data['treasure_words']
+        es['treasure_answers'] = data['treasure_answers']
+        es['treasure_meanings'] = data['treasure_meanings']
+        es['true_treasure'] = data['true_treasure']
+        es['treasure_counts'] = data['treasure_counts']
+        es['_words_pool'] = data.get('words_pool') or build_words_pool()
+    return True
+
+
+def _ensure_treasure_data(es):
+    """确保盗宝大师题目已生成（优先使用预准备缓存）"""
+    if es.get('treasure_answers'):
+        return None
+    if _apply_pattern_cache(es):
+        return None
+    if es.get('predetermined_pattern') != '盗宝大师':
+        return '盗宝大师题目未准备'
+    treasure_words, error = prepare_treasure_words(es['today'], es['yesterday'])
+    if error:
+        return error
+    words_pool = build_words_pool()
+    answers, meanings, true_treasure, treasure_counts = generate_treasure_answers(treasure_words)
+    es['treasure_words'] = [
+        {'word': w['word'], 'pos': w.get('part_of_speech', ''), 'meaning': w.get('chinese_meaning', '')}
+        for w in treasure_words
+    ]
+    es['treasure_answers'] = answers
+    es['treasure_meanings'] = meanings
+    es['true_treasure'] = true_treasure
+    es['treasure_counts'] = treasure_counts
+    es['_words_pool'] = words_pool
+    return None
+
+
+def _background_prepare_pattern(exam_id, user_id, app):
+    from flask import g
+    with app.app_context():
+        g._vocab_manager = VocabularyManager(user_id=user_id)
+        es = exam_sessions.get(exam_id)
+        if not es:
+            return
+        pattern_name = es.get('predetermined_pattern')
+        if not pattern_name:
+            return
+        es['pattern_prep'] = _prepare_pattern(es, pattern_name)
+        es['pattern_prep_done'] = True
+
+
 @shadow_hunter_bp.route('/exam/shadow_hunter')
 def shadow_hunter_page():
+    settings = get_all_settings()
     return render_template('shadow_hunter.html',
                          groups=get_all_group_names(),
                          patterns=PATTERNS,
                          pattern_pass_scores=PATTERN_PASS_SCORES,
                          full_score=FULL_SCORE,
-                         basic_full=BASIC_FULL)
+                         basic_full=BASIC_FULL,
+                         place_names=PLACE_NAMES,
+                         user_name=settings.get('user_name', ''),
+                         student_id=settings.get('student_id', ''))
 
 
 @shadow_hunter_bp.route('/api/shadow_hunter/start', methods=['POST'])
@@ -62,6 +249,8 @@ def start_exam():
     except:
         dictionary_name = "默认词典"
     
+    predetermined_pattern = random.choices(PATTERNS, weights=PATTERN_WEIGHTS, k=1)[0]
+
     exam_sessions[exam_id] = {
         'basic': [{'word': w['word'], 'pos': w['pos'], 'meaning': w['meaning']} for w in basic_words],
         'today': today,
@@ -69,9 +258,16 @@ def start_exam():
         'dictionary_name': dictionary_name,
         'basic_results': [],
         'basic_score': 0,
-        'selected_pattern': None
+        'predetermined_pattern': predetermined_pattern,
+        'selected_pattern': None,
+        'pattern_prep': {'ready': False, 'error': None, 'data': None},
+        'pattern_prep_done': False,
     }
-    
+    from flask import current_app
+    user_id = session.get('user', {}).get('id')
+    app = current_app._get_current_object()
+    threading.Thread(target=_background_prepare_pattern, args=(exam_id, user_id, app), daemon=True).start()
+
     return jsonify({
         'success': True,
         'exam_id': exam_id,
@@ -176,20 +372,41 @@ def submit_basic():
     })
 
 
-@shadow_hunter_bp.route('/api/shadow_hunter/draw_pattern', methods=['POST'])
-def draw_pattern():
-    """抽取版型"""
+@shadow_hunter_bp.route('/api/shadow_hunter/pattern_status', methods=['POST'])
+def pattern_status():
+    """查询预定版型的预出题是否就绪"""
     data = request.get_json()
     exam_id = data.get('exam_id', '')
     es = exam_sessions.get(exam_id)
     if not es:
         return jsonify({'success': False, 'message': '数据过期'})
-    
-    selected = random.choices(PATTERNS, weights=PATTERN_WEIGHTS, k=1)[0]
+    prep = es.get('pattern_prep') or {}
+    pattern = es.get('predetermined_pattern') or data.get('pattern', '')
+    return jsonify({
+        'success': True,
+        'pattern': pattern,
+        'ready': bool(prep.get('ready')),
+        'error': prep.get('error'),
+    })
+
+
+@shadow_hunter_bp.route('/api/shadow_hunter/draw_pattern', methods=['POST'])
+def draw_pattern():
+    """揭晓预定版型（开始考试时已随机确定）"""
+    data = request.get_json()
+    exam_id = data.get('exam_id', '')
+    es = exam_sessions.get(exam_id)
+    if not es:
+        return jsonify({'success': False, 'message': '数据过期'})
+
+    selected = es.get('predetermined_pattern')
+    if not selected:
+        return jsonify({'success': False, 'message': '版型未确定'})
     es['selected_pattern'] = selected
-    
+    _apply_pattern_cache(es)
+
     pass_score = PATTERN_PASS_SCORES.get(selected, 46)
-    
+
     return jsonify({
         'success': True,
         'pattern': selected,
@@ -236,19 +453,61 @@ def auto_correct_shadow_hunter(user_answer, correct_answer):
         else:
             return 0.0, "#ff0000"
         
-# ========== 诡影重重20分 API ==========
-@shadow_hunter_bp.route('/api/shadow_hunter/shadow_start', methods=['POST'])
-def shadow_start():
+# ========== 诡影重重20分 API（与独立诡影重重版型一致：地名抽取 + 按词性出题） ==========
+@shadow_hunter_bp.route('/api/shadow_hunter/shadow_draw_place', methods=['POST'])
+def shadow_draw_place():
     data = request.get_json()
-    exam_id = data.get('exam_id', '')
-    es = exam_sessions.get(exam_id)
-    if not es: return jsonify({'success': False, 'message': '数据过期'})
-    
-    shadow_words, error = prepare_shadow_words(es['today'], es['yesterday'])
-    if error: return jsonify({'success': False, 'message': error})
-    
-    es['shadow_words'] = [{'word': w['word'], 'pos': w['part_of_speech'], 'meaning': w['chinese_meaning']} for w in shadow_words]
-    return jsonify({'success': True, 'words': [{'word': w['word'], 'pos': w['pos'], 'index': i} for i, w in enumerate(es['shadow_words'])], 'total': len(es['shadow_words'])})
+    es = exam_sessions.get(data.get('exam_id', ''))
+    if not es:
+        return jsonify({'success': False, 'message': '数据过期'})
+    prep = es.get('pattern_prep') or {}
+    if prep.get('ready') and prep.get('data'):
+        selected_place = prep['data']['selected_place']
+    elif es.get('selected_place'):
+        selected_place = es['selected_place']
+    else:
+        selected_place = random.choices(PLACE_NAMES, weights=PLACE_WEIGHTS, k=1)[0]
+    es['selected_place'] = selected_place
+    return jsonify({'success': True, 'place': selected_place})
+
+
+@shadow_hunter_bp.route('/api/shadow_hunter/shadow_prepare_words', methods=['POST'])
+def shadow_prepare_words():
+    data = request.get_json()
+    es = exam_sessions.get(data.get('exam_id', ''))
+    if not es:
+        return jsonify({'success': False, 'message': '数据过期'})
+    if es.get('shadow_words') and es.get('selected_place'):
+        return jsonify({
+            'success': True,
+            'place': es['selected_place'],
+            'words': [
+                {'word': w['word'], 'pos': w['pos'], 'index': i}
+                for i, w in enumerate(es['shadow_words'])
+            ],
+            'total': len(es['shadow_words']),
+        })
+    selected_place = es.get('selected_place')
+    if not selected_place:
+        return jsonify({'success': False, 'message': '请先抽取地名'})
+    shadow_words, place, error = prepare_shadow_words_by_place(
+        es['today'], es['yesterday'], selected_place
+    )
+    if error:
+        return jsonify({'success': False, 'message': error})
+    es['shadow_words'] = [
+        {'word': w['word'], 'pos': w['pos'], 'meaning': w['meaning']}
+        for w in shadow_words
+    ]
+    return jsonify({
+        'success': True,
+        'place': place,
+        'words': [
+            {'word': w['word'], 'pos': w['pos'], 'index': i}
+            for i, w in enumerate(es['shadow_words'])
+        ],
+        'total': len(es['shadow_words']),
+    })
 
 @shadow_hunter_bp.route('/api/shadow_hunter/shadow_submit', methods=['POST'])
 def shadow_submit():
@@ -294,20 +553,43 @@ def seventytwo_start():
     data = request.get_json()
     exam_id = data.get('exam_id', '')
     es = exam_sessions.get(exam_id)
-    if not es: return jsonify({'success': False, 'message': '数据过期'})
-    
-    suffix_words, similar_words, error = prepare_strategy_words_72(es['today'], es['yesterday'])
-    if error: return jsonify({'success': False, 'message': error})
-    
-    suffix_meanings = build_meaning_options_72(suffix_words)
-    similar_meanings = build_meaning_options_72(similar_words)
-    
+    if not es:
+        return jsonify({'success': False, 'message': '数据过期'})
+
+    prep = es.get('pattern_prep') or {}
+    if prep.get('ready') and prep.get('data'):
+        cached = prep['data']
+        suffix_words = cached['suffix_words']
+        similar_words = cached['similar_words']
+        suffix_meanings = cached['suffix_meanings']
+        similar_meanings = cached['similar_meanings']
+    elif es.get('suffix_words') and es.get('similar_words'):
+        suffix_words = es['suffix_words']
+        similar_words = es['similar_words']
+        suffix_meanings = es['suffix_meanings']
+        similar_meanings = es['similar_meanings']
+    else:
+        suffix_words, similar_words, suffix_extra, similar_extra, error = prepare_strategy_words_72_full(
+            es['today'], es['yesterday']
+        )
+        if error:
+            return jsonify({'success': False, 'message': error})
+        suffix_meanings = build_meaning_options_72_full(suffix_words, suffix_extra or [])
+        similar_meanings = build_meaning_options_72_full(similar_words, similar_extra or [])
+
     es['suffix_words'] = suffix_words
     es['similar_words'] = similar_words
     es['suffix_meanings'] = suffix_meanings
     es['similar_meanings'] = similar_meanings
-    
-    return jsonify({'success': True, 'suffix_words': suffix_words, 'similar_words': similar_words, 'suffix_meanings': suffix_meanings, 'similar_meanings': similar_meanings})
+    es['strategy_ready'] = True
+
+    return jsonify({
+        'success': True,
+        'suffix_words': suffix_words,
+        'similar_words': similar_words,
+        'suffix_meanings': suffix_meanings,
+        'similar_meanings': similar_meanings,
+    })
 
 @shadow_hunter_bp.route('/api/shadow_hunter/seventytwo_submit', methods=['POST'])
 def seventytwo_submit():
@@ -322,8 +604,20 @@ def seventytwo_submit():
     for w in all_words:
         user_meaning = pairs.get(w['id'], '')
         is_correct = user_meaning == w['meaning']
-        if is_correct: strategy_score += 1
-        results.append({'id': w['id'], 'word': w['word'], 'pos': w.get('part_of_speech',''), 'meaning': w['meaning'], 'user_meaning': user_meaning, 'is_correct': is_correct, 'score': '1.00' if is_correct else '0.00'})
+        if is_correct:
+            strategy_score += 1
+        results.append({
+            'id': w['id'], 'word': w['word'], 'pos': w.get('part_of_speech', ''),
+            'meaning': w['meaning'], 'user_meaning': user_meaning,
+            'is_correct': is_correct, 'score': '1.00' if is_correct else '0.00',
+        })
+        try:
+            if is_correct:
+                get_vocab_manager().remove_word_from_wrong_book(w['word'])
+            else:
+                get_vocab_manager().add_word_to_wrong_book(w['word'], w.get('part_of_speech', ''), w['meaning'])
+        except Exception:
+            pass
     
     es['pattern_score'] = strategy_score
     es['pattern_results'] = results
@@ -354,18 +648,41 @@ def thirtysix_start():
     data = request.get_json()
     exam_id = data.get('exam_id', '')
     es = exam_sessions.get(exam_id)
-    if not es: return jsonify({'success': False, 'message': '数据过期'})
-    
-    strategy_data, error = prepare_strategy_words_36(es['today'], es['yesterday'])
-    if error: return jsonify({'success': False, 'message': error})
-    
+    if not es:
+        return jsonify({'success': False, 'message': '数据过期'})
+
+    prep = es.get('pattern_prep') or {}
+    if prep.get('ready') and prep.get('data'):
+        strategy_data = prep['data']
+        error = None
+    elif es.get('meanings_36') and es.get('card_pool_36'):
+        strategy_data = {
+            'meanings': es['meanings_36'],
+            'card_pool': es['card_pool_36'],
+        }
+        error = None
+    else:
+        strategy_data, error = None, '出题失败'
+        for _ in range(5):
+            strategy_data, error = prepare_strategy_words_36_full(es['today'], es['yesterday'])
+            if not error:
+                break
+    if error:
+        return jsonify({'success': False, 'message': f'出题失败: {error}'})
+
     es['meanings_36'] = strategy_data['meanings']
     es['card_pool_36'] = strategy_data['card_pool']
     es['hand_cards_36'] = strategy_data['card_pool'][:7]
     es['pool_index_36'] = 7
     es['placements_36'] = {}
-    
-    return jsonify({'success': True, 'meanings': [{'meaning': m['meaning'], 'index': i} for i, m in enumerate(es['meanings_36'])], 'hand_cards': es['hand_cards_36'], 'placements': es['placements_36'], 'pool_remaining': len(es['card_pool_36']) - es['pool_index_36']})
+
+    return jsonify({
+        'success': True,
+        'meanings': [{'meaning': m['meaning'], 'index': i} for i, m in enumerate(es['meanings_36'])],
+        'hand_cards': es['hand_cards_36'],
+        'placements': es['placements_36'],
+        'pool_remaining': len(es['card_pool_36']) - es['pool_index_36'],
+    })
 
 @shadow_hunter_bp.route('/api/shadow_hunter/thirtysix_place', methods=['POST'])
 def thirtysix_place():
@@ -397,14 +714,31 @@ def thirtysix_submit():
         card_data = next((c for c in es['card_pool_36'] if c['id'] == card_id), None)
         if card_data and card_data['meaning_index'] == mi: area_correct[mi] = area_correct.get(mi, 0) + 1
     
-    strategy_score = sum(2 if area_correct.get(mi, 0) >= 2 else (1 if area_correct.get(mi, 0) == 1 else 0) for mi in range(10))
-    
+    strategy_score = 0
+    for mi in range(10):
+        matches = area_correct.get(mi, 0)
+        if matches >= 2:
+            strategy_score += 2
+        elif matches == 1:
+            strategy_score += 1
+
     results = []
-    for card_id, mi in es['placements_36'].items():
-        card_data = next((c for c in es['card_pool_36'] if c['id'] == card_id), None)
-        if not card_data: continue
-        is_correct = (card_data['meaning_index'] == mi)
-        results.append({'word': card_data['word'], 'pos': card_data['pos'], 'meaning': card_data['meaning'], 'target_meaning': card_data['target_meaning'], 'is_correct': is_correct, 'score': '1.00' if is_correct else '0.00'})
+    for card in es['card_pool_36']:
+        card_id = card['id']
+        placed_mi = es['placements_36'].get(card_id)
+        is_correct = (placed_mi is not None and placed_mi == card['meaning_index'])
+        results.append({
+            'word': card['word'], 'pos': card['pos'], 'meaning': card['meaning'],
+            'target_meaning': card['target_meaning'], 'is_correct': is_correct,
+            'score': '1.00' if is_correct else '0.00',
+        })
+        try:
+            if is_correct:
+                get_vocab_manager().remove_word_from_wrong_book(card['word'])
+            else:
+                get_vocab_manager().add_word_to_wrong_book(card['word'], card['pos'], card['meaning'])
+        except Exception:
+            pass
     
     es['pattern_score'] = strategy_score
     es['pattern_results'] = results
@@ -426,7 +760,16 @@ def thirtysix_submit():
     
     save_final_record(es, strategy_score)
     
-    return jsonify({'success': True, 'results': results, 'strategy_score': strategy_score, 'basic_score': basic_score, 'total_score': total_score, 'is_passed': is_passed, 'area_correct': area_correct})
+    return jsonify({
+        'success': True,
+        'results': results,
+        'strategy_score': strategy_score,
+        'basic_score': basic_score,
+        'total_score': total_score,
+        'is_passed': is_passed,
+        'area_correct': area_correct,
+        'meanings': [{'meaning': m['meaning']} for m in es['meanings_36']],
+    })
 
 # ========== 盗宝大师20分 API ==========
 ALL_SKILLS = ['重置', '翻牌', '预言', '孤注一掷', '看破', '科技之星', '枫恬果实']
@@ -442,16 +785,10 @@ def treasure_start():
     selected_skills = data.get('selected_skills', [])
     if len(selected_skills) != 2: return jsonify({'success': False, 'message': '请选择2个技能'})
     
-    treasure_words, error = prepare_treasure_words(es['today'], es['yesterday'])
-    if error: return jsonify({'success': False, 'message': error})
+    error = _ensure_treasure_data(es)
+    if error:
+        return jsonify({'success': False, 'message': error})
     
-    answers, meanings, true_treasure, treasure_counts = generate_treasure_answers(treasure_words)
-    
-    es['treasure_words'] = [{'word': w['word'], 'pos': w.get('part_of_speech',''), 'meaning': w.get('chinese_meaning','')} for w in treasure_words]
-    es['treasure_answers'] = answers
-    es['treasure_meanings'] = meanings
-    es['true_treasure'] = true_treasure
-    es['treasure_counts'] = treasure_counts
     es['user_choices_tr'] = {}
     es['treasure_score'] = 0
     es['current_round_tr'] = 0
@@ -501,7 +838,7 @@ def treasure_choice():
             ncm = nw.get('chinese_meaning','')
             npos = nw.get('part_of_speech','')
             es['treasure_meanings'][ri][str(correct_card)] = ncm
-            nwp = generate_wrong_meanings_for_web(ncm, npos, nw['word'], set())
+            nwp = generate_wrong_meanings_for_web(ncm, npos, nw['word'], set(), es.get('_words_pool'))
             noc = [c for c in range(1, 6) if c != correct_card and c != nec]
             for j, card in enumerate(noc): es['treasure_meanings'][ri][str(card)] = nwp[j] if j < len(nwp) else f'错{j+1}'
         return jsonify({'success': True, 'current_score': es['treasure_score'], 'reset_done': True, 'skill_remaining': es['skill_remaining_tr']})
@@ -572,6 +909,13 @@ def treasure_final():
             'meaning': w['meaning'], 'correct_card': es['treasure_answers'][i],
             'user_choice': uc, 'is_correct': is_correct
         })
+        try:
+            if is_correct:
+                get_vocab_manager().remove_word_from_wrong_book(w['word'])
+            else:
+                get_vocab_manager().add_word_to_wrong_book(w['word'], w['pos'], w['meaning'])
+        except Exception:
+            pass
     
     return jsonify({
         'success': True,
@@ -668,7 +1012,10 @@ def save_final_record(es, pattern_score, found_true_treasure=False):
         exam_data = {
             'basic_words': [],
             'pattern_data': pattern_data,
-            'pattern_name': selected_pattern
+            'pattern_name': selected_pattern,
+            'drawn_pattern': selected_pattern,
+            'pass_score': pass_score,
+            'exam_type': '阴影迷踪',
         }
         
         # 基础词汇数据
@@ -688,7 +1035,8 @@ def save_final_record(es, pattern_score, found_true_treasure=False):
             dictionary_name=es['dictionary_name'],
             score=total_score,
             passed=is_passed,
-            pattern_name=selected_pattern
+            pattern_name=selected_pattern,
+            pass_score_override=pass_score,
         )
         get_stats_db().add_exam_record(
             group_name=es['today'],
@@ -699,9 +1047,10 @@ def save_final_record(es, pattern_score, found_true_treasure=False):
             basic_score=basic_score,
             shadow_score=pattern_score,
             total_score=total_score,
-            record_details=record_details
+            record_details=record_details,
+            pass_score_override=pass_score,
         )
-        print(f"✓ 记录已保存: {es['today']} - {selected_pattern} - {total_score:.2f}分")
+        print(f"✓ 阴影迷踪记录已保存: {es['today']} - 抽取{selected_pattern} - 计入{selected_pattern}积分 - {total_score:.2f}分")
     except Exception as e:
         print(f"保存记录失败: {e}")
         import traceback
@@ -716,312 +1065,9 @@ def final_report():
     return jsonify({'success': True, 'basic_results': es.get('basic_results', []), 'basic_score': es.get('basic_score', 0), 'pattern_score': es.get('pattern_score', 0), 'pattern_results': es.get('pattern_results', []), 'selected_pattern': es.get('selected_pattern', ''), 'today': es.get('today', ''), 'total_score': es.get('basic_score', 0) + es.get('pattern_score', 0)})
 
 # ========== 辅助函数（从各版型复制过来） ==========
-def prepare_shadow_words(today, yesterday):
-    # 同 shadow_exam_web.py 中的 prepare_shadow_words
-    all_groups = get_vocab_manager().get_all_groups()
-    other_words = []
-    for g in all_groups:
-        if g['group_name'] in [today, yesterday]: continue
-        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
-        if gdata and 'words' in gdata:
-            words = gdata['words']; n = min(5, len(words))
-            for w in random.sample(words, n): other_words.append({'word': w['word'], 'part_of_speech': w.get('part_of_speech',''), 'chinese_meaning': w.get('chinese_meaning','')})
-            if len(other_words) >= 100: break
-    if len(other_words) < 30: return None, '候选单词不足'
-    def clean_meaning(m): return re.sub(r'[的地了是]', '', m)
-    filtered, char_sets = [], []
-    for w in other_words:
-        cm = clean_meaning(w['chinese_meaning']); filtered.append(w); char_sets.append(set(re.findall(r'[\u4e00-\u9fff]', cm)))
-    to_remove = set()
-    for i in range(len(filtered)):
-        if i in to_remove: continue
-        for j in range(i+1, len(filtered)):
-            if j in to_remove: continue
-            if len(char_sets[i] & char_sets[j]) >= 2: to_remove.add(random.choice([i, j]))
-    final = [w for idx, w in enumerate(filtered) if idx not in to_remove]
-    if len(final) < 30: return None, '过滤后单词不足'
-    return random.sample(final, 30), None
-
-def calc_shadow_score(ua, ca):
-    if not ua: return 0.0
-    sim = calculate_similarity(ua, ca)
-    return 1.0 if sim >= 2 else (0.75 if sim == 1 else 0.0)
-
 def process_wrong_books_shadow(results):
     for r in results:
         try:
             if r['score'] >= 1.0: get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else: get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except: pass
-
-def prepare_strategy_words_72(today, yesterday):
-    # 同 seventy_two_web.py
-    all_words = []
-    for g in get_vocab_manager().get_all_groups():
-        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
-        if gdata and 'words' in gdata:
-            for w in gdata['words']: all_words.append({'word': w['word'], 'chinese_meaning': w.get('chinese_meaning',''), 'part_of_speech': w.get('part_of_speech','')})
-    if len(all_words) < 30: return None, None, '词汇不足'
-    affixes = ['-tion','-sion','-ment','-ness','-ity','-ance','-ence','-er','-or','-ist','-ism','-able','-ible','-ive','-ous','-ful','-less','-al','-ic','-ly','un-','re-','pre-','dis-','mis-','over-','under-','inter-','trans-','sub-']
-    random.shuffle(affixes)
-    suffix_words = None
-    for affix in affixes:
-        candidates = []
-        for w in all_words:
-            word = w['word'].lower()
-            if affix.startswith('-') and word.endswith(affix[1:]): candidates.append({'word': w['word'], 'meaning': w['chinese_meaning'], 'part_of_speech': w.get('part_of_speech','')})
-            elif affix.endswith('-') and word.startswith(affix[:-1]): candidates.append({'word': w['word'], 'meaning': w['chinese_meaning'], 'part_of_speech': w.get('part_of_speech','')})
-        if len(candidates) >= 10:
-            filtered = [candidates[0]]
-            for c in candidates[1:]:
-                ok = True
-                for f in filtered:
-                    if difflib.SequenceMatcher(None, c['meaning'], f['meaning']).ratio() >= 0.4: ok = False; break
-                if ok: filtered.append(c)
-                if len(filtered) >= 10: break
-            if len(filtered) >= 10:
-                suffix_words = random.sample(filtered, 10)
-                for i, sw in enumerate(suffix_words): sw['id'] = f'suffix_{i}'
-                break
-    if not suffix_words: return None, None, '同缀词不足'
-    similar_pairs = []
-    check_count = min(len(all_words), 500)
-    for i in range(check_count):
-        for j in range(i+1, check_count):
-            w1, w2 = all_words[i], all_words[j]
-            if w1['word'].lower() == w2['word'].lower(): continue
-            ws = difflib.SequenceMatcher(None, w1['word'].lower(), w2['word'].lower()).ratio()
-            if ws >= 0.74:
-                ms = difflib.SequenceMatcher(None, w1['chinese_meaning'], w2['chinese_meaning']).ratio()
-                if ms <= 0.4: similar_pairs.append((w1, w2))
-    if len(similar_pairs) < 5: return suffix_words, None, '相似词对不足'
-    random.shuffle(similar_pairs)
-    similar_words, used = [], set()
-    for w1, w2 in similar_pairs:
-        if w1['word'] in used or w2['word'] in used: continue
-        used.add(w1['word']); used.add(w2['word'])
-        pid = len(similar_words)//2
-        similar_words.append({'id': f'similar_{pid}_1', 'word': w1['word'], 'meaning': w1['chinese_meaning'], 'part_of_speech': w1.get('part_of_speech',''), 'pair_id': pid})
-        similar_words.append({'id': f'similar_{pid}_2', 'word': w2['word'], 'meaning': w2['chinese_meaning'], 'part_of_speech': w2.get('part_of_speech',''), 'pair_id': pid})
-        if len(similar_words) >= 10: break
-    return suffix_words, similar_words, None
-
-def build_meaning_options_72(words_list):
-    correct_meanings = [w['meaning'] for w in words_list]
-    all_meanings = correct_meanings.copy()
-    all_vocab = []
-    for g in get_vocab_manager().get_all_groups():
-        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name',''))
-        if gdata and 'words' in gdata:
-            for w in gdata['words']: all_vocab.append(w.get('chinese_meaning',''))
-    random.shuffle(all_vocab)
-    for m in all_vocab:
-        if m not in all_meanings: all_meanings.append(m)
-        if len(all_meanings) >= len(correct_meanings)+2: break
-    random.shuffle(all_meanings)
-    return [{'text': m, 'is_correct': m in correct_meanings} for m in all_meanings]
-
-def split_meanings_36(meaning_str): return [m.strip() for m in meaning_str.split(';') if m.strip()]
-def split_into_words_36(text):
-    if ';' in text: return [w.strip() for w in text.split(';') if w.strip()]
-    words = []; current = ''
-    for char in text:
-        if char not in [' ', '，', '；', ',', ';']: current += char
-        elif current: words.append(current); current = ''
-    if current: words.append(current)
-    return words if words else [text]
-def calc_single_meaning_similarity(m1, m2):
-    if not m1 or not m2: return 0.0
-    if m1 == m2: return 1.0
-    if m1 in m2 or m2 in m1: return 0.9
-    w1 = split_into_words_36(m1); w2 = split_into_words_36(m2)
-    common = set(w1) & set(w2)
-    if common: return 0.8 + len(common) * 0.1
-    s1, s2 = set(m1), set(m2)
-    if not s1 or not s2: return 0.0
-    return len(s1 & s2) / len(s1 | s2)
-def check_pos_match_36(pos1, pos2):
-    p1 = [p.strip() for p in pos1.split('/') if p.strip()]; p2 = [p.strip() for p in pos2.split('/') if p.strip()]
-    return bool(set(p1) & set(p2)) if p1 and p2 else True
-
-def prepare_strategy_words_36(today, yesterday):
-    all_words = []; seen = set()
-    for g in get_vocab_manager().get_all_groups():
-        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
-        if gdata and 'words' in gdata:
-            for w in gdata['words']:
-                key = (w['word'].lower(), w.get('chinese_meaning', ''))
-                if key not in seen: seen.add(key); all_words.append(w)
-    if len(all_words) < 100: return None, '词汇不足'
-    basic_words, _ = prepare_basic_words(today, yesterday)
-    if not basic_words: return None, '基础词汇不足'
-    meanings, used_words, used_meanings, used_base_words = [], set(), set(), set()
-    check_count = int(len(all_words) * 0.75)
-    for _ in range(1000):
-        if len(meanings) >= 10: break
-        bw = random.choice(basic_words); bw_key = bw['word'].lower()
-        if bw_key in used_base_words: continue
-        bw_pos = bw.get('pos', bw.get('part_of_speech', '')); bw_pos_list = [p.strip() for p in bw_pos.split('/') if p.strip()]
-        if not bw_pos_list: continue
-        bw_meanings = split_meanings_36(bw.get('meaning', bw.get('chinese_meaning', '')))
-        if not bw_meanings: continue
-        selected_meaning = random.choice(bw_meanings)
-        if selected_meaning in used_meanings: continue
-        if any(calc_single_meaning_similarity(selected_meaning, e['meaning']) >= 0.4 for e in meanings): continue
-        random_check = random.sample(all_words, min(check_count, len(all_words)))
-        similar_words = []
-        for dw in random_check:
-            if not check_pos_match_36(bw_pos, dw.get('part_of_speech', '')): continue
-            if dw['word'].lower() in used_words: continue
-            if any(calc_single_meaning_similarity(selected_meaning, dm) >= 0.8 for dm in split_meanings_36(dw.get('chinese_meaning', ''))): similar_words.append({'word': dw['word'], 'part_of_speech': dw.get('part_of_speech',''), 'chinese_meaning': dw.get('chinese_meaning',''), 'is_itself': dw['word'].lower() == bw_key})
-        if not any(w['is_itself'] for w in similar_words) and bw_key not in used_words: similar_words.append({'word': bw['word'], 'part_of_speech': bw_pos, 'chinese_meaning': bw.get('meaning', bw.get('chinese_meaning','')), 'is_itself': True})
-        if len(similar_words) >= 3:
-            selected, selected_keys = [], set()
-            self_word = next((w for w in similar_words if w['is_itself']), None)
-            if self_word and self_word['word'].lower() not in used_words: selected.append(self_word); selected_keys.add(self_word['word'].lower())
-            for w in similar_words:
-                if not w['is_itself'] and len(selected) < 3 and w['word'].lower() not in used_words and w['word'].lower() not in selected_keys: selected.append(w); selected_keys.add(w['word'].lower())
-            if len(selected) == 3:
-                for sw in selected: used_words.add(sw['word'].lower())
-                meanings.append({'meaning': selected_meaning, 'words': selected, 'from_basic': True}); used_meanings.add(selected_meaning); used_base_words.add(bw_key)
-    if len(meanings) < 10:
-        available = [w for w in all_words if w['word'].lower() not in used_words]
-        for _ in range(1000):
-            if len(meanings) >= 10 or not available: break
-            dw = random.choice(available); dw_key = dw['word'].lower()
-            dw_pos = dw.get('part_of_speech', ''); dw_pos_list = [p.strip() for p in dw_pos.split('/') if p.strip()]
-            if not dw_pos_list: continue
-            dw_meanings = split_meanings_36(dw.get('chinese_meaning', ''))
-            if not dw_meanings: continue
-            selected_meaning = random.choice(dw_meanings)
-            if selected_meaning in used_meanings: continue
-            if any(calc_single_meaning_similarity(selected_meaning, e['meaning']) >= 0.4 for e in meanings): continue
-            similar_words = []
-            for cw in random.sample(all_words, min(check_count, len(all_words))):
-                if not check_pos_match_36(dw_pos, cw.get('part_of_speech', '')): continue
-                if cw['word'].lower() in used_words: continue
-                if any(calc_single_meaning_similarity(selected_meaning, cm) >= 0.8 for cm in split_meanings_36(cw.get('chinese_meaning', ''))): similar_words.append({'word': cw['word'], 'part_of_speech': cw.get('part_of_speech',''), 'chinese_meaning': cw.get('chinese_meaning',''), 'is_itself': cw['word'].lower() == dw_key})
-            if not any(w['is_itself'] for w in similar_words) and dw_key not in used_words: similar_words.append({'word': dw['word'], 'part_of_speech': dw_pos, 'chinese_meaning': dw.get('chinese_meaning',''), 'is_itself': True})
-            if len(similar_words) >= 3:
-                selected, selected_keys = [], set()
-                self_word = next((w for w in similar_words if w['is_itself']), None)
-                if self_word and self_word['word'].lower() not in used_words: selected.append(self_word); selected_keys.add(self_word['word'].lower())
-                for w in similar_words:
-                    if not w['is_itself'] and len(selected) < 3 and w['word'].lower() not in used_words and w['word'].lower() not in selected_keys: selected.append(w); selected_keys.add(w['word'].lower())
-                if len(selected) == 3:
-                    for sw in selected: used_words.add(sw['word'].lower())
-                    meanings.append({'meaning': selected_meaning, 'words': selected, 'from_basic': False}); used_meanings.add(selected_meaning)
-    if len(meanings) < 10: return None, f'只找到{len(meanings)}个汉译'
-    card_pool = []
-    for mi, m in enumerate(meanings):
-        for wi, w in enumerate(m['words']): card_pool.append({'id': f'card_{mi}_{wi}', 'word': w['word'], 'pos': w.get('part_of_speech',''), 'meaning': w.get('chinese_meaning',''), 'target_meaning': m['meaning'], 'meaning_index': mi})
-    if any(sum(1 for c in card_pool if c['word'].lower() == k) > 1 for k in set(c['word'].lower() for c in card_pool)): return None, '出题出现重复单词'
-    return {'meanings': meanings, 'card_pool': card_pool}, None
-
-def prepare_treasure_words(today, yesterday):
-    all_words, seen = [], set()
-    for g in get_vocab_manager().get_all_groups():
-        if g['group_name'] in [today, yesterday]: continue
-        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
-        if gdata and 'words' in gdata:
-            for w in gdata['words']:
-                key = (w['word'].lower(), w.get('chinese_meaning', ''))
-                if key not in seen: seen.add(key); all_words.append(w)
-    if len(all_words) < 20: return None, '词汇不足'
-    return random.sample(all_words, 20), None
-
-def calculate_word_similarity(w1, w2):
-    if not w1 or not w2: return 0
-    s1, s2 = set(w1.lower()), set(w2.lower())
-    return len(s1 & s2) / len(s1 | s2) if s1 | s2 else 0
-
-def has_too_many_common_chars(t1, t2):
-    if not t1 or not t2: return False
-    fc = ['的','地','得','了','在','是','有','和','与','及','或','使','让','把','被','不','错误']
-    def ft(t): return ''.join([c for c in t if c not in fc])
-    a, b = ft(t1), ft(t2)
-    return len(set(a) & set(b)) >= 2 if a and b else False
-
-def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, used_wrong_meanings):
-    all_groups = get_vocab_manager().get_all_groups()
-    candidate_meanings, used_meanings = [], set()
-    shuffled_groups = all_groups.copy(); random.shuffle(shuffled_groups)
-    for group in shuffled_groups:
-        gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-        if gdata and 'words' in gdata:
-            for word in random.sample(gdata['words'], len(gdata['words'])):
-                if word.get('part_of_speech','') != correct_pos: continue
-                if word['word'].lower() == current_word.lower(): continue
-                if calculate_word_similarity(current_word.lower(), word['word'].lower()) < 0.7: continue
-                cm = word.get('chinese_meaning','')
-                if cm == correct_meaning or cm in used_meanings or cm in used_wrong_meanings: continue
-                if has_too_many_common_chars(cm, correct_meaning): continue
-                candidate_meanings.append(cm); used_meanings.add(cm)
-                if len(candidate_meanings) >= 3: break
-        if len(candidate_meanings) >= 3: break
-    if len(candidate_meanings) < 3:
-        for group in shuffled_groups:
-            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-            if gdata and 'words' in gdata:
-                for word in random.sample(gdata['words'], len(gdata['words'])):
-                    if word.get('part_of_speech','') != correct_pos: continue
-                    if word['word'].lower() == current_word.lower(): continue
-                    cm = word.get('chinese_meaning','')
-                    if cm == correct_meaning or cm in used_meanings or cm in used_wrong_meanings: continue
-                    if has_too_many_common_chars(cm, correct_meaning): continue
-                    candidate_meanings.append(cm); used_meanings.add(cm)
-                    if len(candidate_meanings) >= 3: break
-            if len(candidate_meanings) >= 3: break
-    if len(candidate_meanings) < 3:
-        for group in shuffled_groups:
-            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-            if gdata and 'words' in gdata:
-                for word in gdata['words']:
-                    if word.get('part_of_speech','') != correct_pos: continue
-                    cm = word.get('chinese_meaning','')
-                    if cm == correct_meaning or cm in used_meanings or cm in used_wrong_meanings: continue
-                    candidate_meanings.append(cm); used_meanings.add(cm)
-                    if len(candidate_meanings) >= 3: break
-            if len(candidate_meanings) >= 3: break
-    if len(candidate_meanings) < 3:
-        all_ms = set()
-        for group in shuffled_groups:
-            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
-            if gdata and 'words' in gdata:
-                for word in gdata['words']: all_ms.add(word.get('chinese_meaning',''))
-        avail = list(all_ms - used_meanings - used_wrong_meanings - {correct_meaning})
-        if avail: candidate_meanings.extend(random.sample(avail, min(3-len(candidate_meanings), len(avail))))
-    while len(candidate_meanings) < 3: candidate_meanings.append(f'错{len(candidate_meanings)+1}')
-    used_wrong_meanings.update(used_meanings)
-    return random.sample(candidate_meanings, 3) if len(candidate_meanings) > 3 else candidate_meanings
-
-def generate_treasure_answers(words):
-    empty_seq = [5, 1, 2, 3, 4]
-    treasure_counts = {1:0, 2:0, 3:0, 4:0, 5:0}
-    answers, meanings, used_wrong_meanings = {}, {}, set()
-    for i, w in enumerate(words):
-        empty_card = empty_seq[i % 5]
-        if i == 19:
-            available = [c for c in range(1, 6) if c != empty_card]
-            candidate = random.choice(available)
-            sim = treasure_counts.copy(); sim[candidate] += 1
-            if len([c for c, v in sim.items() if v == max(sim.values())]) > 1:
-                for nc in [c for c in available if c != candidate]:
-                    ns = treasure_counts.copy(); ns[nc] += 1
-                    if len([c for c, v in ns.items() if v == max(ns.values())]) == 1: candidate = nc; break
-            correct_card = candidate
-        else:
-            available = [c for c in range(1, 6) if treasure_counts[c] < 16 and c != empty_card] or [c for c in range(1, 6) if c != empty_card]
-            correct_card = random.choice(available)
-        answers[i] = correct_card; treasure_counts[correct_card] += 1
-        meanings[i] = {}; cm = w.get('chinese_meaning',''); cp = w.get('part_of_speech',''); cw = w['word']
-        meanings[i][str(correct_card)] = cm; meanings[i][str(empty_card)] = None
-        wm = generate_wrong_meanings_for_web(cm, cp, cw, used_wrong_meanings)
-        ac = [c for c in range(1, 6) if c != empty_card]; random.shuffle(ac)
-        mc = [correct_card] + [c for c in ac if c != correct_card and len([correct_card] + [c]) <= 4]
-        mi_idx = 0
-        for card in range(1, 6):
-            if card == empty_card or card == correct_card: continue
-            if card in mc: meanings[i][str(card)] = wm[mi_idx] if mi_idx < len(wm) else f'错{mi_idx+1}'; mi_idx += 1
-    true_treasure = max(treasure_counts, key=treasure_counts.get)
-    return answers, meanings, true_treasure, treasure_counts
