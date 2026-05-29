@@ -1,15 +1,9 @@
 # vocabulary_web.py - 词汇数据库网页版（支持用户隔离）
 from flask import Blueprint, render_template, request, jsonify, session
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import sqlite3
 
 vocabulary_bp = Blueprint('vocabulary', __name__)
-
-def get_vocab_manager():
-    """获取当前用户的词汇管理器"""
-    user = session.get('user')
-    user_id = user.get('id') if user else None
-    return VocabularyManager(user_id=user_id)
 
 
 # ==================== 页面路由 ====================
@@ -17,7 +11,12 @@ def get_vocab_manager():
 @vocabulary_bp.route('/vocabulary')
 def vocabulary_page():
     """词汇管理主页面"""
-    return render_template('vocabulary.html')
+    show_sidebar = request.args.get('sidebar', '1') != '0'
+    return render_template(
+        'vocabulary.html',
+        active_nav='vocabulary' if show_sidebar else '',
+        show_sidebar=show_sidebar,
+    )
 
 
 # ==================== API接口 ====================

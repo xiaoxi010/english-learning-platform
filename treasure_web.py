@@ -1,12 +1,10 @@
 # treasure_web.py - 盗宝大师网页版（完全复刻Tkinter版）
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import random, os, uuid, math
 from settings_web import get_all_settings
 treasure_bp = Blueprint('treasure', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 PASS_SCORE = 46
 FULL_SCORE = 50
@@ -30,9 +28,9 @@ exam_sessions = {}
 def prepare_treasure_words(today, yesterday):
     all_words = []
     seen = set()
-    for g in vm.get_all_groups():
+    for g in get_vocab_manager().get_all_groups():
         if g['group_name'] in [today, yesterday]: continue
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']:
                 key = (w['word'].lower(), w.get('chinese_meaning', ''))
@@ -74,7 +72,7 @@ def has_too_many_common_chars(text1, text2):
 # ============ 新增：生成错误汉译（复刻Tkinter版） ============
 def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, used_wrong_meanings):
     """生成错误答案 - 优先满足条件，如果找不到就放宽条件"""
-    all_groups = vm.get_all_groups()
+    all_groups = get_vocab_manager().get_all_groups()
     candidate_meanings = []
     used_meanings = set()
 
@@ -83,7 +81,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
 
     # 第一轮：严格条件（字母重复率>0.7，词性相同，重复字<2）
     for group in shuffled_groups:
-        gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+        gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
         if gdata and 'words' in gdata:
             shuffled_words = gdata['words'].copy()
             random.shuffle(shuffled_words)
@@ -114,7 +112,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
     if len(candidate_meanings) < 3:
         random.shuffle(shuffled_groups)
         for group in shuffled_groups:
-            gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 shuffled_words = gdata['words'].copy()
                 random.shuffle(shuffled_words)
@@ -142,7 +140,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
     if len(candidate_meanings) < 3:
         random.shuffle(shuffled_groups)
         for group in shuffled_groups:
-            gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 shuffled_words = gdata['words'].copy()
                 random.shuffle(shuffled_words)
@@ -166,7 +164,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
         all_meanings = set()
         random.shuffle(shuffled_groups)
         for group in shuffled_groups:
-            gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for word in gdata['words']:
                     cm = word.get('chinese_meaning', '')
@@ -329,8 +327,8 @@ def submit_basic():
     es['basic_results'] = results; es['basic_score'] = correct
     for r in results:
         try:
-            if r['is_correct']: vm.remove_word_from_wrong_book(r['word'])
-            else: vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+            if r['is_correct']: get_vocab_manager().remove_word_from_wrong_book(r['word'])
+            else: get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except: pass
     return jsonify({'success': True, 'results': results, 'score': correct, 'total': len(words)})
 
@@ -351,9 +349,9 @@ def start_game():
         # 根据手动修正后的结果更新错题本
         try:
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except: pass
     es['basic_score'] = correct
     selected = data.get('selected_skills', [])
@@ -397,9 +395,9 @@ def submit_choice():
         # 收集所有可用单词后随机选择
         available_words = []
         current_word = es['treasure_words'][ri]['word']
-        for g in vm.get_all_groups():
+        for g in get_vocab_manager().get_all_groups():
             if g['group_name'] in [es['today'], es['yesterday']]: continue
-            gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for w in gdata['words']:
                     if w['word'] != current_word:
@@ -535,9 +533,9 @@ def final_report():
         # 错题本处理
         try:
             if is_correct:
-                vm.remove_word_from_wrong_book(w['word'])
+                get_vocab_manager().remove_word_from_wrong_book(w['word'])
             else:
-                vm.add_word_to_wrong_book(w['word'], w['pos'], w['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(w['word'], w['pos'], w['meaning'])
         except: pass
     return jsonify({'success': True, 'basic_score': es.get('basic_score', 0),
         'treasure_score': es['treasure_score'], 'total_score': total, 'is_passed': passed,

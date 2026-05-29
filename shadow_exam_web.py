@@ -1,13 +1,11 @@
 # shadow_exam_web.py - 诡影重重网页版（完整修复版，含地名抽取）
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import random, re, os, uuid
 from settings_web import get_all_settings
 
 shadow_bp = Blueprint('shadow', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 PASS_SCORE = 45
 FULL_SCORE = 50
@@ -53,12 +51,12 @@ def prepare_shadow_words(today, yesterday, selected_place):
         return None, None, '无效的地名'
 
     # 收集所有非今日昨日的单词
-    all_groups = vm.get_all_groups()
+    all_groups = get_vocab_manager().get_all_groups()
     all_words = []
     for g in all_groups:
         if g['group_name'] in [today, yesterday]:
             continue
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']:
                 all_words.append({
@@ -296,18 +294,18 @@ def submit_shadow():
     for r in basic_results:
         try:
             if r.get('is_correct', False):
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
 
     for r in results:
         try:
             if r['score'] >= 1.0:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
 

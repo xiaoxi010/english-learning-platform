@@ -150,7 +150,7 @@ init_skill_database()
 @skill_db_bp.route('/')
 def skill_db_page():
     """技能数据库主页面"""
-    return render_template('skill_db.html', user_name=session.get('user_name', '未登录'))
+    return render_template('skill_db.html', active_nav='skill_db')
 
 
 # ==================== 分类管理API ====================

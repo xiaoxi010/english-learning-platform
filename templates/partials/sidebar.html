@@ -1,0 +1,29 @@
+<aside class="sidebar" id="appSidebar">
+    <div class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text nav-label">英语学习平台</span>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('index') }}" class="nav-item {% if active_nav == 'home' %}active{% endif %}" title="主页">
+            <span class="nav-icon">🏠</span><span class="nav-label">主页</span>
+        </a>
+        <a href="{{ url_for('start_exam', exam_type='vocabulary') }}" class="nav-item {% if active_nav == 'vocabulary' %}active{% endif %}" title="词汇数据库">
+            <span class="nav-icon">📚</span><span class="nav-label">词汇数据库</span>
+        </a>
+        <a href="{{ url_for('dict_shop.dict_shop_page') }}" class="nav-item {% if active_nav == 'dict_shop' %}active{% endif %}" title="词典商城">
+            <span class="nav-icon">🛒</span><span class="nav-label">词典商城</span>
+        </a>
+        <a href="{{ url_for('vocabulary_shop.vocabulary_page') }}" class="nav-item {% if active_nav == 'vocabulary_shop' %}active{% endif %}" title="词典数据库">
+            <span class="nav-icon">🗄️</span><span class="nav-label">词典数据库</span>
+        </a>
+        <a href="{{ url_for('start_exam', exam_type='exam_database') }}" class="nav-item {% if active_nav == 'exam_db' %}active{% endif %}" title="考试数据库">
+            <span class="nav-icon">📊</span><span class="nav-label">考试数据库</span>
+        </a>
+        <a href="{{ url_for('start_exam', exam_type='skill_db') }}" class="nav-item {% if active_nav == 'skill_db' %}active{% endif %}" title="技能数据库">
+            <span class="nav-icon">⚔️</span><span class="nav-label">技能数据库</span>
+        </a>
+        <a href="{{ url_for('settings.settings_page') }}" class="nav-item {% if active_nav == 'settings' %}active{% endif %}" title="设置">
+            <span class="nav-icon">⚙️</span><span class="nav-label">设置</span>
+        </a>
+    </nav>
+</aside>

@@ -1,45 +1,36 @@
 # recitation_web.py - 单词背诵网页版
 from flask import Blueprint, render_template, request, jsonify
-import sqlite3
 import random
 import re
 
+from vocabulary_manager import get_vocab_manager
+
 recitation_bp = Blueprint('recitation', __name__)
-DB_PATH = "vocabulary.db"
 
 
 def get_all_groups():
     """获取所有单词组"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("SELECT group_name FROM word_groups ORDER BY created_time DESC")
-    groups = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return groups
+    return [g['group_name'] for g in get_vocab_manager().get_all_groups()]
 
 
 def get_group_words(group_name):
     """获取指定组的单词"""
     if not group_name:
         return []
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT w.word, w.part_of_speech, w.chinese_meaning
-        FROM words w
-        JOIN word_groups wg ON w.group_id = wg.id
-        WHERE wg.group_name = ?
-    ''', (group_name,))
-    words = []
-    for row in cursor.fetchall():
-        words.append({
-            'word': row[0],
-            'part_of_speech': row[1],
-            'chinese_meaning': row[2].replace('\n', ' ').replace('\r', ' '),
-            'group': group_name
-        })
-    conn.close()
-    return words
+    vm = get_vocab_manager()
+    for g in vm.get_all_groups():
+        if g['group_name'] != group_name:
+            continue
+        data = vm.get_word_group(group_name, g['dict_name'])
+        if not data:
+            return []
+        return [{
+            'word': w['word'],
+            'part_of_speech': w['part_of_speech'],
+            'chinese_meaning': w['chinese_meaning'].replace('\n', ' ').replace('\r', ' '),
+            'group': group_name,
+        } for w in data.get('words', [])]
+    return []
 
 
 def check_answer(user_answer, correct_answer):
@@ -85,23 +76,23 @@ def api_words():
     today_group = request.args.get('today', '')
     yesterday_group = request.args.get('yesterday', '')
     shuffle = request.args.get('shuffle', 'false').lower() == 'true'
-    
+
     words = []
     if today_group:
         today_words = get_group_words(today_group)
         for w in today_words:
             w['type'] = '今日'
         words.extend(today_words)
-    
+
     if yesterday_group:
         yesterday_words = get_group_words(yesterday_group)
         for w in yesterday_words:
             w['type'] = '昨日'
         words.extend(yesterday_words)
-    
+
     if shuffle:
         random.shuffle(words)
-    
+
     return jsonify({
         'words': words,
         'total': len(words),
@@ -115,10 +106,10 @@ def api_check():
     """批量检查答案"""
     data = request.get_json()
     answers = data.get('answers', [])
-    
+
     results = []
     correct_count = 0
-    
+
     for item in answers:
         user_answer = item.get('user_answer', '')
         correct_answer = item.get('correct_answer', '')
@@ -131,7 +122,7 @@ def api_check():
             'correct_answer': correct_answer,
             'is_correct': is_correct
         })
-    
+
     return jsonify({
         'results': results,
         'correct_count': correct_count,

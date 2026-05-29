@@ -4,25 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>考试记录管理</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: "Microsoft YaHei", sans-serif;
-            background: linear-gradient(135deg, #0c0c1d, #1a1a3e, #0d1b2a, #1b0a2e);
-            min-height: 100vh; color: #fff;
-        }
-        .header {
-            background: rgba(0,0,0,0.4); padding: 12px 30px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .header h1 { font-size: 1.4em; color: #ffd93d; }
-        .back-btn {
-            color: #aaa; text-decoration: none; padding: 8px 16px;
-            border-radius: 20px; background: rgba(255,255,255,0.1);
-        }
-        .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-        
-        .container { display: flex; gap: 15px; padding: 15px; max-width: 1400px; margin: 0 auto; height: calc(100vh - 70px); }
+        .container { display: flex; gap: 15px; padding: 15px; max-width: 1400px; margin: 0 auto; flex: 1; min-height: 0; overflow: hidden; }
         
         .left-panel { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
         .panel {
@@ -114,11 +99,11 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📊 考试记录管理</h1>
-        <a href="/" class="back-btn">← 返回主菜单</a>
-    </div>
-
+{% set show_sidebar = true %}
+{% set active_nav = active_nav | default('exam_db') %}
+{% set page_title = '考试数据库' %}
+{% set content_class = 'content-area--flush' %}
+{% include 'partials/app_shell_open.html' %}
     <div class="container">
         <!-- 左侧面板 -->
         <div class="left-panel">
@@ -367,5 +352,6 @@
 
         init();
     </script>
+{% include 'partials/app_shell_close.html' %}
 </body>
 </html>

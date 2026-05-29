@@ -20,7 +20,7 @@ vocab_manager = VocabularyManager()
 @vocabulary_shop_bp.route('/')
 def vocabulary_page():
     """词汇管理主页面"""
-    return render_template('vocabulary_shop.html')
+    return render_template('vocabulary_shop.html', active_nav='vocabulary_shop')
 
 
 

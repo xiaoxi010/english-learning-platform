@@ -15,7 +15,7 @@ png_exporter = ExamPNGExporter()
 def exam_database_page():
     """考试数据库页面"""
     dictionaries = stats_db.get_dictionaries_list()
-    return render_template('exam_database.html', dictionaries=dictionaries)
+    return render_template('exam_database.html', dictionaries=dictionaries, active_nav='exam_db')
 
 
 # ==================== API ====================

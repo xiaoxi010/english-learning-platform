@@ -1,12 +1,10 @@
 # thirty_six_web.py - 三十六计网页版（完整最终版）
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import random, os, uuid
 from settings_web import get_all_settings
 thirty_six_bp = Blueprint('thirty_six', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 PASS_SCORE = 47
 FULL_SCORE = 50
@@ -82,8 +80,8 @@ def calculate_single_meaning_similarity(meaning1, meaning2):
 def prepare_strategy_words(today, yesterday):
     all_words = []
     seen_words = set()  # 按小写单词去重
-    for g in vm.get_all_groups():
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+    for g in get_vocab_manager().get_all_groups():
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']:
                 word_key = w['word'].lower()
@@ -389,9 +387,9 @@ def submit_strategy():
     for r in basic_results:
         try:
             if r.get('is_correct', False):
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
     
@@ -399,9 +397,9 @@ def submit_strategy():
         try:
             full_meaning = word_full_meaning.get(r['word'].lower(), r['target_meaning'])
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], full_meaning)
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], full_meaning)
         except:
             pass
     

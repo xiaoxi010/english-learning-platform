@@ -1,12 +1,10 @@
 # halloween_web.py - 万圣之夜网页版（完整版，修复词汇加载）
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import random, os, uuid, math, json, difflib
 
 halloween_bp = Blueprint('halloween', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 PASS_SCORE = 43
 FULL_SCORE = 50
@@ -61,7 +59,7 @@ def load_vocabulary_from_db():
     
     try:
         # 获取所有激活的词典
-        active_dicts = vm.get_active_dictionaries()
+        active_dicts = get_vocab_manager().get_active_dictionaries()
         print(f"[万圣之夜] 激活词典: {active_dicts}")
         
         if not active_dicts:
@@ -69,7 +67,7 @@ def load_vocabulary_from_db():
             return all_vocab
         
         # 遍历所有单词组
-        all_groups = vm.get_all_groups()
+        all_groups = get_vocab_manager().get_all_groups()
         print(f"[万圣之夜] 找到 {len(all_groups)} 个单词组")
         
         seen_words = set()
@@ -85,7 +83,7 @@ def load_vocabulary_from_db():
             if dict_name == 'A-错题词典':
                 continue
             
-            group_data = vm.get_word_group(group_name, dict_name)
+            group_data = get_vocab_manager().get_word_group(group_name, dict_name)
             if not group_data or 'words' not in group_data:
                 continue
             
@@ -268,9 +266,9 @@ def submit_basic():
     for r in results:
         try:
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
     
@@ -296,9 +294,9 @@ def init_game():
             correct += 1
         try:
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
     es['basic_score'] = correct

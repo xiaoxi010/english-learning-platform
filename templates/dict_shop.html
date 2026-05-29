@@ -9,33 +9,34 @@
         .shop-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
         .shop-header {
-            text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
         }
         .shop-header h1 {
-            font-size: 2.5em;
-            color: #ffd93d;
+            font-size: 1.25em;
+            color: var(--text-primary);
+            font-weight: 600;
         }
         .shop-header p {
-            color: #aaa;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 6px;
         }
         .dict-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
         }
         .dict-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             padding: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: border-color 0.15s;
         }
         .dict-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: var(--accent-green);
         }
         .dict-icon {
             font-size: 3em;
@@ -43,14 +44,14 @@
             margin-bottom: 15px;
         }
         .dict-name {
-            font-size: 1.5em;
-            font-weight: bold;
+            font-size: 1.1em;
+            font-weight: 600;
             text-align: center;
             margin-bottom: 10px;
-            color: #ffd93d;
+            color: var(--text-primary);
         }
         .dict-desc {
-            color: #ccc;
+            color: var(--text-secondary);
             font-size: 0.9em;
             text-align: center;
             margin-bottom: 15px;
@@ -60,59 +61,54 @@
         .dict-info {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
         .dict-info span {
-            color: #ffd93d;
-            font-weight: bold;
+            color: var(--accent-green);
+            font-weight: 500;
+            font-size: 0.9em;
         }
         .buy-btn {
             display: block;
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #6c5ce7, #5a4bd1);
-            color: white;
+            padding: 10px;
+            background: var(--accent-green);
+            color: #0d0d0d;
             border: none;
-            border-radius: 8px;
-            font-size: 1em;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.3s;
+            transition: opacity 0.2s;
         }
         .buy-btn:hover:not(:disabled) {
-            opacity: 0.8;
+            opacity: 0.88;
         }
         .buy-btn:disabled,
         .buy-btn.owned {
-            background: #555;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
             cursor: default;
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 30px;
-            color: #aaa;
-            text-decoration: none;
-        }
-        .back-link:hover {
-            color: #fff;
         }
     </style>
 </head>
 <body>
+{% set show_sidebar = true %}
+{% set active_nav = active_nav | default('dict_shop') %}
+{% set page_title = '词典商城' %}
+{% set page_subtitle = '从商城数据库挑选词典，一键导入到你的词汇数据库' %}
+{% include 'partials/app_shell_open.html' %}
     <div class="shop-container">
-        <div class="shop-header">
-            <h1>📖 词库商城</h1>
-            <p>从商城数据库挑选词典，一键导入到你的词汇数据库</p>
-        </div>
-
         <div class="dict-grid" id="dictGrid">
             <div style="text-align: center; grid-column: 1/-1;">加载中...</div>
         </div>
-
-        <a href="{{ url_for('index') }}" class="back-link">← 返回首页</a>
     </div>
+{% include 'partials/app_shell_close.html' %}
 
     <script>
         async function loadDictShop() {

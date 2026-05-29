@@ -4,18 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>词汇管理系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: "Microsoft YaHei", sans-serif;
-            background: linear-gradient(135deg, #0c0c1d, #1a1a3e, #0d1b2a, #1b0a2e);
-            min-height: 100vh; color: #fff;
-        }
-        .header { background: rgba(0,0,0,0.4); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 1.5em; color: #ffd93d; }
-        .back-btn { color: #aaa; text-decoration: none; font-size: 1em; padding: 8px 16px; border-radius: 20px; background: rgba(255,255,255,0.1); }
-        .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-        .container { display: flex; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; height: calc(100vh - 70px); }
+        .container { display: flex; gap: 20px; padding: 20px; max-width: 1400px; margin: 0 auto; flex: 1; min-height: 0; overflow: hidden; }
         .left-panel { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 15px; }
         .panel { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; }
         .panel h3 { font-size: 1em; color: #ffd93d; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -97,7 +89,14 @@
     </style>
 </head>
 <body>
-<div class="header"><h1>📚 词汇管理系统</h1><a href="/" class="back-btn">← 返回主菜单</a></div>
+{% set show_sidebar = show_sidebar | default(true) %}
+{% set active_nav = active_nav | default('vocabulary') %}
+{% set page_title = '词汇数据库' %}
+{% set content_class = 'content-area--flush' %}
+{% include 'partials/app_shell_open.html' %}
+{% if not show_sidebar %}
+<a href="{{ url_for('index') }}" class="back-link" style="display:inline-block;padding:12px 20px 0;">← 返回主页</a>
+{% endif %}
 <div class="container">
     <div class="left-panel">
         <div class="panel"><h3>📖 词典列表</h3><div class="dict-list" id="dictList"></div>
@@ -142,7 +141,7 @@ async function loadDictionaries(){
     const resp=await fetch('/api/dictionaries');const dicts=await resp.json();
     document.getElementById('dictList').innerHTML=dicts.map(d=>`<div class="dict-item ${d.name===currentDict?'selected':''}" onclick="selectDict('${d.name}')"><span class="dict-name">${d.name} ${d.is_system?'🔒':''}</span><span class="dict-status ${d.is_system?'locked':(d.is_active?'active':'inactive')}" onclick="event.stopPropagation();toggleDict('${d.name}',${d.is_active})" title="${d.is_system?'系统词典':(d.is_active?'使用中':'未使用')}"></span></div>`).join('');
 }
-function selectDict(name){currentDict=name;document.getElementById('addTargetDict').textContent=name;loadDictionaries();loadGroups();}
+function selectDict(name){currentDict=name;document.getElementById('addTargetDict').textContent=name;if(currentGroup&&currentGroup.dictName!==name){currentGroup=null;document.getElementById('groupDetail').innerHTML='';document.getElementById('tabDetail').textContent='单词组详情';}document.getElementById('groupSearch').value='';loadDictionaries();loadGroups();}
 async function toggleDict(name,st){if(name==='A-错题词典')return;const r=await fetch('/api/dictionary/toggle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,is_active:!st})});if((await r.json()).success){loadDictionaries();loadGroups();}}
 function showAddDictModal(){document.getElementById('addDictModal').classList.add('show');}
 function showRenameDictModal(){if(currentDict==='默认词典'||currentDict==='A-错题词典')return alert('不能修改系统词典名称');document.getElementById('oldDictName').textContent=currentDict;document.getElementById('newDictName2').value=currentDict;document.getElementById('renameDictModal').classList.add('show');}
@@ -151,9 +150,10 @@ async function addDictionary(){const n=document.getElementById('newDictName').va
 async function deleteDict(){if(currentDict==='默认词典'||currentDict==='A-错题词典')return alert('不能删除系统词典');if(!confirm(`确定要删除词典 "${currentDict}" 吗？`))return;const r=await fetch('/api/dictionary/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:currentDict})});const d=await r.json();alert(d.message);if(d.success){currentDict='默认词典';document.getElementById('addTargetDict').textContent='默认词典';loadDictionaries();loadGroups();}}
 
 // ========== 单词组 ==========
-async function loadGroups(){const r=await fetch(`/api/groups?sort=${currentSort}`);const g=await r.json();allGroupsData=g;renderGroupList(g);}
-function filterGroups(){const kw=document.getElementById('groupSearch').value.toLowerCase();renderGroupList(kw?allGroupsData.filter(g=>g.group_name.toLowerCase().includes(kw)||g.dict_name.toLowerCase().includes(kw)):allGroupsData);}
-function renderGroupList(groups){document.getElementById('groupList').innerHTML=groups.map(g=>`<div class="group-item" ondblclick="viewGroupDetail('${g.dict_name}','${g.group_name}')" onclick="selectGroup(this,'${g.dict_name}','${g.group_name}')"><div class="group-info"><div class="group-name">${g.group_name}</div><div class="group-meta">${g.dict_name} · ${g.created_time}</div></div><span class="group-count">${g.word_count} 词</span></div>`).join('');}
+function getGroupsForCurrentDict(groups){return (groups||allGroupsData).filter(g=>g.dict_name===currentDict);}
+async function loadGroups(){const r=await fetch(`/api/groups?sort=${currentSort}`);const g=await r.json();allGroupsData=g;renderGroupList(getGroupsForCurrentDict(g));}
+function filterGroups(){const kw=document.getElementById('groupSearch').value.toLowerCase();let groups=getGroupsForCurrentDict();if(kw)groups=groups.filter(g=>g.group_name.toLowerCase().includes(kw));renderGroupList(groups);}
+function renderGroupList(groups){document.getElementById('groupList').innerHTML=groups.length?groups.map(g=>`<div class="group-item" ondblclick="viewGroupDetail('${g.dict_name}','${g.group_name}')" onclick="selectGroup(this,'${g.dict_name}','${g.group_name}')"><div class="group-info"><div class="group-name">${g.group_name}</div><div class="group-meta">${g.created_time}</div></div><span class="group-count">${g.word_count} 词</span></div>`).join(''):`<p style="color:#aaa;text-align:center;padding:30px;">「${currentDict}」暂无单词组</p>`;}
 function selectGroup(el,dn,gn){document.querySelectorAll('.group-item').forEach(i=>i.classList.remove('selected'));el.classList.add('selected');currentGroup={dictName:dn,groupName:gn};}
 function sortGroups(s){currentSort=s;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');loadGroups();}
 function showAddGroupModal(){document.getElementById('addTargetDict').textContent=currentDict;document.getElementById('addGroupModal').classList.add('show');}
@@ -252,5 +252,6 @@ function switchTab(tab){document.querySelectorAll('.tab').forEach((t,i)=>{t.clas
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 init();
 </script>
+{% include 'partials/app_shell_close.html' %}
 </body>
 </html>

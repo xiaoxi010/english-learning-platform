@@ -1,19 +1,16 @@
 # exam_base_web.py - 基础词汇共用模块（对应BaseExam）
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import random
-import os
-
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 
 def get_all_group_names():
     """获取所有单词组名称列表"""
-    return [g['group_name'] for g in vm.get_all_groups()]
+    return [g['group_name'] for g in get_vocab_manager().get_all_groups()]
 
 
 def prepare_basic_words(today_group, yesterday_group):
     """准备基础词汇：今日20+昨日10，随机打乱"""
+    vm = get_vocab_manager()
     today_data, yesterday_data = None, None
     for dict_name in vm.get_active_dictionaries():
         if not today_data:

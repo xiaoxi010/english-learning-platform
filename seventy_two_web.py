@@ -1,12 +1,10 @@
 # seventy_two_web.py - 七十二变网页版（完整修复版，得分用小数，版型含词性）
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 import random, re, os, uuid, difflib
 from settings_web import get_all_settings
 seventy_two_bp = Blueprint('seventy_two', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 PASS_SCORE = 47
 FULL_SCORE = 50
@@ -107,8 +105,8 @@ def seventy_two_page():
 
 def prepare_strategy_words(today, yesterday):
     all_words = []
-    for g in vm.get_all_groups():
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+    for g in get_vocab_manager().get_all_groups():
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']:
                 if 'phr' in w.get('part_of_speech', '').lower():
@@ -302,8 +300,8 @@ def build_meaning_options(words_list, extra_meanings):
 
     if len(all_meanings) < 12:
         all_vocab = []
-        for g in vm.get_all_groups():
-            gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+        for g in get_vocab_manager().get_all_groups():
+            gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for w in gdata['words']:
                     all_vocab.append(w.get('chinese_meaning', ''))
@@ -406,9 +404,9 @@ def submit_basic():
     for r in results:
         try:
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
     return jsonify({'success': True, 'results': results, 'score': correct, 'total': len(words)})
@@ -432,9 +430,9 @@ def start_strategy():
             correct += 1
         try:
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
     es['basic_score'] = correct
@@ -479,9 +477,9 @@ def submit_strategy():
             w = next((x for x in all_words if x['id'] == r['id']), None)
             pos = w.get('part_of_speech', '') if w else ''
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], pos, r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], pos, r['meaning'])
         except:
             pass
     return jsonify({

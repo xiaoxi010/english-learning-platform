@@ -1,15 +1,16 @@
 # shadow_hunter_web.py - 阴影迷踪网页版（完整版）
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 from exam_stats_db import ExamStatsDB
 import random, os, uuid, json, sqlite3, re, difflib, math
 from ai_correct import ai_corrector
 from settings_web import get_all_settings
 shadow_hunter_bp = Blueprint('shadow_hunter', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
-stats_db = ExamStatsDB("exam_stats.db", "vocabulary.db")
+
+
+def get_stats_db():
+    return ExamStatsDB("exam_stats.db", get_vocab_manager().db_path)
 
 PATTERN_PASS_SCORES = {"盗宝大师": 46, "诡影重重": 45, "三十六计": 47, "七十二变": 47}
 FULL_SCORE = 50
@@ -48,7 +49,7 @@ def start_exam():
     
     # 获取词典名称
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(get_vocab_manager().db_path)
         cursor = conn.cursor()
         cursor.execute('''
             SELECT d.dict_name FROM dictionaries d
@@ -160,9 +161,9 @@ def submit_basic():
     for r in results:
         try:
             if r['score'] >= 1.0:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass
     
@@ -488,9 +489,9 @@ def treasure_choice():
         nec = empty_seq[ri % 5]
         available_words = []
         current_word = es['treasure_words'][ri]['word']
-        for g in vm.get_all_groups():
+        for g in get_vocab_manager().get_all_groups():
             if g['group_name'] in [es['today'], es['yesterday']]: continue
-            gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for w in gdata['words']:
                     if w['word'] != current_word: available_words.append(w)
@@ -682,14 +683,14 @@ def save_final_record(es, pattern_score, found_true_treasure=False):
         
         record_details = json.dumps(exam_data, ensure_ascii=False)
         
-        stats_db.update_or_create_stats(
+        get_stats_db().update_or_create_stats(
             group_name=es['today'],
             dictionary_name=es['dictionary_name'],
             score=total_score,
             passed=is_passed,
             pattern_name=selected_pattern
         )
-        stats_db.add_exam_record(
+        get_stats_db().add_exam_record(
             group_name=es['today'],
             dictionary_name=es['dictionary_name'],
             pattern_name=selected_pattern,
@@ -717,11 +718,11 @@ def final_report():
 # ========== 辅助函数（从各版型复制过来） ==========
 def prepare_shadow_words(today, yesterday):
     # 同 shadow_exam_web.py 中的 prepare_shadow_words
-    all_groups = vm.get_all_groups()
+    all_groups = get_vocab_manager().get_all_groups()
     other_words = []
     for g in all_groups:
         if g['group_name'] in [today, yesterday]: continue
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             words = gdata['words']; n = min(5, len(words))
             for w in random.sample(words, n): other_words.append({'word': w['word'], 'part_of_speech': w.get('part_of_speech',''), 'chinese_meaning': w.get('chinese_meaning','')})
@@ -749,15 +750,15 @@ def calc_shadow_score(ua, ca):
 def process_wrong_books_shadow(results):
     for r in results:
         try:
-            if r['score'] >= 1.0: vm.remove_word_from_wrong_book(r['word'])
-            else: vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+            if r['score'] >= 1.0: get_vocab_manager().remove_word_from_wrong_book(r['word'])
+            else: get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except: pass
 
 def prepare_strategy_words_72(today, yesterday):
     # 同 seventy_two_web.py
     all_words = []
-    for g in vm.get_all_groups():
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+    for g in get_vocab_manager().get_all_groups():
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']: all_words.append({'word': w['word'], 'chinese_meaning': w.get('chinese_meaning',''), 'part_of_speech': w.get('part_of_speech','')})
     if len(all_words) < 30: return None, None, '词汇不足'
@@ -809,8 +810,8 @@ def build_meaning_options_72(words_list):
     correct_meanings = [w['meaning'] for w in words_list]
     all_meanings = correct_meanings.copy()
     all_vocab = []
-    for g in vm.get_all_groups():
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name',''))
+    for g in get_vocab_manager().get_all_groups():
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name',''))
         if gdata and 'words' in gdata:
             for w in gdata['words']: all_vocab.append(w.get('chinese_meaning',''))
     random.shuffle(all_vocab)
@@ -845,8 +846,8 @@ def check_pos_match_36(pos1, pos2):
 
 def prepare_strategy_words_36(today, yesterday):
     all_words = []; seen = set()
-    for g in vm.get_all_groups():
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+    for g in get_vocab_manager().get_all_groups():
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']:
                 key = (w['word'].lower(), w.get('chinese_meaning', ''))
@@ -919,9 +920,9 @@ def prepare_strategy_words_36(today, yesterday):
 
 def prepare_treasure_words(today, yesterday):
     all_words, seen = [], set()
-    for g in vm.get_all_groups():
+    for g in get_vocab_manager().get_all_groups():
         if g['group_name'] in [today, yesterday]: continue
-        gdata = vm.get_word_group(g['group_name'], g.get('dict_name', ''))
+        gdata = get_vocab_manager().get_word_group(g['group_name'], g.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for w in gdata['words']:
                 key = (w['word'].lower(), w.get('chinese_meaning', ''))
@@ -942,11 +943,11 @@ def has_too_many_common_chars(t1, t2):
     return len(set(a) & set(b)) >= 2 if a and b else False
 
 def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, used_wrong_meanings):
-    all_groups = vm.get_all_groups()
+    all_groups = get_vocab_manager().get_all_groups()
     candidate_meanings, used_meanings = [], set()
     shuffled_groups = all_groups.copy(); random.shuffle(shuffled_groups)
     for group in shuffled_groups:
-        gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+        gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
         if gdata and 'words' in gdata:
             for word in random.sample(gdata['words'], len(gdata['words'])):
                 if word.get('part_of_speech','') != correct_pos: continue
@@ -960,7 +961,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
         if len(candidate_meanings) >= 3: break
     if len(candidate_meanings) < 3:
         for group in shuffled_groups:
-            gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for word in random.sample(gdata['words'], len(gdata['words'])):
                     if word.get('part_of_speech','') != correct_pos: continue
@@ -973,7 +974,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
             if len(candidate_meanings) >= 3: break
     if len(candidate_meanings) < 3:
         for group in shuffled_groups:
-            gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for word in gdata['words']:
                     if word.get('part_of_speech','') != correct_pos: continue
@@ -985,7 +986,7 @@ def generate_wrong_meanings_for_web(correct_meaning, correct_pos, current_word, 
     if len(candidate_meanings) < 3:
         all_ms = set()
         for group in shuffled_groups:
-            gdata = vm.get_word_group(group['group_name'], group.get('dict_name', ''))
+            gdata = get_vocab_manager().get_word_group(group['group_name'], group.get('dict_name', ''))
             if gdata and 'words' in gdata:
                 for word in gdata['words']: all_ms.add(word.get('chinese_meaning',''))
         avail = list(all_ms - used_meanings - used_wrong_meanings - {correct_meaning})

@@ -1,13 +1,11 @@
 # past_light_web.py - 昔日之光（对应PastLightExam）
 from flask import Blueprint, render_template, request, jsonify, session
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity, auto_correct_single
-from vocabulary_manager import VocabularyManager
+from vocabulary_manager import get_vocab_manager
 from settings_web import get_all_settings
 import os
 
 past_light_bp = Blueprint('past_light', __name__)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocabulary.db")
-vm = VocabularyManager(db_path=DB_PATH)
 
 PASS_SCORE = 28
 FULL_SCORE = 30
@@ -216,8 +214,8 @@ def _process_wrong_books(results):
     for r in results:
         try:
             if r['is_correct']:
-                vm.remove_word_from_wrong_book(r['word'])
+                get_vocab_manager().remove_word_from_wrong_book(r['word'])
             else:
-                vm.add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
+                get_vocab_manager().add_word_to_wrong_book(r['word'], r['pos'], r['meaning'])
         except:
             pass

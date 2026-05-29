@@ -21,7 +21,7 @@ from shadow_hunter_web import shadow_hunter_bp
 from shadow_hunter_png import shadow_hunter_png_bp
 from skill_db_web import skill_db_bp
 from nightmare_exam_web import nightmare_bp
-from settings_web import settings_bp, get_all_settings
+from settings_web import settings_bp, get_all_settings, get_user_settings, ensure_user_settings
 from vocabulary_shop_web import vocabulary_shop_bp
 from dict_shop_web import dict_shop_bp
 
@@ -115,6 +115,26 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(vocabulary_shop_bp)
 app.register_blueprint(dict_shop_bp)
 
+@app.context_processor
+def inject_user_context():
+    """全局注入用户信息（顶栏显示）"""
+    logged_in_user = session.get('user')
+    if logged_in_user:
+        settings = get_user_settings(logged_in_user['id'])
+        user_name = settings.get('account_name') or settings.get('user_name', '未设置')
+        student_id = settings.get('student_id', '')
+        credits = settings.get('credits', 100)
+    else:
+        user_name = '未设置'
+        student_id = ''
+        credits = 0
+    return {
+        'logged_in_user': logged_in_user,
+        'user_name': user_name,
+        'student_id': student_id,
+        'credits': credits,
+    }
+
 # ========== Logto 登录路由 ==========
 @app.route('/login')
 def login():
@@ -159,22 +179,15 @@ def callback():
             'email': user_email,
         }
         
-        # 创建用户设置记录
+        # 创建用户独立设置数据库
         try:
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute("SELECT user_id FROM settings WHERE user_id = %s", (user_id,))
-            existing = cur.fetchone()
-            if not existing:
-                cur.execute(
-                    "INSERT INTO settings (user_id, user_name, student_id) VALUES (%s, %s, %s)",
-                    (user_id, session['user']['name'], '')
-                )
-                conn.commit()
-            cur.close()
-            conn.close()
+            ensure_user_settings(
+                user_id,
+                account_name=session['user']['name'],
+                account_email=session['user']['email'],
+            )
         except Exception as db_err:
-            print(f"数据库操作出错: {db_err}")
+            print(f"用户设置库初始化出错: {db_err}")
         
         # 初始化用户词汇库（创建默认词典和错题词典）
         try:
@@ -218,31 +231,8 @@ def login_required(f):
     return decorated_function
 # ===================================
 
-# ========== 辅助函数（替代原来的 settings_web 中的函数） ==========
-def get_user_settings(user_id):
-    """获取用户设置"""
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT user_name, student_id FROM settings WHERE user_id = %s", (user_id,))
-    result = cur.fetchone()
-    cur.close()
-    conn.close()
-    if result:
-        return {'user_name': result['user_name'], 'student_id': result['student_id']}
-    return {'user_name': '未设置', 'student_id': ''}
-
-def update_user_settings(user_id, user_name, student_id):
-    """更新用户设置"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        UPDATE settings 
-        SET user_name = %s, student_id = %s, updated_at = NOW()
-        WHERE user_id = %s
-    """, (user_name, student_id, user_id))
-    conn.commit()
-    cur.close()
-    conn.close()
+# ========== 辅助函数 ==========
+# 用户设置见 settings_web.py
 # ===================================
 
 # ========== 原有路由 ==========
@@ -252,19 +242,21 @@ def index():
     logged_in_user = session.get('user')
     
     if logged_in_user:
-        # 已登录用户，从数据库读取设置
         settings = get_user_settings(logged_in_user['id'])
-        user_name = settings['user_name']
-        student_id = settings['student_id']
+        user_name = settings.get('account_name') or settings.get('user_name', '未设置')
+        student_id = settings.get('student_id', '')
+        credits = settings.get('credits', 100)
     else:
-        # 未登录用户，使用默认值
         user_name = '未设置'
         student_id = ''
+        credits = 0
     
     return render_template('index.html', 
                          user_name=user_name,
                          student_id=student_id,
+                         credits=credits,
                          page='main_menu',
+                         active_nav='home',
                          logged_in_user=logged_in_user)
 
 @app.route('/word_exam')
@@ -359,26 +351,6 @@ def start_exam(exam_type):
     exam_name = name_map.get(exam_type, exam_type)
     logged_in_user = session.get('user')
     return render_template('index.html', page='exam_placeholder', exam_name=exam_name, logged_in_user=logged_in_user)
-
-# ========== 用户设置相关路由 ==========
-@app.route('/settings', methods=['GET', 'POST'])
-@login_required
-def user_settings():
-    """用户设置页面"""
-    user_id = session['user']['id']
-    
-    if request.method == 'POST':
-        user_name = request.form.get('user_name', '未设置')
-        student_id = request.form.get('student_id', '')
-        update_user_settings(user_id, user_name, student_id)
-        return redirect(url_for('index'))
-    
-    settings = get_user_settings(user_id)
-    return render_template('settings.html', 
-                         user_name=settings['user_name'],
-                         student_id=settings['student_id'])
-# ===================================
-
 if __name__ == '__main__':
     print("英语学习平台网页版启动中...")
     print("请访问: http://127.0.0.1:5000")
