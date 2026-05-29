@@ -21,7 +21,7 @@ from shadow_hunter_web import shadow_hunter_bp
 from shadow_hunter_png import shadow_hunter_png_bp
 from skill_db_web import skill_db_bp
 from nightmare_exam_web import nightmare_bp
-from settings_web import settings_bp, get_all_settings, get_user_settings, ensure_user_settings
+from settings_web import settings_bp, get_all_settings, get_user_settings
 from vocabulary_shop_web import vocabulary_shop_bp
 from dict_shop_web import dict_shop_bp
 
@@ -179,22 +179,16 @@ def callback():
             'email': user_email,
         }
         
-        # 创建用户独立设置数据库
+        # 初始化用户独立数据库（词汇、设置、考试记录、技能库）
         try:
-            ensure_user_settings(
+            from user_data_init import init_all_user_data
+            init_all_user_data(
                 user_id,
                 account_name=session['user']['name'],
                 account_email=session['user']['email'],
             )
         except Exception as db_err:
-            print(f"用户设置库初始化出错: {db_err}")
-        
-        # 初始化用户词汇库（创建默认词典和错题词典）
-        try:
-            from vocabulary_manager import init_user_vocabulary
-            init_user_vocabulary(user_id)
-        except Exception as vocab_err:
-            print(f"初始化词汇库出错: {vocab_err}")
+            print(f"用户数据初始化出错: {db_err}")
         
         # 跳转回首页
         next_url = session.pop('next_url', url_for('index'))

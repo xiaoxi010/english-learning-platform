@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, jsonify
 from exam_base_web import prepare_basic_words, get_all_group_names, calculate_similarity
 from vocabulary_manager import get_vocab_manager
-from exam_stats_db import ExamStatsDB
+from exam_stats_db import get_exam_stats_db
 import random, os, uuid, json, sqlite3, re, difflib, math
 from ai_correct import ai_corrector
 from settings_web import get_all_settings
@@ -10,7 +10,7 @@ shadow_hunter_bp = Blueprint('shadow_hunter', __name__)
 
 
 def get_stats_db():
-    return ExamStatsDB("exam_stats.db", get_vocab_manager().db_path)
+    return get_exam_stats_db()
 
 PATTERN_PASS_SCORES = {"盗宝大师": 46, "诡影重重": 45, "三十六计": 47, "七十二变": 47}
 FULL_SCORE = 50

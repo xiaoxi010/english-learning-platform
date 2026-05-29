@@ -5,90 +5,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>阴影迷踪 - 考试</title>
-    <style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/exam-vocab.css') }}">
+<style>
         * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; }
-        body { font-family:"Microsoft YaHei",sans-serif; background:linear-gradient(135deg,#0c0c1d,#1a1a3e); min-height:100vh; color:#fff; padding-bottom:40px; }
-        .header { background:rgba(0,0,0,0.4); padding:10px 25px; display:flex; justify-content:space-between; align-items:center; }
-        .header h1 { font-size:1.3em; color:#ff6b35; }
-        .back-btn { color:#aaa; text-decoration:none; padding:6px 14px; border-radius:20px; background:rgba(255,255,255,0.1); font-size:0.9em; }
+        body { font-family:"Microsoft YaHei",sans-serif;  min-height:100vh; color:var(--text-primary); padding-bottom:40px; }
+        .header { background:var(--bg-primary); padding:10px 25px; display:flex; justify-content:space-between; align-items:center; }
+        .header h1 { font-size:1.3em; color:#ffd700; }
+        .back-btn { color:var(--text-secondary); text-decoration:none; padding:6px 14px; border-radius:20px; background:var(--bg-secondary); font-size:0.9em; }
         .main-wrap { max-width:1400px; margin:0 auto; padding:12px; }
-        .panel { background:rgba(255,255,255,0.05); border-radius:12px; padding:20px; margin-bottom:15px; }
-        .panel h2 { color:#ff6b35; margin-bottom:18px; font-size:1.5em; text-align:center; }
+        .panel { background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:20px; margin-bottom:15px; }
+        .panel h2 { color:#ffd700; margin-bottom:18px; font-size:1.5em; text-align:center; }
         .select-row { display:flex; gap:20px; margin-bottom:18px; justify-content:center; flex-wrap:wrap; }
         .select-group { min-width:300px; text-align:left; position:relative; }
-        .select-group label { display:block; color:#ff6b35; margin-bottom:5px; font-weight:bold; font-size:0.9em; }
-        .select-group input { width:100%; padding:10px; border-radius:8px; background:#1e1e3a; color:#fff; border:1px solid rgba(255,255,255,0.2); font-size:0.95em; }
-        .select-group input:focus { outline:none; border-color:#ff6b35; }
-        .dropdown { position:absolute; top:100%; left:0; right:0; max-height:200px; overflow-y:auto; background:#1e1e3a; border:1px solid rgba(255,255,255,0.2); border-radius:0 0 8px 8px; z-index:10; display:none; }
+        .select-group label { display:block; color:#ffd700; margin-bottom:5px; font-weight:bold; font-size:0.9em; }
+        .select-group input { width:100%; padding:10px; border-radius:8px; background:var(--bg-secondary); color:var(--text-primary); border:1px solid var(--border-color); font-size:0.95em; }
+        .select-group input:focus { outline:none; border-color:#ffd700; }
+        .dropdown { position:absolute; top:100%; left:0; right:0; max-height:200px; overflow-y:auto; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:0 0 8px 8px; z-index:10; display:none; }
         .dropdown div { padding:8px 10px; cursor:pointer; font-size:0.9em; }
-        .dropdown div:hover { background:rgba(255,107,53,0.2); }
-        .btn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:0.95em; font-weight:bold; transition:all 0.2s; color:#fff; }
-        .btn-orange { background:#ff6b35; }
-        .btn-green { background:#2ecc71; }
-        .btn-purple { background:#6c5ce7; }
+        .dropdown div:hover { background:rgba(255,215,0,0.15); }
+        .btn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:0.95em; font-weight:bold; transition:all 0.2s; color:var(--text-primary); }
+        .btn-orange { background:#ffd700; }
+        .btn-green { background:#ffd700; }
+        .btn-purple { background:#ffd700; }
         .btn-gold { background:#ffd700; color:#000; }
         .btn:disabled { opacity:0.4; cursor:not-allowed; }
-        .timer { font-size:2.5em; color:#ff6b35; font-weight:bold; margin-bottom:12px; text-align:center; }
+        .timer { font-size:2.5em; color:#ffd700; font-weight:bold; margin-bottom:12px; text-align:center; }
         .timer.warning { color:#e74c3c; animation:blink 1s infinite; }
         @keyframes blink { 50%{opacity:0.5;} }
-        .instruction { color:#aaa; text-align:center; margin-bottom:15px; font-size:0.95em; }
+        .instruction { color:var(--text-secondary); text-align:center; margin-bottom:15px; font-size:0.95em; }
         .word-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
-        .word-card { background:#1a1a30; border-radius:8px; padding:10px 8px; text-align:center; border:2px solid #333; }
+        .word-card { background:var(--bg-secondary); border-radius:8px; padding:10px 8px; text-align:center; border:2px solid #333; }
         .word-card .w-num { font-size:0.7em; color:#888; }
-        .word-card .w-word { font-size:0.95em; font-weight:bold; color:#ff6b35; margin:3px 0; }
-        .word-card .w-pos { font-size:0.7em; color:#3498db; margin-bottom:6px; }
-        .word-card input { width:100%; padding:6px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.3); color:#fff; font-size:0.85em; text-align:center; }
-        .word-card input:focus { outline:none; border-color:#ff6b35; }
+        .word-card .w-word { font-size:0.95em; font-weight:bold; color:#ffd700; margin:3px 0; }
+        .word-card .w-pos { font-size:0.7em; color:#ffd700; margin-bottom:6px; }
+        .word-card input { width:100%; padding:6px; border-radius:4px; border:1px solid var(--border-color); background:rgba(0,0,0,0.3); color:var(--text-primary); font-size:0.85em; text-align:center; }
+        .word-card input:focus { outline:none; border-color:#ffd700; }
         .result-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
-        .result-cell { background:#1a1a30; border-radius:8px; padding:10px 8px; text-align:center; border:3px solid transparent; }
-        .result-cell.border-green { border-color:#2ecc71; background:#1a2a1a; }
+        .result-cell { background:var(--bg-secondary); border-radius:8px; padding:10px 8px; text-align:center; border:3px solid transparent; }
+        .result-cell.border-green { border-color:#ffd700; background:#1a2a1a; }
         .result-cell.border-gold { border-color:#ffd700; background:#2a2a00; }
         .result-cell.border-orange { border-color:#ffa500; background:#2a1a00; }
         .result-cell.border-red { border-color:#e74c3c; background:#2a1a1a; }
         .result-cell .r-num { font-size:0.7em; color:#888; }
-        .result-cell .r-word { font-size:0.9em; font-weight:bold; color:#ff6b35; margin:3px 0; }
-        .result-cell .r-pos { font-size:0.7em; color:#3498db; margin-bottom:4px; }
+        .result-cell .r-word { font-size:0.9em; font-weight:bold; color:#ffd700; margin:3px 0; }
+        .result-cell .r-pos { font-size:0.7em; color:#ffd700; margin-bottom:4px; }
         .result-cell .r-user { font-size:0.8em; margin-bottom:2px; }
-        .result-cell .r-answer { font-size:0.8em; color:#00b894; margin-bottom:2px; }
+        .result-cell .r-answer { font-size:0.8em; color:#ffd700; margin-bottom:2px; }
         .result-cell .r-score { font-size:0.85em; font-weight:bold; }
         .score-bar { text-align:center; font-size:1.2em; margin:10px 0; }
         .hidden { display:none !important; }
         .btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
         .pattern-row { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin:20px 0; }
-        .pattern-card { background:#1a1a30; border-radius:16px; padding:30px 20px; text-align:center; border:3px solid #444; transition:all 0.15s; width:200px; min-height:130px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        .pattern-card { background:var(--bg-secondary); border-radius:16px; padding:30px 20px; text-align:center; border:3px solid #444; transition:all 0.15s; width:200px; min-height:130px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
         .pattern-card.flashing { animation:patternFlash 0.12s ease-in-out; }
-        @keyframes patternFlash { 0%{border-color:#ff0000;box-shadow:0 0 20px rgba(255,0,0,0.8);} 100%{border-color:#ff4444;box-shadow:0 0 35px rgba(255,0,0,0.5);} }
-        .pattern-card.won { border-color:#2ecc71 !important; box-shadow:0 0 40px rgba(46,204,113,0.8) !important; background:#1a2a1a !important; }
+        @keyframes patternFlash { 0%{border-color:#ffd700;box-shadow:0 0 20px rgba(255,0,0,0.8);} 100%{border-color:#ffd700;box-shadow:0 0 35px rgba(255,0,0,0.5);} }
+        .pattern-card.won { border-color:#ffd700 !important; box-shadow:0 0 40px rgba(46,204,113,0.8) !important; background:#1a2a1a !important; }
         .pattern-card .pc-name { color:#ffd700; font-weight:bold; font-size:1.3em; margin-bottom:10px; }
-        .pattern-card .pc-score { color:#aaa; font-size:0.9em; }
-        .countdown-text { text-align:center; font-size:1.3em; color:#ff6b35; margin-top:15px; }
+        .pattern-card .pc-score { color:var(--text-secondary); font-size:0.9em; }
+        .countdown-text { text-align:center; font-size:1.3em; color:#ffd700; margin-top:15px; }
         
         /* 七十二变 */
         .four-col { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-        .col-panel { background:#1a1a30; border-radius:8px; padding:10px; }
-        .col-panel h3 { color:#ff6b35; text-align:center; font-size:0.95em; margin-bottom:8px; }
-        .match-card { background:#2a2a3a; border-radius:6px; padding:8px; margin:3px 0; cursor:pointer; text-align:center; border:2px solid transparent; transition:all 0.2s; font-size:0.85em; }
+        .col-panel { background:var(--bg-secondary); border-radius:8px; padding:10px; }
+        .col-panel h3 { color:#ffd700; text-align:center; font-size:0.95em; margin-bottom:8px; }
+        .match-card { background:var(--bg-secondary); border-radius:6px; padding:8px; margin:3px 0; cursor:pointer; text-align:center; border:2px solid transparent; transition:all 0.2s; font-size:0.85em; }
         .match-card:hover { background:#3a3a4a; }
-        .match-card.selected { border-color:#ff6b35 !important; background:#3a3020; }
+        .match-card.selected { border-color:#ffd700 !important; background:#3a3020; }
         .match-card.matched { opacity:0.5; background:#2a2a2a; cursor:default; border-color:#555; }
-        .match-card .matched-meaning { color:#2ecc71; font-size:0.75em; margin-top:4px; }
+        .match-card .matched-meaning { color:#ffd700; font-size:0.75em; margin-top:4px; }
         
         /* 盗宝大师完整样式 */
         .skill-grid { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin:20px 0; }
-        .skill-card { background:#1a1a30; border-radius:16px; padding:30px 20px; text-align:center; border:2px solid #444; cursor:pointer; transition:all 0.3s; width:220px; min-height:160px; }
-        .skill-card:hover { border-color:#ffd700; transform:translateY(-5px); box-shadow:0 10px 30px rgba(255,215,0,0.2); }
-        .skill-card.selected { border-color:#ff6b35; background:#2a1a10; box-shadow:0 0 30px rgba(255,107,53,0.3); }
+        .skill-card { background:var(--bg-secondary); border-radius:16px; padding:30px 20px; text-align:center; border:2px solid #444; cursor:pointer; transition:all 0.3s; width:220px; min-height:160px; }
+        .skill-card:hover { border-color:#ffd700; transform:translateY(-5px); box-shadow:0 10px 30px rgba(255,215,0,0.15); }
+        .skill-card.selected { border-color:#ffd700; background:rgba(255,215,0,0.15); box-shadow:0 0 30px rgba(255,215,0,0.15); }
         .skill-card .sk-name { color:#ffd700; font-weight:bold; font-size:1.2em; margin-bottom:10px; }
-        .skill-card .sk-desc { color:#aaa; font-size:0.85em; line-height:1.5; }
+        .skill-card .sk-desc { color:var(--text-secondary); font-size:0.85em; line-height:1.5; }
         .treasure-row { display:flex; gap:20px; justify-content:center; margin:25px 0; flex-wrap:wrap; }
-        .treasure-card { background:#1a1a30; border-radius:16px; padding:20px 15px; text-align:center; border:3px solid #ffd700; cursor:pointer; transition:all 0.3s; width:190px; min-height:260px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        .treasure-card { background:var(--bg-secondary); border-radius:16px; padding:20px 15px; text-align:center; border:3px solid #ffd700; cursor:pointer; transition:all 0.3s; width:190px; min-height:260px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; align-items:center; }
         .treasure-card:hover:not(.empty-card):not(.selected-card):not(.disabled-card) { border-color:var(--theme); transform:translateY(-8px) scale(1.02); box-shadow:0 0 30px var(--theme),0 15px 40px var(--theme); }
         .treasure-card.empty-card { border-color:#333; opacity:0.5; cursor:not-allowed; }
         .treasure-card.empty-card:hover { transform:none; box-shadow:none; }
-        .treasure-card.selected-card { border-color:#ff6b35; background:#2a1a10; box-shadow:0 0 50px rgba(255,107,53,0.6); }
+        .treasure-card.selected-card { border-color:#ffd700; background:rgba(255,215,0,0.15); box-shadow:0 0 50px #ffd700; }
         .treasure-card.disabled-card { pointer-events:none; }
         .treasure-card.flashing { animation:flashCard 0.3s ease-in-out; }
-        @keyframes flashCard { 0%{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.8);} 50%{border-color:#ff4444;box-shadow:0 0 50px rgba(255,0,0,0.5);} 100%{border-color:#ff0000;box-shadow:0 0 30px rgba(255,0,0,0.8);} }
+        @keyframes flashCard { 0%{border-color:#ffd700;box-shadow:0 0 30px rgba(255,0,0,0.8);} 50%{border-color:#ffd700;box-shadow:0 0 50px rgba(255,0,0,0.5);} 100%{border-color:#ffd700;box-shadow:0 0 30px rgba(255,0,0,0.8);} }
         .treasure-card .tc-name { color:var(--theme); font-weight:bold; font-size:1.1em; position:absolute; top:12px; left:0; right:0; text-align:center;}
         .treasure-card .tc-meaning { color:#ddd; font-size:0.85em; line-height:1.4; padding:0 10px; word-break:break-all;display:flex; align-items:center; justify-content:center; min-height:60px; margin-top:20px;}
         .treasure-card .tc-empty { color:#555; font-size:0.85em; display:flex; align-items:center; justify-content:center; min-height:60px;}
@@ -97,42 +99,42 @@
         .bg-particle { position:absolute; border-radius:50%; pointer-events:none; z-index:1; animation:fallDown var(--dur) linear forwards; }
         @keyframes fallDown { 0%{opacity:0.8;transform:translate(0,0);} 20%{opacity:0.7;} 60%{opacity:0.4;} 100%{opacity:0;transform:translate(0,var(--dy));} }
         .stat-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:15px 0; }
-        .stat-card { background:#1a1a30; border-radius:12px; padding:15px; text-align:center; border:2px solid #444; cursor:pointer; transition:all 0.3s; }
+        .stat-card { background:var(--bg-secondary); border-radius:12px; padding:15px; text-align:center; border:2px solid #444; cursor:pointer; transition:all 0.3s; }
         .stat-card:hover { border-color:#ffd700; }
-        .stat-card.dig-selected { border-color:#ff6b35; background:#2a1a10; }
+        .stat-card.dig-selected { border-color:#ffd700; background:rgba(255,215,0,0.15); }
         .stat-card.flashing { animation:flashCard 0.3s ease-in-out; }
         .stat-card .st-name { color:#ffd700; font-weight:bold; font-size:1.1em; }
-        .stat-card .st-info { color:#aaa; font-size:0.85em; margin-top:5px; }
-        .btn-blue { background:#3498db; }
+        .stat-card .st-info { color:var(--text-secondary); font-size:0.85em; margin-top:5px; }
+        .btn-blue { background:#ffd700; }
 
         /* 三十六计完整样式 */
         .strategy-container { display:flex; flex-direction:column; gap:15px; }
         .tabs { display:flex; gap:5px; margin-bottom:10px; }
-        .tab-btn { padding:8px 16px; border:none; border-radius:8px 8px 0 0; cursor:pointer; background:#2a2a3a; color:#aaa; font-size:0.9em; }
-        .tab-btn.active { background:#ff6b35; color:#fff; }
+        .tab-btn { padding:8px 16px; border:none; border-radius:8px 8px 0 0; cursor:pointer; background:var(--bg-secondary); color:var(--text-secondary); font-size:0.9em; }
+        .tab-btn.active { background:#ffd700; color:var(--text-primary); }
         .tab-content { display:none; }
         .tab-content.active { display:block; }
         .summary-table { width:100%; border-collapse:collapse; font-size:0.8em; margin-bottom:15px; }
-        .summary-table th { background:#2d3436; padding:6px 4px; }
-        .summary-table td { padding:5px 4px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1); }
+        .summary-table th { background:var(--bg-card); padding:6px 4px; }
+        .summary-table td { padding:5px 4px; text-align:center; border-bottom:1px solid var(--bg-secondary); }
         
         /* 总成绩报告 */
         .report-top { display:flex; gap:15px; margin-bottom:15px; }
-        .report-info { flex:1; background:#2a2a3a; border:1px solid #fff; padding:10px; }
+        .report-info { flex:1; background:var(--bg-secondary); border:1px solid #fff; padding:10px; }
         .report-info .r-row { padding:3px 0; font-size:0.8em; }
-        .report-info .r-label { color:#3498db; font-weight:bold; }
-        .report-photo { width:200px; background:#2a2a3a; border:1px solid #fff; display:flex; align-items:center; justify-content:center; font-size:1.3em; font-weight:bold; }
+        .report-info .r-label { color:#ffd700; font-weight:bold; }
+        .report-photo { width:200px; background:var(--bg-secondary); border:1px solid #fff; display:flex; align-items:center; justify-content:center; font-size:1.3em; font-weight:bold; }
         .report-photo img { max-width:100%; max-height:110px; }
-        .report-table-wrap { background:#2a2a3a; border:1px solid #fff; max-height:45vh; overflow-y:auto; }
+        .report-table-wrap { background:var(--bg-secondary); border:1px solid #fff; max-height:45vh; overflow-y:auto; }
         .report-table { width:100%; border-collapse:collapse; font-size:0.7em; }
-        .report-table th { background:#2d3436; padding:4px 2px; position:sticky; top:0; }
+        .report-table th { background:var(--bg-card); padding:4px 2px; position:sticky; top:0; }
         .report-table td { padding:3px 2px; text-align:center; border:1px solid rgba(255,255,255,0.3); }
-        .td-green { color:#2ecc71; font-weight:bold; }
+        .td-green { color:#ffd700; font-weight:bold; }
         .td-red { color:#e74c3c; font-weight:bold; }
         .td-gold { color:#ffd700; font-weight:bold; }
     </style>
 </head>
-<body>
+<body class="exam-vocab-page">
 <div class="header"><h1>🌑 阴影迷踪</h1><a href="/" class="back-btn">← 返回主菜单</a></div>
 <div class="main-wrap">
 
@@ -159,7 +161,7 @@
     <h2>📝 批改结果 <span id="aiBadge" style="font-size:0.5em;vertical-align:middle;"></span></h2>
     <p class="instruction" style="font-size:0.8em;color:#888;">🟢 1.00分 | 🟡 0.75分 | 🟠 0.25-0.5分 | 🔴 0分</p>
     <div class="result-grid" id="resultGrid"></div>
-    <div class="score-bar">基础词汇得分: <span id="basicScore" style="color:#2ecc71;">0</span>/30</div>
+    <div class="score-bar">基础词汇得分: <span id="basicScore" style="color:#ffd700;">0</span>/30</div>
     <div class="btn-row"><button class="btn btn-purple" onclick="goToDraw()">🎲 进入阴影迷踪 →</button></div>
 </div>
 
@@ -185,9 +187,9 @@
     <h2 style="color:#ffd700;text-align:center;margin-bottom:12px;">📊 阴影迷踪考试总成绩报告</h2>
     <div class="report-top"><div class="report-info" id="rinfo"></div><div class="report-photo" id="rphoto"></div></div>
     <div class="report-table-wrap"><table class="report-table"><thead><tr>
-        <th style="background:#1a1a2a;color:#3498db;">行号</th><th style="background:#ff6b35;">单词</th><th style="background:#3498db;">词性</th><th>汉译</th><th>得分</th>
-        <th style="width:8px;"></th><th style="background:#ff6b35;">单词</th><th style="background:#3498db;">词性</th><th>汉译</th><th>得分</th>
-        <th style="width:8px;"></th><th style="background:#ff6b35;">单词</th><th style="background:#3498db;">词性</th><th>汉译</th><th>得分</th>
+        <th style="background:#1a1a2a;color:#ffd700;">行号</th><th style="background:#ffd700;">单词</th><th style="background:#ffd700;">词性</th><th>汉译</th><th>得分</th>
+        <th style="width:8px;"></th><th style="background:#ffd700;">单词</th><th style="background:#ffd700;">词性</th><th>汉译</th><th>得分</th>
+        <th style="width:8px;"></th><th style="background:#ffd700;">单词</th><th style="background:#ffd700;">词性</th><th>汉译</th><th>得分</th>
     </tr></thead><tbody id="rbody"></tbody></table></div>
     <div class="btn-row"><button class="btn btn-green" onclick="exportPNG()">📄 导出PNG证书</button><button class="btn btn-purple" onclick="location.reload()">🔄 重新考试</button><button class="btn btn-gold" onclick="window.location.href='/'">🏠 返回主菜单</button></div>
 </div>
@@ -232,7 +234,7 @@ async function submitBasic(){
     var d=await r.json();if(!d.success)return alert(d.message);
     basicResults=d.results;basicScore=d.score;switchStage('s3');
     var badgeEl=document.getElementById('aiBadge');
-    if(d.used_ai){badgeEl.innerHTML='🤖 AI批改';badgeEl.style.color='#00b894';}else{badgeEl.innerHTML='⚙️ 系统批改';badgeEl.style.color='#ffd700';}
+    if(d.used_ai){badgeEl.innerHTML='🤖 AI批改';badgeEl.style.color='#ffd700';}else{badgeEl.innerHTML='⚙️ 系统批改';badgeEl.style.color='#ffd700';}
     document.getElementById('resultGrid').innerHTML=basicResults.map(function(r,i){
         var bcClass=r.border_color==='#00ff00'?'border-green':(r.border_color==='#ffd700'?'border-gold':(r.border_color==='#ffa500'?'border-orange':'border-red'));
         var sc=r.score>=0.99?'#2ecc71':(r.score>=0.5?'#ffd700':(r.score>=0.25?'#ffa500':'#e74c3c'));
@@ -338,7 +340,7 @@ async function submitShadow(){
     var r=await fetch('/api/shadow_hunter/shadow_submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,answers:ans})});
     var d=await r.json();if(!d.success)return alert(d.message);
     shadowResults=d.results;patternScore=d.shadow_score;patternResults=d.results;
-    document.getElementById('s5').innerHTML='<h2>📝 诡影重重 - 批改结果</h2><div class="result-grid">'+shadowResults.map(function(r,i){var bc=r.score>=1?'border-green':(r.score>=0.75?'border-gold':'border-red');var sc=r.score>=1?'#2ecc71':(r.score>=0.75?'#ffd700':'#e74c3c');return '<div class="result-cell '+bc+'"><div class="r-num">'+(i+1)+'</div><div class="r-word">'+r.word+'</div><div class="r-pos">'+r.pos+'</div><div class="r-user" style="color:'+sc+'">你的: '+(r.user_answer||'(未作答)')+'</div><div class="r-answer">答案: '+r.meaning+'</div><div class="r-score" style="color:'+sc+'">'+r.score_display+'</div></div>';}).join('')+'</div><div class="score-bar">诡影重重得分: <span style="color:#ff6b35;">'+patternScore.toFixed(2)+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
+    document.getElementById('s5').innerHTML='<h2>📝 诡影重重 - 批改结果</h2><div class="result-grid">'+shadowResults.map(function(r,i){var bc=r.score>=1?'border-green':(r.score>=0.75?'border-gold':'border-red');var sc=r.score>=1?'#2ecc71':(r.score>=0.75?'#ffd700':'#e74c3c');return '<div class="result-cell '+bc+'"><div class="r-num">'+(i+1)+'</div><div class="r-word">'+r.word+'</div><div class="r-pos">'+r.pos+'</div><div class="r-user" style="color:'+sc+'">你的: '+(r.user_answer||'(未作答)')+'</div><div class="r-answer">答案: '+r.meaning+'</div><div class="r-score" style="color:'+sc+'">'+r.score_display+'</div></div>';}).join('')+'</div><div class="score-bar">诡影重重得分: <span style="color:#ffd700;">'+patternScore.toFixed(2)+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
 }
 
 // ============ 七十二变 ============
@@ -361,7 +363,7 @@ async function submitSeventyTwo(){
     var r=await fetch('/api/shadow_hunter/seventytwo_submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exam_id:examId,pairs:pairs72})});
     var d=await r.json();if(!d.success)return alert(d.message);
     patternScore=d.strategy_score;patternResults=d.results;
-    document.getElementById('s5').innerHTML='<h2>📝 七十二变 - 批改结果</h2><div class="result-grid">'+patternResults.map(function(r,i){var bc=r.is_correct?'border-green':'border-red';return '<div class="result-cell '+bc+'"><div class="r-num">'+(i+1)+'</div><div class="r-word">'+r.word+'</div><div class="r-pos">'+(r.pos||'')+'</div><div class="r-user" style="color:'+(r.is_correct?'#2ecc71':'#e74c3c')+'">你的: '+(r.user_meaning||'未匹配')+'</div><div class="r-answer">答案: '+r.meaning+'</div></div>';}).join('')+'</div><div class="score-bar">七十二变得分: <span style="color:#ff6b35;">'+patternScore+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
+    document.getElementById('s5').innerHTML='<h2>📝 七十二变 - 批改结果</h2><div class="result-grid">'+patternResults.map(function(r,i){var bc=r.is_correct?'border-green':'border-red';return '<div class="result-cell '+bc+'"><div class="r-num">'+(i+1)+'</div><div class="r-word">'+r.word+'</div><div class="r-pos">'+(r.pos||'')+'</div><div class="r-user" style="color:'+(r.is_correct?'#2ecc71':'#e74c3c')+'">你的: '+(r.user_meaning||'未匹配')+'</div><div class="r-answer">答案: '+r.meaning+'</div></div>';}).join('')+'</div><div class="score-bar">七十二变得分: <span style="color:#ffd700;">'+patternScore+'</span>/20</div><div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
 }
 
 // ============ 三十六计（完整版） ============
@@ -390,7 +392,7 @@ async function submitThirtySix(){
     render36Summary();
 }
 function render36Summary(){
-    var h='<h2>📊 三十六计 - 版型考试总结</h2><div class="score-bar">版型得分: <span style="color:#ff6b35;">'+strategyScore36+'</span>/20</div>';
+    var h='<h2>📊 三十六计 - 版型考试总结</h2><div class="score-bar">版型得分: <span style="color:#ffd700;">'+strategyScore36+'</span>/20</div>';
     // 标签页
     h+='<div class="tabs"><button class="tab-btn active" onclick="switch36Tab(\'areas\')">汉译区域得分</button><button class="tab-btn" onclick="switch36Tab(\'words\')">30个单词详情</button></div>';
     // 区域得分
@@ -401,14 +403,14 @@ function render36Summary(){
         for(var j=0;j<strategyResults36.length;j++){if(strategyResults36[j].target_meaning===m.meaning)correctWords.push(strategyResults36[j].word);}
         if(correctWords.length===0){for(var k in allCards36){if(allCards36[k].target_meaning===m.meaning||allCards36[k].meaning===m.meaning){if(correctWords.indexOf(allCards36[k].word)<0)correctWords.push(allCards36[k].word);}}}
         var matches=areaCorrect36[i]||0;var score=matches>=2?2:(matches==1?1:0);
-        h+='<tr><td>'+(i+1)+'</td><td>'+m.meaning+'</td><td style="color:#ff6b35;">'+(placedWords.join(', ')||'无')+'</td><td style="color:#2ecc71;">'+(correctWords.join(', ')||'无')+'</td><td style="color:'+(score>=2?'#2ecc71':(score>=1?'#ffd700':'#e74c3c'))+'">'+score+'分</td></tr>';
+        h+='<tr><td>'+(i+1)+'</td><td>'+m.meaning+'</td><td style="color:#ffd700;">'+(placedWords.join(', ')||'无')+'</td><td style="color:#ffd700;">'+(correctWords.join(', ')||'无')+'</td><td style="color:'+(score>=2?'#ffd700':(score>=1?'#2ecc71':'#e74c3c'))+'">'+score+'分</td></tr>';
     }
     h+='</table></div>';
     // 单词详情
     h+='<div class="tab-content" id="tab36-words"><table class="summary-table"><tr><th>序号</th><th>单词</th><th>词性</th><th>汉译</th><th>目标汉译</th></tr>';
     for(var i=0;i<strategyResults36.length;i++){
         var r=strategyResults36[i];
-        h+='<tr><td>'+(i+1)+'</td><td style="color:#ff6b35;font-weight:bold;">'+r.word+'</td><td style="color:#3498db;">'+r.pos+'</td><td>'+r.meaning+'</td><td style="color:#2ecc71;">'+r.target_meaning+'</td></tr>';
+        h+='<tr><td>'+(i+1)+'</td><td style="color:#ffd700;font-weight:bold;">'+r.word+'</td><td style="color:#ffd700;">'+r.pos+'</td><td>'+r.meaning+'</td><td style="color:#ffd700;">'+r.target_meaning+'</td></tr>';
     }
     h+='</table></div>';
     h+='<div class="btn-row"><button class="btn btn-purple" onclick="showFinalReport()">📊 查看总成绩报告</button></div>';
@@ -423,7 +425,7 @@ function switch36Tab(tab){
 // ============ 盗宝大师（100%复刻原版） ============
 var treasureSkills=[],skillRemaining={},currentRound=0,treasureScore=0,userChoices={},isSelecting=false;
 var digSelected=null,activeSkill=null,techSelectedRounds=[],finalReportData=null;
-var treasureNames=['青山','寒山','沧山','暮山','尘山'],treasureColors=['#2ecc71','#c0c0c0','#3498db','#ff69b4','#ff8c00'];
+var treasureNames=['青山','寒山','沧山','暮山','尘山'],treasureColors=['#FFD700','#c0c0c0','#00BFFF','#ff69b4','#ff8c00'];
 var treasureHues=[[120,160],[0,0],[200,220],[330,350],[25,40]];
 var bgParticleIntervals={},roundOriginalColors={};
 
@@ -433,7 +435,7 @@ function loadTreasureSkills(){
     var descs={'重置':'刷新当前轮单词和选项(3次)','翻牌':'查看一个宝藏卡的正确次数(1次)','预言':'查看真宝藏的正确次数(1次)','孤注一掷':'挖宝选错时25%概率重选(1次)','看破':'查验某轮选择是否正确(2次)','科技之星':'选4个轮次判定正确率(1次)','枫恬果实':'在统计阶段对某轮使用，正确+1分，错误显示答案(1次)'};
     var drawnSkills=allSkills.sort(function(){return Math.random()-0.5;}).slice(0,3);
     treasureSkills=[];digSelected=null;activeSkill=null;techSelectedRounds=[];finalReportData=null;
-    document.getElementById('s5').innerHTML='<h2>📜 盗宝大师 - 选择技能</h2><p class="instruction">5个位置（青山/寒山/沧山/暮山/尘山）只有一个真宝藏。20轮每轮正确+1分，正确最多的就是真宝藏。</p><div class="skill-grid">'+drawnSkills.map(function(s){return '<div class="skill-card" id="sk_'+s+'" onclick="toggleSkill(\''+s+'\')"><div class="sk-name">'+s+'</div><div class="sk-desc">'+descs[s]+'</div></div>';}).join('')+'</div><p class="instruction" style="color:#ff6b35;">请选择2个技能（点击选中/取消）</p><div style="text-align:center"><button class="btn btn-gold" id="btnGoGame" disabled onclick="goToGame()">开始盗宝大师</button></div>';
+    document.getElementById('s5').innerHTML='<h2>📜 盗宝大师 - 选择技能</h2><p class="instruction">5个位置（青山/寒山/沧山/暮山/尘山）只有一个真宝藏。20轮每轮正确+1分，正确最多的就是真宝藏。</p><div class="skill-grid">'+drawnSkills.map(function(s){return '<div class="skill-card" id="sk_'+s+'" onclick="toggleSkill(\''+s+'\')"><div class="sk-name">'+s+'</div><div class="sk-desc">'+descs[s]+'</div></div>';}).join('')+'</div><p class="instruction" style="color:#ffd700;">请选择2个技能（点击选中/取消）</p><div style="text-align:center"><button class="btn btn-gold" id="btnGoGame" disabled onclick="goToGame()">开始盗宝大师</button></div>';
     document.getElementById('btnGoGame').disabled=true;
 }
 function toggleSkill(name){
@@ -563,8 +565,8 @@ function showStatStage(){
     var rg='';
     for(var i=0;i<d.rounds_detail.length;i++){
         var rd=d.rounds_detail[i];
-        rg+='<div class="round-word-card" id="rwc_'+i+'" onclick="statClickRound('+i+')"><div>'+(i+1)+'. '+rd.word+'</div><div style="color:#ff6b35;">选:'+(rd.user_choice?treasureNames[rd.user_choice-1]:'空')+'</div></div>';
-        roundOriginalColors[i]='#3498db';
+        rg+='<div class="round-word-card" id="rwc_'+i+'" onclick="statClickRound('+i+')"><div>'+(i+1)+'. '+rd.word+'</div><div style="color:#ffd700;">选:'+(rd.user_choice?treasureNames[rd.user_choice-1]:'空')+'</div></div>';
+        roundOriginalColors[i]='#ffd700';
     }
     document.getElementById('roundWordsGrid').innerHTML=rg;
     var ts='';
@@ -602,8 +604,8 @@ function statClickRound(i){
 function toggleTechRound(i){
     var el=document.getElementById('rwc_'+i);if(!el)return;
     var idx=techSelectedRounds.indexOf(i);
-    if(idx>=0){techSelectedRounds.splice(idx,1);el.classList.remove('tech-selected');el.style.borderColor=roundOriginalColors[i]||'#3498db';}
-    else{if(techSelectedRounds.length>=4)return;roundOriginalColors[i]=el.style.borderColor||'#3498db';techSelectedRounds.push(i);el.classList.add('tech-selected');el.style.borderColor='#ffff00';if(techSelectedRounds.length===4){useStatSkill('科技之星',{rounds:[...techSelectedRounds]});}}
+    if(idx>=0){techSelectedRounds.splice(idx,1);el.classList.remove('tech-selected');el.style.borderColor=roundOriginalColors[i]||'#ffd700';}
+    else{if(techSelectedRounds.length>=4)return;roundOriginalColors[i]=el.style.borderColor||'#ffd700';techSelectedRounds.push(i);el.classList.add('tech-selected');el.style.borderColor='#ffff00';if(techSelectedRounds.length===4){useStatSkill('科技之星',{rounds:[...techSelectedRounds]});}}
 }
 function selectDigTreasure(t){
     if(activeSkill==='翻牌'){useStatSkill('翻牌',{target:t});return;}
@@ -618,7 +620,7 @@ function statActivateSkill(skill){
     renderStatSkills();
 }
 function clearTechSelection(){
-    document.querySelectorAll('.round-word-card.tech-selected').forEach(function(el){el.classList.remove('tech-selected');var i=parseInt(el.id.replace('rwc_',''));el.style.borderColor=roundOriginalColors[i]||'#3498db';});
+    document.querySelectorAll('.round-word-card.tech-selected').forEach(function(el){el.classList.remove('tech-selected');var i=parseInt(el.id.replace('rwc_',''));el.style.borderColor=roundOriginalColors[i]||'#ffd700';});
     techSelectedRounds=[];
 }
 async function useStatSkill(skill,params){
@@ -629,8 +631,8 @@ async function useStatSkill(skill,params){
     if(skill==='翻牌'){finalReportData.skill_results['翻牌']={treasure:d.result.treasure,count:d.result.count};}
     else if(skill==='预言'){finalReportData.skill_results['预言']={count:d.result.count};}
     else if(skill==='看破'){finalReportData.skill_results['看破']=finalReportData.skill_results['看破']||[];finalReportData.skill_results['看破'].push({round:params.round_idx+1,is_correct:d.result.is_correct});var el=document.getElementById('rwc_'+params.round_idx);if(el){el.classList.add(d.result.is_correct?'insight-green':'insight-red');roundOriginalColors[params.round_idx]=d.result.is_correct?'#2ecc71':'#e74c3c';}}
-    else if(skill==='科技之星'){finalReportData.skill_results['科技之星']={rounds:params.rounds.map(function(x){return x+1;}),status:d.result.status,correct:d.result.correct};params.rounds.forEach(function(i){var el=document.getElementById('rwc_'+i);if(el){el.classList.remove('tech-selected');var origColor=roundOriginalColors[i];if(origColor&&origColor!=='#3498db'){el.style.borderColor=origColor;}}});}
-    else if(skill==='枫恬果实'){finalReportData.skill_results['枫恬果实']={is_correct:d.result.is_correct,correct_card:d.result.correct_card,round:params.round_idx+1};var el2=document.getElementById('rwc_'+params.round_idx);if(el2){if(d.result.is_correct){el2.classList.add('maple-green');roundOriginalColors[params.round_idx]='#2ecc71';}else{el2.classList.add('maple-red');roundOriginalColors[params.round_idx]='#e74c3c';}}}
+    else if(skill==='科技之星'){finalReportData.skill_results['科技之星']={rounds:params.rounds.map(function(x){return x+1;}),status:d.result.status,correct:d.result.correct};params.rounds.forEach(function(i){var el=document.getElementById('rwc_'+i);if(el){el.classList.remove('tech-selected');var origColor=roundOriginalColors[i];if(origColor&&origColor!=='#ffd700'){el.style.borderColor=origColor;}}});}
+    else if(skill==='枫恬果实'){finalReportData.skill_results['枫恬果实']={is_correct:d.result.is_correct,correct_card:d.result.correct_card,round:params.round_idx+1};var el2=document.getElementById('rwc_'+params.round_idx);if(el2){if(d.result.is_correct){el2.classList.add('maple-green');roundOriginalColors[params.round_idx]='#ffd700';}else{el2.classList.add('maple-red');roundOriginalColors[params.round_idx]='#e74c3c';}}}
     activeSkill=null;techSelectedRounds=[];renderStatSkills();
 }
 async function digTreasure(){
@@ -646,7 +648,7 @@ function animateGambleFlash(duration,finalTreasure,isCorrect){
     return new Promise(function(resolve){
         var cards=document.querySelectorAll('.stat-card');var startTime=Date.now();var flashInterval=150;
         function flash(){var elapsed=Date.now()-startTime;
-            if(elapsed>=duration){cards.forEach(function(c){c.classList.remove('flashing');});var finalCard=document.getElementById('statCard_'+finalTreasure);if(finalCard){cards.forEach(function(c){c.classList.remove('dig-selected');});setTimeout(function(){if(isCorrect){finalCard.style.borderColor='#2ecc71';finalCard.style.boxShadow='0 0 20px rgba(46,204,113,0.8)';}else{if(finalCard.style.borderColor!=='#e74c3c'){finalCard.style.borderColor='#e74c3c';finalCard.style.boxShadow='0 0 20px rgba(231,76,60,0.8)';}}setTimeout(function(){resolve();},1000);},250);}else{setTimeout(function(){resolve();},1250);}return;}
+            if(elapsed>=duration){cards.forEach(function(c){c.classList.remove('flashing');});var finalCard=document.getElementById('statCard_'+finalTreasure);if(finalCard){cards.forEach(function(c){c.classList.remove('dig-selected');});setTimeout(function(){if(isCorrect){finalCard.style.borderColor='#ffd700';finalCard.style.boxShadow='0 0 20px rgba(46,204,113,0.8)';}else{if(finalCard.style.borderColor!=='#e74c3c'){finalCard.style.borderColor='#e74c3c';finalCard.style.boxShadow='0 0 20px rgba(231,76,60,0.8)';}}setTimeout(function(){resolve();},1000);},250);}else{setTimeout(function(){resolve();},1250);}return;}
             cards.forEach(function(c){c.classList.remove('flashing');});var randomCount=Math.floor(Math.random()*3)+1;var shuffled=Array.from(cards).sort(function(){return Math.random()-0.5;});for(var i=0;i<randomCount;i++){shuffled[i].classList.add('flashing');}setTimeout(flash,flashInterval);}
         flash();
     });
@@ -658,7 +660,7 @@ function showFinalSummary(){
     var sk='';for(var j=0;j<treasureSkills.length;j++){var s=treasureSkills[j];var left=skillRemaining[s]||0;sk+='<span class="skill-badge '+(left<=0?'red':'green')+'">'+s+'</span> ';}
     document.getElementById('finalSkills').innerHTML=sk;
     document.getElementById('finalTT').textContent=treasureNames[d.true_treasure-1]+' ('+(d.treasure_counts[d.true_treasure]||0)+'/20)';
-    var fg='';for(var i=0;i<d.rounds_detail.length;i++){var rd=d.rounds_detail[i];var cls=rd.is_correct?'style="border-color:#2ecc71;"':'style="border-color:#e74c3c;"';fg+='<div class="round-word-card" '+cls+'><div>'+(i+1)+'. '+rd.word+'</div><div style="color:#2ecc71;">✓'+treasureNames[rd.correct_card-1]+'</div><div style="color:#ff6b35;">选:'+(rd.user_choice?treasureNames[rd.user_choice-1]:'空')+'</div></div>';}
+    var fg='';for(var i=0;i<d.rounds_detail.length;i++){var rd=d.rounds_detail[i];var cls=rd.is_correct?'style="border-color:#ffd700;"':'style="border-color:#e74c3c;"';fg+='<div class="round-word-card" '+cls+'><div>'+(i+1)+'. '+rd.word+'</div><div style="color:#ffd700;">✓'+treasureNames[rd.correct_card-1]+'</div><div style="color:#ffd700;">选:'+(rd.user_choice?treasureNames[rd.user_choice-1]:'空')+'</div></div>';}
     document.getElementById('finalRoundGrid').innerHTML=fg;
 }
 
@@ -667,20 +669,20 @@ function showFinalReport(){
     switchStage('s6');
     var totalScore = basicScore + patternScore;
     var isPassed = totalScore >= patternPassScore;
-    var tc = isPassed ? '#2ecc71' : '#e74c3c';
+    var tc = isPassed ? '#ffd700' : '#e74c3c';
     
     document.getElementById('rinfo').innerHTML = 
         '<div class="r-row"><span class="r-label">姓名：</span>'+USER_NAME+'  <span class="r-label">学号：</span>'+STUDENT_ID+'</div>' +
         '<div class="r-row"><span class="r-label">今日组别：</span>' + selectedToday + '</div>' +
         '<div class="r-row"><span class="r-label">版型：</span>阴影迷踪</div>' +
         '<div class="r-row"><span class="r-label">抽取版型：</span>' + selectedPattern + '</div>' +
-        '<div class="r-row"><span class="r-label">基础词汇：</span><span style="color:' + (basicScore >= 18 ? '#2ecc71' : '#e74c3c') + ';font-weight:bold;">' + basicScore.toFixed(2) + '/30</span></div>' +
-        '<div class="r-row"><span class="r-label">' + selectedPattern + '：</span><span style="color:' + (patternScore >= 15 ? '#2ecc71' : '#e74c3c') + ';font-weight:bold;">' + patternScore.toFixed(2) + '/20</span></div>' +
+        '<div class="r-row"><span class="r-label">基础词汇：</span><span style="color:' + (basicScore >= 18 ? '#ffd700' : '#e74c3c') + ';font-weight:bold;">' + basicScore.toFixed(2) + '/30</span></div>' +
+        '<div class="r-row"><span class="r-label">' + selectedPattern + '：</span><span style="color:' + (patternScore >= 15 ? '#ffd700' : '#e74c3c') + ';font-weight:bold;">' + patternScore.toFixed(2) + '/20</span></div>' +
         '<div class="r-row"><span class="r-label">总得分：</span><span style="color:' + tc + ';font-weight:bold;font-size:1.1em;">' + totalScore.toFixed(2) + '/50</span></div>' +
         '<div class="r-row"><span class="r-label">通过标准：</span>' + patternPassScore + '分</div>';
     
     document.getElementById('rphoto').innerHTML = isPassed ?
-        '<img src="/static/images/通过.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#2ecc71;>通过</span>\'">' :
+        '<img src="/static/images/通过.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#ffd700;>通过</span>\'">' :
         '<img src="/static/images/挂科.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#e74c3c;>挂科</span>\'">';
     
     // 构建表格数据
@@ -743,13 +745,13 @@ function showFinalReport(){
     var rows = Math.ceil(all.length / 3);
     var h = '';
     for (var r = 0; r < rows; r++) {
-        h += '<tr><td style="color:#3498db;font-weight:bold;background:#1a1a2a;">' + ((r + 1) < 10 ? '0' : '') + (r + 1) + '</td>';
+        h += '<tr><td style="color:#ffd700;font-weight:bold;background:#1a1a2a;">' + ((r + 1) < 10 ? '0' : '') + (r + 1) + '</td>';
         for (var c = 0; c < 3; c++) {
             var idx = r * 3 + c;
             if (idx < all.length) {
                 var w = all[idx];
                 h += '<td class="' + w.cls + '">' + w.word + '</td>' +
-                     '<td style="color:#3498db;">' + w.pos + '</td>' +
+                     '<td style="color:#ffd700;">' + w.pos + '</td>' +
                      '<td>' + w.meaning + '</td>' +
                      '<td class="' + w.cls + '">' + w.score + '</td>';
             } else {

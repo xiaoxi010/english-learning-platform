@@ -4,28 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>单词背诵系统</title>
-    <style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/exam-vocab.css') }}">
+<style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: "Microsoft YaHei", sans-serif;
-            background: linear-gradient(135deg, #0c0c1d, #1a1a3e, #0d1b2a, #1b0a2e);
-            min-height: 100vh; color: #fff;
+            
+            min-height: 100vh; color: var(--text-primary);
         }
         .header {
-            background: rgba(0,0,0,0.4); padding: 12px 30px;
+            background: var(--bg-primary); padding: 12px 24px;
             display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
         }
-        .header h1 { font-size: 1.4em; color: #ffd93d; }
+        .header h1 { font-size: 1.4em; color: #ffd700; }
         .back-btn {
-            color: #aaa; text-decoration: none; padding: 8px 16px;
-            border-radius: 20px; background: rgba(255,255,255,0.1);
+            color: var(--text-secondary); text-decoration: none; padding: 8px 16px;
+            border-radius: 20px; background: var(--bg-secondary);
         }
-        .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        .back-btn:hover { background: var(--border-color); color: var(--text-primary); }
         
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
         
         .control-panel {
-            background: rgba(255,255,255,0.05); border-radius: 12px;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px;
             padding: 20px; margin-bottom: 20px;
         }
         .select-row {
@@ -33,35 +36,35 @@
         }
         .select-group { flex: 1; min-width: 250px; }
         .select-group label {
-            display: block; color: #ffd93d; font-weight: bold; margin-bottom: 5px; font-size: 0.9em;
+            display: block; color: #ffd700; font-weight: bold; margin-bottom: 5px; font-size: 0.9em;
         }
         .select-group select {
             width: 100%; padding: 8px 12px; border-radius: 8px;
-            background: rgba(255,255,255,0.08); color: white;
-            border: 1px solid rgba(255,255,255,0.2); font-size: 0.95em;
+            background: var(--bg-secondary); color: #0d0d0d;
+            border: 1px solid var(--border-color); font-size: 0.95em;
         }
-        .select-group select:focus { outline: none; border-color: #6c5ce7; }
+        .select-group select:focus { outline: none; border-color: #ffd700; }
         
         .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
         .btn {
             padding: 8px 18px; border: none; border-radius: 8px;
             cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.2s;
         }
-        .btn-start { background: #00b894; color: white; }
+        .btn-start { background: #ffd700; color: #0d0d0d; }
         .btn-start:hover { background: #008b74; }
-        .btn-exit { background: #e74c3c; color: white; }
+        .btn-exit { background: #e74c3c; color: #0d0d0d; }
         .btn-exit:hover { background: #c0392b; }
-        .btn-finish { background: #6c5ce7; color: white; }
+        .btn-finish { background: #ffd700; color: #0d0d0d; }
         .btn-finish:hover { background: #5a4bd1; }
-        .btn-shuffle { background: #f39c12; color: #000; }
+        .btn-shuffle { background: #ffd700; color: #000; }
         .btn-shuffle:hover { background: #d68910; }
-        .btn-page { background: #3742fa; color: white; }
+        .btn-page { background: var(--bg-secondary); color: #0d0d0d; }
         .btn-page:hover { background: #2c35d4; }
         .btn:disabled { opacity: 0.4; cursor: not-allowed; }
         
         .info-bar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; color: #ffd93d; font-size: 0.9em; flex-wrap: wrap; gap: 10px;
+            padding: 10px 0; color: #ffd700; font-size: 0.9em; flex-wrap: wrap; gap: 10px;
         }
         
         .table-container {
@@ -75,7 +78,7 @@
             table-layout: fixed;
         }
         th {
-            background: #2d3436;
+            background: var(--bg-card);
             padding: 10px 8px;
             font-size: 0.9em;
             position: sticky;
@@ -96,7 +99,7 @@
         td {
             padding: 10px 8px;
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid var(--bg-card);
             font-size: 0.9em;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -113,10 +116,10 @@
         
         td input {
             width: 100%; padding: 6px 8px; border-radius: 6px;
-            border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08);
-            color: white; font-size: 0.9em; text-align: center; transition: border 0.2s;
+            border: 2px solid var(--border-color); background: var(--bg-secondary);
+            color: #0d0d0d; font-size: 0.9em; text-align: center; transition: border 0.2s;
         }
-        td input:focus { outline: none; border-color: #6c5ce7; }
+        td input:focus { outline: none; border-color: #ffd700; }
         td input.correct { border-color: #2ed573; background: rgba(46,213,115,0.1); }
         td input.wrong { border-color: #e74c3c; background: rgba(231,76,60,0.1); }
         
@@ -129,24 +132,24 @@
             display: flex; justify-content: center; align-items: center;
             gap: 15px; margin-top: 15px;
         }
-        .page-info { color: #aaa; font-size: 0.9em; }
+        .page-info { color: var(--text-secondary); font-size: 0.9em; }
         
         .result-bar {
-            background: rgba(255,255,255,0.05); border-radius: 12px;
+            background: var(--bg-card); border-radius: 12px;
             padding: 15px 20px; margin-top: 15px; text-align: center;
         }
-        .result-bar .score { font-size: 1.5em; color: #ffd93d; font-weight: bold; }
+        .result-bar .score { font-size: 1.5em; color: #ffd700; font-weight: bold; }
         select {
             background: rgba(30, 30, 58, 0.95) !important;
-            color: white !important;
+            color: #0d0d0d !important;
         }
         select option {
-            background: #1e1e3a;
-            color: white;
+            background: var(--bg-secondary);
+            color: #0d0d0d;
         }
     </style>
 </head>
-<body>
+<body class="exam-vocab-page">
     <div class="header">
         <h1>📖 单词背诵系统</h1>
         <a href="/" class="back-btn">← 返回主菜单</a>
@@ -263,11 +266,11 @@
             // 表头
             let headHtml = '<tr>';
             if (showAnswersMode) {
-                headHtml += '<th style="color:#00cec9;">序号</th><th style="color:#00b894;">单词</th><th style="color:#00cec9;">词性</th><th style="color:#00b894;">正确答案</th><th style="color:#ffd93d;">你的答案</th><th style="color:#fdcb6e;">状态</th>';
+                headHtml += '<th style="color:#00cec9;">序号</th><th style="color:#ffd700;">单词</th><th style="color:#00cec9;">词性</th><th style="color:#ffd700;">正确答案</th><th style="color:#ffd700;">你的答案</th><th style="color:#fdcb6e;">状态</th>';
             } else if (isRecitationMode) {
-                headHtml += '<th style="color:#00cec9;">序号</th><th style="color:#00b894;">单词</th><th style="color:#00cec9;">词性</th><th style="color:#ffd93d;">你的答案</th><th style="color:#74b9ff;">来源</th>';
+                headHtml += '<th style="color:#00cec9;">序号</th><th style="color:#ffd700;">单词</th><th style="color:#00cec9;">词性</th><th style="color:#ffd700;">你的答案</th><th style="color:#74b9ff;">来源</th>';
             } else {
-                headHtml += '<th style="color:#00cec9;">序号</th><th style="color:#00b894;">单词</th><th style="color:#00cec9;">词性</th><th style="color:#00b894;">中文释义</th><th style="color:#fdcb6e;">来源</th>';
+                headHtml += '<th style="color:#00cec9;">序号</th><th style="color:#ffd700;">单词</th><th style="color:#00cec9;">词性</th><th style="color:#ffd700;">中文释义</th><th style="color:#fdcb6e;">来源</th>';
             }
             headHtml += '</tr>';
             document.getElementById('tableHead').innerHTML = headHtml;

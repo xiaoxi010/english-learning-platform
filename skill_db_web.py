@@ -1,5 +1,5 @@
 # skill_db_web.py
-from flask import Blueprint, render_template, request, jsonify, session, send_file
+from flask import Blueprint, render_template, request, jsonify, session, send_file, redirect, url_for
 import sqlite3
 import json
 import os
@@ -9,142 +9,44 @@ import hashlib
 from werkzeug.utils import secure_filename
 import uuid
 
+from user_data_paths import get_user_skill_db_path, get_user_skill_upload_dir, get_user_skill_export_dir
+from skill_db_schema import ensure_skill_database
+
 skill_db_bp = Blueprint('skill_db', __name__)
 
-# 配置
-DATABASE = 'skill_database.db'
-UPLOAD_FOLDER = 'skill_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'}
 
-# 确保上传文件夹存在
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs('skill_exports', exist_ok=True)
+
+@skill_db_bp.before_request
+def require_login():
+    if 'user' not in session:
+        session['next_url'] = request.url
+        return redirect(url_for('login'))
+
+
+def _current_user_id():
+    user = session.get('user')
+    return user.get('id') if user else None
 
 
 def get_db():
-    """获取数据库连接"""
-    conn = sqlite3.connect(DATABASE)
+    """获取当前用户的技能数据库连接（数据持久保存在 user_data 目录）"""
+    user_id = _current_user_id()
+    if not user_id:
+        raise PermissionError('需要登录')
+    db_path = get_user_skill_db_path(user_id)
+    ensure_skill_database(db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def init_skill_database():
-    """初始化技能数据库"""
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS resource_files (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            filename TEXT NOT NULL,
-            original_name TEXT NOT NULL,
-            file_type TEXT NOT NULL,
-            file_size INTEGER,
-            uploader TEXT,
-            upload_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            description TEXT,
-            file_path TEXT,
-            tags TEXT
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS question_categories (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            description TEXT,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS question_groups (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            category_id INTEGER,
-            name TEXT NOT NULL,
-            description TEXT,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (category_id) REFERENCES question_categories (id),
-            UNIQUE(category_id, name)
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS single_choice_questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            group_id INTEGER,
-            question TEXT NOT NULL,
-            question_image TEXT,
-            correct_answer TEXT NOT NULL,
-            wrong_answer1 TEXT,
-            wrong_answer2 TEXT,
-            wrong_answer3 TEXT,
-            explanation TEXT,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (group_id) REFERENCES question_groups (id)
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS multi_choice_questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            group_id INTEGER,
-            question TEXT NOT NULL,
-            question_image TEXT,
-            correct_answers TEXT,
-            answer_options TEXT,
-            explanation TEXT,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (group_id) REFERENCES question_groups (id)
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS fill_in_questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            group_id INTEGER,
-            question TEXT NOT NULL,
-            question_image TEXT,
-            answer TEXT NOT NULL,
-            explanation TEXT,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (group_id) REFERENCES question_groups (id)
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS short_answer_questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            group_id INTEGER,
-            question TEXT NOT NULL,
-            question_image TEXT,
-            answer TEXT NOT NULL,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (group_id) REFERENCES question_groups (id)
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS application_questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            group_id INTEGER,
-            scenario TEXT NOT NULL,
-            sub_questions TEXT,
-            sub_answers TEXT,
-            sub_explanations TEXT,
-            explanation TEXT,
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (group_id) REFERENCES question_groups (id)
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
-    print("技能数据库初始化完成")
+def get_upload_folder():
+    return get_user_skill_upload_dir(_current_user_id())
 
 
-# 初始化数据库
-init_skill_database()
+def get_export_folder():
+    return get_user_skill_export_dir(_current_user_id())
 
 
 @skill_db_bp.route('/')
@@ -827,7 +729,7 @@ def export_group_excel(group_id):
     group_name = result['group_name']
     
     filename = f"{category_name}_{group_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
-    filepath = os.path.join('skill_exports', filename)
+    filepath = os.path.join(get_export_folder(), filename)
     
     with pd.ExcelWriter(filepath, engine='openpyxl') as writer:
         df_single = pd.read_sql_query(
@@ -886,7 +788,7 @@ def import_excel():
     if not category_name or not group_name:
         return jsonify({'success': False, 'message': '请输入分类名和分组名'})
     
-    temp_path = os.path.join(UPLOAD_FOLDER, f"temp_{uuid.uuid4().hex}.xlsx")
+    temp_path = os.path.join(get_upload_folder(), f"temp_{uuid.uuid4().hex}.xlsx")
     file.save(temp_path)
     
     xls = None
@@ -1119,7 +1021,7 @@ def upload_resource_file():
     
     # 生成存储文件名
     new_filename = original_name
-    file_path = os.path.join(UPLOAD_FOLDER, new_filename)
+    file_path = os.path.join(get_upload_folder(), new_filename)
     
     # 同名加序号
     if os.path.exists(file_path):
@@ -1127,7 +1029,7 @@ def upload_resource_file():
         counter = 1
         while True:
             new_filename = f"{base}({counter}){ext}"
-            file_path = os.path.join(UPLOAD_FOLDER, new_filename)
+            file_path = os.path.join(get_upload_folder(), new_filename)
             if not os.path.exists(file_path):
                 break
             counter += 1

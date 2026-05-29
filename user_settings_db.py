@@ -1,28 +1,13 @@
 # user_settings_db.py - 每用户独立 SQLite 设置库
 import os
-import re
 import sqlite3
-import hashlib
 from datetime import datetime
 from typing import Dict, Optional
 
+from user_data_paths import get_user_settings_db_path
+
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-USER_DATA_DIR = os.path.join(_BASE_DIR, 'user_data')
 DEFAULT_CREDITS = 100
-
-
-def _safe_user_key(user_id: str) -> str:
-    safe = re.sub(r'[^\w\-]', '_', user_id or '')
-    safe = safe.strip('_')[:64]
-    if not safe:
-        safe = hashlib.sha256((user_id or 'unknown').encode()).hexdigest()[:32]
-    return safe
-
-
-def get_user_settings_db_path(user_id: str) -> str:
-    user_dir = os.path.join(USER_DATA_DIR, _safe_user_key(user_id))
-    os.makedirs(user_dir, exist_ok=True)
-    return os.path.join(user_dir, 'settings.db')
 
 
 def _init_db(conn: sqlite3.Connection):

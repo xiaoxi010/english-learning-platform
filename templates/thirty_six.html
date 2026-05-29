@@ -4,94 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ pattern_name }} - 考试</title>
-    <style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/exam-vocab.css') }}">
+<style>
         * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; }
-        body { font-family:"Microsoft YaHei",sans-serif; background:linear-gradient(135deg,#0c0c1d,#1a1a3e,#0d1b2a,#1b0a2e); min-height:100vh; color:#fff; padding-bottom:40px; }
-        .header { background:rgba(0,0,0,0.4); padding:10px 25px; display:flex; justify-content:space-between; align-items:center; }
-        .header h1 { font-size:1.3em; color:#ff6b35; }
-        .back-btn { color:#aaa; text-decoration:none; padding:6px 14px; border-radius:20px; background:rgba(255,255,255,0.1); font-size:0.9em; }
+        body { font-family:"Microsoft YaHei",sans-serif;  min-height:100vh; color:var(--text-primary); padding-bottom:40px; }
+        .header { background:var(--bg-primary); padding:10px 25px; display:flex; justify-content:space-between; align-items:center; }
+        .header h1 { font-size:1.3em; color:#ffd700; }
+        .back-btn { color:var(--text-secondary); text-decoration:none; padding:6px 14px; border-radius:20px; background:var(--bg-secondary); font-size:0.9em; }
         .main-wrap { max-width:1400px; margin:0 auto; padding:12px; }
-        .panel { background:rgba(255,255,255,0.05); border-radius:12px; padding:20px; margin-bottom:15px; }
+        .panel { background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:20px; margin-bottom:15px; }
         .panel h2 { color:#ffd700; margin-bottom:18px; font-size:1.5em; text-align:center; }
         .select-row { display:flex; gap:20px; margin-bottom:18px; justify-content:center; flex-wrap:wrap; }
         .select-group { min-width:300px; text-align:left; position:relative; }
         .select-group label { display:block; color:#ffd700; margin-bottom:5px; font-weight:bold; font-size:0.9em; }
-        .select-group input { width:100%; padding:10px; border-radius:8px; background:#1e1e3a; color:#fff; border:1px solid rgba(255,255,255,0.2); font-size:0.95em; user-select:text; -webkit-user-select:text; }
+        .select-group input { width:100%; padding:10px; border-radius:8px; background:var(--bg-secondary); color:var(--text-primary); border:1px solid var(--border-color); font-size:0.95em; user-select:text; -webkit-user-select:text; }
         .select-group input:focus { outline:none; border-color:#ffd700; }
-        .dropdown { position:absolute; top:100%; left:0; right:0; max-height:200px; overflow-y:auto; background:#1e1e3a; border:1px solid rgba(255,255,255,0.2); border-radius:0 0 8px 8px; z-index:10; display:none; }
+        .dropdown { position:absolute; top:100%; left:0; right:0; max-height:200px; overflow-y:auto; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:0 0 8px 8px; z-index:10; display:none; }
         .dropdown div { padding:8px 10px; cursor:pointer; font-size:0.9em; }
-        .dropdown div:hover { background:rgba(255,215,0,0.2); }
+        .dropdown div:hover { background:rgba(255,215,0,0.15); }
         .dropdown::-webkit-scrollbar { width:0px; }
-        .btn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:0.95em; font-weight:bold; transition:all 0.2s; color:#fff; }
+        .btn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:0.95em; font-weight:bold; transition:all 0.2s; color:var(--text-primary); }
         .btn-gold { background:#ffd700; color:#000; }
-        .btn-green { background:#2ecc71; }
-        .btn-purple { background:#6c5ce7; }
-        .btn-orange { background:#ff6b35; }
+        .btn-green { background:#ffd700; }
+        .btn-purple { background:#ffd700; }
+        .btn-orange { background:#ffd700; }
         .btn-outline { background:transparent; border:2px solid #ffd700; color:#ffd700; }
-        .timer { font-size:2.2em; color:#ff6b35; font-weight:bold; margin-bottom:8px; text-align:center; }
+        .timer { font-size:2.2em; color:#ffd700; font-weight:bold; margin-bottom:8px; text-align:center; }
         .timer.warning { color:#e74c3c; animation:blink 1s infinite; }
         @keyframes blink { 50%{opacity:0.5;} }
-        .instruction { color:#aaa; text-align:center; margin-bottom:12px; font-size:0.9em; }
+        .instruction { color:var(--text-secondary); text-align:center; margin-bottom:12px; font-size:0.9em; }
         .stage-indicator { text-align:center; color:#ffd700; font-size:1.1em; margin-bottom:10px; }
         .word-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
-        .word-card { background:#1a1a30; border-radius:8px; padding:10px 8px; text-align:center; border:2px solid #333; }
+        .word-card { background:var(--bg-secondary); border-radius:8px; padding:10px 8px; text-align:center; border:2px solid #333; }
         .word-card .w-num { font-size:0.7em; color:#888; }
         .word-card .w-word { font-size:0.95em; font-weight:bold; color:#ffd700; margin:3px 0; }
-        .word-card .w-pos { font-size:0.7em; color:#3498db; margin-bottom:6px; }
-        .word-card input { width:100%; padding:6px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.3); color:#fff; font-size:0.85em; text-align:center; user-select:text; -webkit-user-select:text; }
+        .word-card .w-pos { font-size:0.7em; color:#ffd700; margin-bottom:6px; }
+        .word-card input { width:100%; padding:6px; border-radius:4px; border:1px solid var(--border-color); background:rgba(0,0,0,0.3); color:var(--text-primary); font-size:0.85em; text-align:center; user-select:text; -webkit-user-select:text; }
         .word-card input:focus { outline:none; border-color:#ffd700; }
         .correction-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
-        .correction-card { background:#1a1a30; border-radius:8px; padding:8px; text-align:center; border:3px solid transparent; }
-        .correction-card.border-green { border-color:#2ecc71; background:#1a2a1a; }
+        .correction-card { background:var(--bg-secondary); border-radius:8px; padding:8px; text-align:center; border:3px solid transparent; }
+        .correction-card.border-green { border-color:#ffd700; background:#1a2a1a; }
         .correction-card.border-red { border-color:#e74c3c; background:#2a1a1a; }
-        .correction-card.border-yellow { border-color:#ffd700; background:#2a2a1a; }
+        .correction-card.border-yellow { border-color:#ffd700; background:rgba(255,215,0,0.15); }
         .correction-card .c-word { font-weight:bold; color:#ffd700; font-size:0.9em; margin-bottom:4px; }
         .correction-card .c-user { font-size:0.8em; margin-bottom:2px; }
-        .correction-card .c-answer { font-size:0.8em; color:#2ecc71; margin-bottom:6px; }
+        .correction-card .c-answer { font-size:0.8em; color:#ffd700; margin-bottom:6px; }
         .correction-card .c-btns { display:flex; gap:4px; justify-content:center; }
-        .correction-card .c-btns button { padding:3px 8px; font-size:0.7em; border-radius:4px; border:none; cursor:pointer; color:#fff; }
-        .correction-card .c-btns .btn-correct { background:#555; }
-        .correction-card .c-btns .btn-correct.active { background:#2ecc71; }
-        .correction-card .c-btns .btn-wrong { background:#555; }
+        .correction-card .c-btns button { padding:3px 8px; font-size:0.7em; border-radius:4px; border:none; cursor:pointer; color:var(--text-primary); }
+        .correction-card .c-btns .btn-correct { background:var(--bg-secondary); }
+        .correction-card .c-btns .btn-correct.active { background:#ffd700; }
+        .correction-card .c-btns .btn-wrong { background:var(--bg-secondary); }
         .correction-card .c-btns .btn-wrong.active { background:#e74c3c; }
         .strategy-container { display:flex; flex-direction:column; gap:15px; }
         .meaning-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
-        .meaning-area { background:#1a1a30; border-radius:8px; padding:10px; text-align:center; border:2px solid #444; min-height:110px; cursor:pointer; transition:all 0.2s; }
-        .meaning-area:hover { border-color:#ff6b35; }
+        .meaning-area { background:var(--bg-secondary); border-radius:8px; padding:10px; text-align:center; border:2px solid #444; min-height:110px; cursor:pointer; transition:all 0.2s; }
+        .meaning-area:hover { border-color:#ffd700; }
         .meaning-area .m-title { color:#ffd700; font-weight:bold; font-size:0.85em; margin-bottom:5px; }
-        .meaning-area .m-word { background:#2a2a3a; padding:4px 8px; border-radius:4px; font-size:0.8em; color:#ff6b35; margin:2px 0; }
+        .meaning-area .m-word { background:var(--bg-secondary); padding:4px 8px; border-radius:4px; font-size:0.8em; color:#ffd700; margin:2px 0; }
         .hand-cards { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; min-height:90px; padding:10px; background:#111; border-radius:8px; }
-        .hand-card { background:#2a2a3a; border-radius:8px; padding:60px 22px; text-align:center; border:2px solid #555; cursor:pointer; transition:all 0.2s; min-width:130px; }
-        .hand-card:hover { border-color:#ff6b35; background:#3a3020; }
-        .hand-card.selected { border-color:#ff6b35 !important; background:#3a3020 !important; }
+        .hand-card { background:var(--bg-secondary); border-radius:8px; padding:60px 22px; text-align:center; border:2px solid #555; cursor:pointer; transition:all 0.2s; min-width:130px; }
+        .hand-card:hover { border-color:#ffd700; background:#3a3020; }
+        .hand-card.selected { border-color:#ffd700 !important; background:#3a3020 !important; }
         .hand-card .hc-word { font-weight:bold; color:#ffd700; font-size:1.1em; }
         .score-bar { text-align:center; font-size:1.2em; margin:10px 0; }
         .summary-table { width:100%; border-collapse:collapse; font-size:0.8em; margin-bottom:15px; }
-        .summary-table th { background:#2d3436; padding:6px 4px; }
-        .summary-table td { padding:5px 4px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.1); }
+        .summary-table th { background:var(--bg-card); padding:6px 4px; }
+        .summary-table td { padding:5px 4px; text-align:center; border-bottom:1px solid var(--bg-secondary); }
         .report-top { display:flex; gap:15px; margin-bottom:15px; }
-        .report-info { flex:1; background:#2a2a3a; border:1px solid #fff; padding:10px; }
+        .report-info { flex:1; background:var(--bg-secondary); border:1px solid #fff; padding:10px; }
         .report-info .r-row { padding:3px 0; font-size:0.8em; }
-        .report-info .r-label { color:#3498db; font-weight:bold; }
-        .report-photo { width:200px; background:#2a2a3a; border:1px solid #fff; display:flex; align-items:center; justify-content:center; font-size:1.3em; font-weight:bold; overflow:hidden; }
+        .report-info .r-label { color:#ffd700; font-weight:bold; }
+        .report-photo { width:200px; background:var(--bg-secondary); border:1px solid #fff; display:flex; align-items:center; justify-content:center; font-size:1.3em; font-weight:bold; overflow:hidden; }
         .report-photo img { max-width:100%; max-height:110px; }
-        .report-table-wrap { background:#2a2a3a; border:1px solid #fff; max-height:40vh; overflow-y:auto; }
+        .report-table-wrap { background:var(--bg-secondary); border:1px solid #fff; max-height:40vh; overflow-y:auto; }
         .report-table-wrap::-webkit-scrollbar { width:0; }
         .report-table { width:100%; border-collapse:collapse; font-size:0.7em; }
-        .report-table th { background:#2d3436; padding:4px 2px; position:sticky; top:0; }
+        .report-table th { background:var(--bg-card); padding:4px 2px; position:sticky; top:0; }
         .report-table td { padding:3px 2px; text-align:center; border:1px solid rgba(255,255,255,0.3); }
-        .td-green { color:#2ecc71; font-weight:bold; }
+        .td-green { color:#ffd700; font-weight:bold; }
         .td-red { color:#e74c3c; font-weight:bold; }
         .hidden { display:none !important; }
         .btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
         .tabs { display:flex; gap:5px; margin-bottom:10px; }
-        .tab-btn { padding:8px 16px; border:none; border-radius:8px 8px 0 0; cursor:pointer; background:#2a2a3a; color:#aaa; font-size:0.9em; }
-        .tab-btn.active { background:#ff6b35; color:#fff; }
+        .tab-btn { padding:8px 16px; border:none; border-radius:8px 8px 0 0; cursor:pointer; background:var(--bg-secondary); color:var(--text-secondary); font-size:0.9em; }
+        .tab-btn.active { background:#ffd700; color:var(--text-primary); }
         .tab-content { display:none; }
         .tab-content.active { display:block; }
     </style>
 </head>
-<body>
+<body class="exam-vocab-page">
 <div class="header"><h1>📊 {{ pattern_name }}</h1><a href="/" class="back-btn">← 返回主菜单</a></div>
 <div class="main-wrap">
 
@@ -114,7 +116,7 @@
     <h2>📝 批改基础词汇</h2>
     <p class="instruction" style="font-size:0.8em;color:#888;">🟢 绿色=正确 | 🔴 红色=错误 | 🟡 黄色=需判断</p>
     <div class="correction-grid" id="basicCorrGrid"></div>
-    <div class="score-bar">基础词汇得分: <span id="basicScore" style="color:#2ecc71;">0</span>/30</div>
+    <div class="score-bar">基础词汇得分: <span id="basicScore" style="color:#ffd700;">0</span>/30</div>
     <div class="btn-row"><button class="btn btn-purple" onclick="goToStrategy()">✅ 进入三十六计 →</button></div>
 </div>
 
@@ -128,7 +130,7 @@
 
 <div class="panel hidden" id="s5">
     <h2>📊 版型考试总结</h2>
-    <div class="score-bar">版型得分: <span id="summaryStrategyScore" style="color:#ff6b35;">0</span>/20</div>
+    <div class="score-bar">版型得分: <span id="summaryStrategyScore" style="color:#ffd700;">0</span>/20</div>
     <div class="tabs">
         <button class="tab-btn active" onclick="switchSummaryTab('areas')">汉译区域得分</button>
         <button class="tab-btn" onclick="switchSummaryTab('words')">30个单词详情</button>
@@ -142,9 +144,9 @@
     <h2 style="color:#ffd700;text-align:center;margin-bottom:12px;">📊 {{ pattern_name }}考试总成绩报告</h2>
     <div class="report-top"><div class="report-info" id="rinfo"></div><div class="report-photo" id="rphoto"></div></div>
     <div class="report-table-wrap"><table class="report-table"><thead><tr>
-        <th style="background:#1a1a2a;color:#3498db;">行号</th><th style="background:#ff6b35;color:#fff;">单词</th><th style="background:#3498db;color:#fff;">词性</th><th>汉译</th><th>得分</th>
-        <th style="width:8px;"></th><th style="background:#ff6b35;color:#fff;">单词</th><th style="background:#3498db;color:#fff;">词性</th><th>汉译</th><th>得分</th>
-        <th style="width:8px;"></th><th style="background:#ff6b35;color:#fff;">单词</th><th style="background:#3498db;color:#fff;">词性</th><th>汉译</th><th>得分</th>
+        <th style="background:#1a1a2a;color:#ffd700;">行号</th><th style="background:#ffd700;color:var(--text-primary);">单词</th><th style="background:#ffd700;color:var(--text-primary);">词性</th><th>汉译</th><th>得分</th>
+        <th style="width:8px;"></th><th style="background:#ffd700;color:var(--text-primary);">单词</th><th style="background:#ffd700;color:var(--text-primary);">词性</th><th>汉译</th><th>得分</th>
+        <th style="width:8px;"></th><th style="background:#ffd700;color:var(--text-primary);">单词</th><th style="background:#ffd700;color:var(--text-primary);">词性</th><th>汉译</th><th>得分</th>
     </tr></thead><tbody id="rbody"></tbody></table></div>
     <div class="btn-row"><button class="btn btn-green" onclick="exportPNG()">📄 导出PNG证书</button><button class="btn btn-gold" onclick="location.reload()">🔄 重新考试</button><button class="btn btn-outline" onclick="window.location.href='/'">🏠 返回主菜单</button></div>
 </div>
@@ -268,7 +270,7 @@ function renderSummary(){
         }
         var matches=areaCorrect[i]||0;
         var score=matches>=2?2:(matches==1?1:0);
-        ah+='<tr><td>'+(i+1)+'</td><td>'+m.meaning+'</td><td style="color:#ff6b35;">'+(placedWords.join(', ')||'无')+'</td><td style="color:#2ecc71;">'+(correctWords.join(', ')||'无')+'</td><td style="color:'+(score>=2?'#2ecc71':(score>=1?'#ffd700':'#e74c3c'))+'">'+score+'分</td></tr>';
+        ah+='<tr><td>'+(i+1)+'</td><td>'+m.meaning+'</td><td style="color:#ffd700;">'+(placedWords.join(', ')||'无')+'</td><td style="color:#ffd700;">'+(correctWords.join(', ')||'无')+'</td><td style="color:'+(score>=2?'#ffd700':(score>=1?'#2ecc71':'#e74c3c'))+'">'+score+'分</td></tr>';
     }
     ah+='</table>';
     document.getElementById('summaryAreas').innerHTML=ah;
@@ -277,7 +279,7 @@ function renderSummary(){
     var wh='<table class="summary-table"><tr><th>序号</th><th>单词</th><th>词性</th><th>汉译</th><th>目标汉译</th></tr>';
     for(var i=0;i<strategyResults.length;i++){
         var r=strategyResults[i];
-        wh+='<tr><td>'+(i+1)+'</td><td style="color:#ff6b35;font-weight:bold;">'+r.word+'</td><td style="color:#3498db;">'+r.pos+'</td><td>'+r.meaning+'</td><td style="color:#2ecc71;">'+r.target_meaning+'</td></tr>';
+        wh+='<tr><td>'+(i+1)+'</td><td style="color:#ffd700;font-weight:bold;">'+r.word+'</td><td style="color:#ffd700;">'+r.pos+'</td><td>'+r.meaning+'</td><td style="color:#ffd700;">'+r.target_meaning+'</td></tr>';
     }
     wh+='</table>';
     document.getElementById('summaryWords').innerHTML=wh;
@@ -290,8 +292,8 @@ function switchSummaryTab(tab){
 
 function showFinalReport(){
     switchStage('s6');var tc=isPassed?'#2ecc71':'#e74c3c';
-    document.getElementById('rinfo').innerHTML='<div class="r-row"><span class="r-label">姓名：</span>'+USER_NAME+'  <span class="r-label">学号：</span>'+STUDENT_ID+'</div><div class="r-row"><span class="r-label">今日组别：</span>'+selectedToday+'</div><div class="r-row"><span class="r-label">版型：</span>三十六计</div><div class="r-row"><span class="r-label">基础词汇：</span><span style="color:'+(basicScore>=18?'#2ecc71':'#e74c3c')+';font-weight:bold;">'+basicScore.toFixed(2)+'/30</span></div><div class="r-row"><span class="r-label">三十六计：</span><span style="color:'+(strategyScore>=25?'#2ecc71':'#e74c3c')+';font-weight:bold;">'+strategyScore+'/20</span></div><div class="r-row"><span class="r-label">总得分：</span><span style="color:'+tc+';font-weight:bold;font-size:1.1em;">'+totalScore.toFixed(2)+'/50</span></div>';
-    document.getElementById('rphoto').innerHTML=isPassed?'<img src="/static/images/通过.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#2ecc71;>通过</span>\'">':'<img src="/static/images/挂科.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#e74c3c;>挂科</span>\'">';
+    document.getElementById('rinfo').innerHTML='<div class="r-row"><span class="r-label">姓名：</span>'+USER_NAME+'  <span class="r-label">学号：</span>'+STUDENT_ID+'</div><div class="r-row"><span class="r-label">今日组别：</span>'+selectedToday+'</div><div class="r-row"><span class="r-label">版型：</span>三十六计</div><div class="r-row"><span class="r-label">基础词汇：</span><span style="color:'+(basicScore>=18?'#2ecc71':'#e74c3c')+';font-weight:bold;">'+basicScore.toFixed(2)+'/30</span></div><div class="r-row"><span class="r-label">三十六计：</span><span style="color:'+(strategyScore>=25?'#ffd700':'#e74c3c')+';font-weight:bold;">'+strategyScore+'/20</span></div><div class="r-row"><span class="r-label">总得分：</span><span style="color:'+tc+';font-weight:bold;font-size:1.1em;">'+totalScore.toFixed(2)+'/50</span></div>';
+    document.getElementById('rphoto').innerHTML=isPassed?'<img src="/static/images/通过.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#ffd700;>通过</span>\'">':'<img src="/static/images/挂科.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#e74c3c;>挂科</span>\'">';
     var all=[];basicResults.forEach(function(r){all.push({word:r.word,pos:r.pos,meaning:r.meaning,score:r.score,cls:r.is_correct?'td-green':'td-red'});});while(all.length<30)all.push({word:'-',pos:'-',meaning:'-',score:'0.00',cls:'td-red'});
     strategyResults.forEach(function(r){
         all.push({
@@ -302,7 +304,7 @@ function showFinalReport(){
             cls: r.is_correct ? 'td-green' : 'td-red'
         });
     });
-    var h='';for(var r=0;r<20;r++){h+='<tr><td style="color:#3498db;font-weight:bold;">'+((r+1)<10?'0':'')+(r+1)+'</td>';for(var c=0;c<3;c++){var i=r*3+c;if(i<all.length){var w=all[i];h+='<td class="'+w.cls+'">'+w.word+'</td><td style="color:#3498db;">'+w.pos+'</td><td>'+w.meaning+'</td><td class="'+w.cls+'">'+w.score+'</td>';}else{h+='<td>-</td><td>-</td><td>-</td><td>-</td>';}}h+='</tr>';}document.getElementById('rbody').innerHTML=h;
+    var h='';for(var r=0;r<20;r++){h+='<tr><td style="color:#ffd700;font-weight:bold;">'+((r+1)<10?'0':'')+(r+1)+'</td>';for(var c=0;c<3;c++){var i=r*3+c;if(i<all.length){var w=all[i];h+='<td class="'+w.cls+'">'+w.word+'</td><td style="color:#ffd700;">'+w.pos+'</td><td>'+w.meaning+'</td><td class="'+w.cls+'">'+w.score+'</td>';}else{h+='<td>-</td><td>-</td><td>-</td><td>-</td>';}}h+='</tr>';}document.getElementById('rbody').innerHTML=h;
 }
 function switchStage(id){['s1','s2','s3','s4','s5','s6'].forEach(function(s){var el=document.getElementById(s);if(s===id)el.classList.remove('hidden');else el.classList.add('hidden');});}
 async function exportPNG(){

@@ -4,82 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ pattern_name }} - 考试</title>
-    <style>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/exam-vocab.css') }}">
+<style>
         * { margin:0; padding:0; box-sizing:border-box; user-select:none; -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; }
-        body { font-family:"Microsoft YaHei",sans-serif; background:linear-gradient(135deg,#0c0c1d,#1a1a3e,#0d1b2a,#1b0a2e); min-height:100vh; color:#fff; }
-        .header { background:rgba(0,0,0,0.4); padding:10px 25px; display:flex; justify-content:space-between; align-items:center; }
-        .header h1 { font-size:1.3em; color:#ffd700; }
-        .back-btn { color:#aaa; text-decoration:none; padding:6px 14px; border-radius:20px; background:rgba(255,255,255,0.1); font-size:0.9em; }
-        .container { max-width:1300px; margin:0 auto; padding:12px; }
-        .panel { background:rgba(255,255,255,0.05); border-radius:12px; padding:20px; margin-bottom:15px; }
-        .panel h2 { color:#ffd700; margin-bottom:18px; font-size:1.5em; text-align:center; }
-        .select-row { display:flex; gap:20px; margin-bottom:18px; justify-content:center; flex-wrap:wrap; }
-        .select-group { min-width:300px; text-align:left; position:relative; }
-        .select-group label { display:block; color:#ffd700; margin-bottom:5px; font-weight:bold; font-size:0.9em; }
-        .select-group input { width:100%; padding:10px; border-radius:8px; background:#1e1e3a; color:#fff; border:1px solid rgba(255,255,255,0.2); font-size:0.95em; user-select:text; -webkit-user-select:text; }
-        .select-group input:focus { outline:none; border-color:#ffd700; }
-        .dropdown { position:absolute; top:100%; left:0; right:0; max-height:200px; overflow-y:auto; background:#1e1e3a; border:1px solid rgba(255,255,255,0.2); border-radius:0 0 8px 8px; z-index:10; display:none; }
-        .dropdown div { padding:8px 10px; cursor:pointer; font-size:0.9em; }
-        .dropdown div:hover { background:rgba(255,215,0,0.2); }
-        .dropdown::-webkit-scrollbar { width:0px; }
-        .dropdown:hover::-webkit-scrollbar { width:4px; }
-        .dropdown::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
-        .btn { padding:10px 24px; border:none; border-radius:8px; cursor:pointer; font-size:0.95em; font-weight:bold; transition:all 0.2s; color:#fff; }
-        .btn-gold { background:#ffd700; color:#000; }
-        .btn-green { background:#2ecc71; }
-        .btn-purple { background:#6c5ce7; }
-        .btn-outline { background:transparent; border:2px solid #ffd700; color:#ffd700; }
-        .timer { font-size:2.5em; color:#ffd700; font-weight:bold; margin-bottom:12px; text-align:center; }
-        .timer.warning { color:#e74c3c; animation:blink 1s infinite; }
-        @keyframes blink { 50%{opacity:0.5;} }
-        .instruction { color:#aaa; text-align:center; margin-bottom:15px; font-size:0.95em; }
-        .word-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
-        .word-card { background:#2a2a3a; border-radius:8px; padding:10px 8px; text-align:center; border:2px solid transparent; }
-        .word-card .w-num { font-size:0.7em; color:#888; }
-        .word-card .w-word { font-size:0.95em; font-weight:bold; color:#ffd700; margin:3px 0; }
-        .word-card .w-pos { font-size:0.7em; color:#3498db; margin-bottom:6px; }
-        .word-card input { width:100%; padding:6px; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-size:0.85em; text-align:center; user-select:text; -webkit-user-select:text; }
-        .word-card input:focus { outline:none; border-color:#ffd700; }
-        .correction-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-bottom:18px; }
-        .correction-card { background:#2a2a3a; border-radius:8px; padding:8px; text-align:center; border:3px solid transparent; }
-        .correction-card.border-green { border-color:#2ecc71; }
-        .correction-card.border-red { border-color:#e74c3c; }
-        .correction-card.border-yellow { border-color:#ffd700; }
-        .correction-card .c-word { font-weight:bold; color:#ffd700; font-size:0.9em; margin-bottom:4px; }
+        .exam-vocab-page .select-group input, .exam-vocab-page .word-card input { user-select:text; -webkit-user-select:text; }
         .correction-card .c-user { font-size:0.8em; margin-bottom:2px; }
-        .correction-card .c-answer { font-size:0.8em; color:#2ecc71; margin-bottom:6px; }
         .correction-card .c-btns { display:flex; gap:4px; justify-content:center; }
-        .correction-card .c-btns button { padding:3px 8px; font-size:0.7em; border-radius:4px; border:none; cursor:pointer; color:#fff; }
-        .correction-card .c-btns .btn-correct { background:#636e72; }
-        .correction-card .c-btns .btn-correct.active { background:#2ecc71; }
-        .correction-card .c-btns .btn-wrong { background:#636e72; }
-        .correction-card .c-btns .btn-wrong.active { background:#e74c3c; }
-        .score-bar { text-align:center; font-size:1.2em; margin:10px 0; }
-        /* 报告区 - 按Tkinter布局 */
         .report-top { display:flex; gap:12px; margin-bottom:12px; height:130px; }
-        .report-info { flex:1; background:#2a2a3a; border:1px solid #fff; border-radius:0; padding:8px 10px; display:flex; flex-direction:column; justify-content:center; }
-        .report-info .r-row { padding:2px 0; font-size:0.8em; }
-        .report-info .r-label { color:#3498db; font-weight:bold; }
+        .report-info { display:flex; flex-direction:column; justify-content:center; }
         .report-info .r-value { color:#fff; }
-        .report-photo { width:280px; background:#2a2a3a; border:1px solid #fff; border-radius:0; display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:1.3em; font-weight:bold; }
+        .report-photo { width:280px; }
         .report-photo img { max-width:100%; max-height:110px; object-fit:contain; }
-        .report-table-wrap { background:#2a2a3a; border:1px solid #fff; border-radius:0; max-height:45vh; overflow-y:auto; }
         .report-table-wrap::-webkit-scrollbar { width:0; }
         .report-table-wrap:hover::-webkit-scrollbar { width:4px; }
         .report-table-wrap::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
-        .report-table { width:100%; border-collapse:collapse; font-size:0.72em; }
-        .report-table th { background:#2d3436; padding:5px 3px; position:sticky; top:0; z-index:1; }
-        .report-table td { padding:4px 3px; text-align:center; border:1px solid rgba(255,255,255,0.3); }
+        .report-table { font-size:0.72em; }
+        .report-table th { z-index:1; }
         .report-table tr:nth-child(even) td { background:#252536; }
         .report-table tr:nth-child(odd) td { background:#2a2a3a; }
-        .td-correct { color:#2ecc71; font-weight:bold; }
-        .td-wrong { color:#e74c3c; font-weight:bold; }
         .td-score { font-weight:bold; }
-        .hidden { display:none !important; }
-        .btn-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
     </style>
 </head>
-<body>
+<body class="exam-vocab-page">
 <div class="header"><h1>✨ {{ pattern_name }}</h1><a href="/" class="back-btn">← 返回主菜单</a></div>
 <div class="container">
 
@@ -114,7 +61,7 @@
     <h2>📝 请批改您的答案</h2>
     <p class="instruction" style="font-size:0.8em;color:#888;">🟢正确 🔴错误 🟡需判断（1个相同字符）</p>
     <div class="correction-grid" id="correctionGrid"></div>
-    <div class="score-bar">基础词汇得分: <span id="cs" style="color:#2ecc71;">0</span>/30</div>
+    <div class="score-bar">基础词汇得分: <span id="cs" style="color:#ffd700;">0</span>/30</div>
     <div class="btn-row"><button class="btn btn-purple" onclick="finishCorrection()">批改完成</button></div>
 </div>
 
@@ -128,14 +75,14 @@
     <div class="report-table-wrap">
         <table class="report-table">
             <thead><tr>
-                <th style="color:#fff;background:#ffd700;width:14%;">单词</th>
-                <th style="color:#fff;background:#3498db;width:8%;">词性</th>
-                <th style="color:#fff;width:28%;">汉译</th>
-                <th style="color:#fff;width:10%;">得分</th>
-                <th style="color:#fff;background:#ffd700;width:14%;">单词</th>
-                <th style="color:#fff;background:#3498db;width:8%;">词性</th>
-                <th style="color:#fff;width:28%;">汉译</th>
-                <th style="color:#fff;width:10%;">得分</th>
+                <th style="color:var(--text-primary);background:#ffd700;width:14%;">单词</th>
+                <th style="color:var(--text-primary);background:#ffd700;width:8%;">词性</th>
+                <th style="color:var(--text-primary);width:28%;">汉译</th>
+                <th style="color:var(--text-primary);width:10%;">得分</th>
+                <th style="color:var(--text-primary);background:#ffd700;width:14%;">单词</th>
+                <th style="color:var(--text-primary);background:#ffd700;width:8%;">词性</th>
+                <th style="color:var(--text-primary);width:28%;">汉译</th>
+                <th style="color:var(--text-primary);width:10%;">得分</th>
             </tr></thead>
             <tbody id="rbody"></tbody>
         </table>
@@ -222,7 +169,7 @@ function renderReport(){
         '<div class="r-row"><span class="r-label">今日组别：</span><span class="r-value">'+examData.today_group+'</span>  <span class="r-label">版型：</span><span class="r-value">昔日之光</span></div>'+
         '<div class="r-row"><span class="r-label">基础词汇：</span><span class="r-value" style="color:'+tc+';font-weight:bold;font-size:1.1em;">'+totalScore+'/30</span></div>';
     // 照片区
-    var ph=isPassed?'<img src="/static/images/通过.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#2ecc71;font-size:1.5em;>通过</span>\'">':'<img src="/static/images/挂科.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#e74c3c;font-size:1.5em;>挂科</span>\'">';
+    var ph=isPassed?'<img src="/static/images/通过.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#ffd700;font-size:1.5em;>通过</span>\'">':'<img src="/static/images/挂科.png" style="max-width:100%;max-height:110px;" onerror="this.innerHTML=\'<span style=color:#e74c3c;font-size:1.5em;>挂科</span>\'">';
     document.getElementById('rphoto').innerHTML=ph;
     // 单词表 - 15行每行2个单词，8列
     var h='';
@@ -234,7 +181,7 @@ function renderReport(){
                 var w=results[i];
                 var sc=w.is_correct?'1.00':'0.00';
                 var cl=w.is_correct?'td-correct':'td-wrong';
-                h+='<td class="'+cl+'">'+w.word+'</td><td style="color:#3498db;">'+w.pos+'</td><td>'+w.meaning+'</td><td class="td-score '+cl+'">'+sc+'</td>';
+                h+='<td class="'+cl+'">'+w.word+'</td><td style="color:#ffd700;">'+w.pos+'</td><td>'+w.meaning+'</td><td class="td-score '+cl+'">'+sc+'</td>';
             }else{
                 h+='<td style="color:#7f8c8d;">-</td><td style="color:#7f8c8d;">-</td><td style="color:#7f8c8d;">-</td><td style="color:#7f8c8d;">-</td>';
             }

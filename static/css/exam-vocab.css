@@ -1,0 +1,382 @@
+/* 考核版型 — 基础词汇共用样式（原版金色 + 微软雅黑，仅背景用深色主题） */
+
+.exam-vocab-page,
+.exam-vocab-page body {
+    font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+    background: var(--bg-primary);
+    color: #fff;
+}
+
+.exam-vocab-page .header {
+    background: var(--bg-primary);
+    padding: 10px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.exam-vocab-page .header h1 {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.exam-vocab-page .back-btn {
+    color: #aaa;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.9em;
+}
+
+.exam-vocab-page .back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.exam-vocab-page .container,
+.exam-vocab-page .main-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px;
+}
+
+.exam-vocab-page .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.exam-vocab-page .panel h2 {
+    color: #ffd700;
+    margin-bottom: 18px;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.exam-vocab-page .select-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.exam-vocab-page .select-group {
+    min-width: 300px;
+    text-align: left;
+    position: relative;
+}
+
+.exam-vocab-page .select-group label {
+    display: block;
+    color: #ffd700;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.exam-vocab-page .select-group input,
+.exam-vocab-page .select-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: #1e1e3a;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.95em;
+    font-family: inherit;
+}
+
+.exam-vocab-page .select-group input:focus,
+.exam-vocab-page .select-group select:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+.exam-vocab-page .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #1e1e3a;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0 0 8px 8px;
+    z-index: 10;
+    display: none;
+}
+
+.exam-vocab-page .dropdown div {
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.exam-vocab-page .dropdown div:hover {
+    background: rgba(255, 215, 0, 0.2);
+}
+
+.exam-vocab-page .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: bold;
+    font-family: inherit;
+    transition: all 0.2s;
+    color: #fff;
+}
+
+.exam-vocab-page .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.exam-vocab-page .btn-gold { background: #ffd700; color: #000; }
+.exam-vocab-page .btn-green { background: #2ecc71; color: #fff; }
+.exam-vocab-page .btn-purple { background: #6c5ce7; color: #fff; }
+.exam-vocab-page .btn-orange { background: #ff6b35; color: #fff; }
+.exam-vocab-page .btn-blue { background: #3498db; color: #fff; }
+.exam-vocab-page .btn-outline {
+    background: transparent;
+    border: 2px solid #ffd700;
+    color: #ffd700;
+}
+
+.exam-vocab-page .timer {
+    font-size: 2.5em;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.exam-vocab-page .timer.warning {
+    color: #e74c3c;
+    animation: exam-vocab-blink 1s infinite;
+}
+
+@keyframes exam-vocab-blink {
+    50% { opacity: 0.5; }
+}
+
+.exam-vocab-page .stage-indicator {
+    text-align: center;
+    color: #ffd700;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.exam-vocab-page .instruction {
+    color: #aaa;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+.exam-vocab-page .word-grid,
+.exam-vocab-page .correction-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.exam-vocab-page .word-card {
+    background: #2a2a3a;
+    border-radius: 8px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+.exam-vocab-page .word-card .w-num {
+    font-size: 0.7em;
+    color: #888;
+}
+
+.exam-vocab-page .word-card .w-word {
+    font-size: 0.95em;
+    font-weight: bold;
+    color: #ffd700;
+    margin: 3px 0;
+}
+
+.exam-vocab-page .word-card .w-pos {
+    font-size: 0.7em;
+    color: #3498db;
+    margin-bottom: 6px;
+}
+
+.exam-vocab-page .word-card input {
+    width: 100%;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 0.85em;
+    font-family: inherit;
+    text-align: center;
+}
+
+.exam-vocab-page .word-card input:focus {
+    outline: none;
+    border-color: #ffd700;
+}
+
+.exam-vocab-page .correction-card {
+    background: #2a2a3a;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    border: 3px solid transparent;
+}
+
+.exam-vocab-page .correction-card.border-green { border-color: #2ecc71; }
+.exam-vocab-page .correction-card.border-red { border-color: #e74c3c; }
+.exam-vocab-page .correction-card.border-yellow { border-color: #ffd700; }
+.exam-vocab-page .correction-card.border-gold { border-color: #ffd700; background: #2a2a00; }
+
+.exam-vocab-page .correction-card .c-word {
+    font-weight: bold;
+    color: #ffd700;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+}
+
+.exam-vocab-page .correction-card .c-answer {
+    font-size: 0.8em;
+    color: #2ecc71;
+    margin-bottom: 6px;
+}
+
+.exam-vocab-page .correction-card .c-btns button {
+    padding: 3px 8px;
+    font-size: 0.7em;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+.exam-vocab-page .correction-card .c-btns .btn-correct { background: #636e72; }
+.exam-vocab-page .correction-card .c-btns .btn-correct.active { background: #2ecc71; }
+.exam-vocab-page .correction-card .c-btns .btn-wrong { background: #636e72; }
+.exam-vocab-page .correction-card .c-btns .btn-wrong.active { background: #e74c3c; }
+
+.exam-vocab-page .score-bar {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.exam-vocab-page .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.exam-vocab-page .hidden { display: none !important; }
+
+.exam-vocab-page .td-green,
+.exam-vocab-page .td-correct { color: #2ecc71; font-weight: bold; }
+.exam-vocab-page .td-red,
+.exam-vocab-page .td-wrong { color: #e74c3c; font-weight: bold; }
+.exam-vocab-page .td-gold { color: #ffd700; font-weight: bold; }
+
+/* 诡影重重 — 地名抽取 */
+.exam-vocab-page .place-row {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.exam-vocab-page .place-card {
+    background: #1a1a30;
+    border-radius: 16px;
+    padding: 25px 18px;
+    text-align: center;
+    border: 3px solid #444;
+    transition: all 0.15s;
+    width: 160px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.exam-vocab-page .place-card.flashing {
+    animation: placeFlash 0.12s ease-in-out;
+}
+
+@keyframes placeFlash {
+    0% { border-color: #ff0000; box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+    100% { border-color: #ff4444; box-shadow: 0 0 35px rgba(255, 0, 0, 0.5); }
+}
+
+.exam-vocab-page .place-card.won {
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8) !important;
+    background: #2a2a1a !important;
+}
+
+.exam-vocab-page .place-card .pc-name {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 6px;
+}
+
+.exam-vocab-page .place-card .pc-pos {
+    color: #888;
+    font-size: 0.8em;
+}
+
+/* 报告区 */
+.exam-vocab-page .report-top { display: flex; gap: 15px; margin-bottom: 15px; }
+.exam-vocab-page .report-info {
+    flex: 1;
+    background: #2a2a3a;
+    border: 1px solid #fff;
+    padding: 10px;
+}
+.exam-vocab-page .report-info .r-row { padding: 3px 0; font-size: 0.8em; }
+.exam-vocab-page .report-info .r-label { color: #3498db; font-weight: bold; }
+.exam-vocab-page .report-photo {
+    width: 200px;
+    background: #2a2a3a;
+    border: 1px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    overflow: hidden;
+}
+.exam-vocab-page .report-table-wrap {
+    background: #2a2a3a;
+    border: 1px solid #fff;
+    max-height: 45vh;
+    overflow-y: auto;
+}
+.exam-vocab-page .report-table { width: 100%; border-collapse: collapse; font-size: 0.7em; }
+.exam-vocab-page .report-table th { background: #2d3436; padding: 4px 2px; position: sticky; top: 0; }
+.exam-vocab-page .report-table td { padding: 3px 2px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.3); }

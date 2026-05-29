@@ -1,0 +1,533 @@
+/* 考核版型 / 单词背诵 — 与主界面统一的 Supabase 深色主题 */
+
+.exam-page * {
+    box-sizing: border-box;
+}
+
+.exam-page {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg-primary);
+    min-height: 100vh;
+    color: var(--text-primary);
+}
+
+.exam-page .header {
+    background: var(--bg-primary);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.exam-page .header h1 {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.exam-page .back-btn {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    font-size: 0.85em;
+    transition: background 0.15s, color 0.15s;
+}
+
+.exam-page .back-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.exam-page .container,
+.exam-page .main-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.exam-page .panel,
+.exam-page .control-panel,
+.exam-page .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.exam-page .panel h2,
+.exam-page .card-title {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-size: 1.25em;
+    font-weight: 600;
+    text-align: center;
+}
+
+.exam-page .select-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.exam-page .select-group {
+    min-width: 280px;
+    text-align: left;
+    position: relative;
+    flex: 1;
+}
+
+.exam-page .select-group label,
+.exam-page .form-group label,
+.exam-page .form-col label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 0.88em;
+}
+
+.exam-page .select-group input,
+.exam-page .select-group select,
+.exam-page .form-group select,
+.exam-page .form-col input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    font-size: 0.92em;
+}
+
+.exam-page .select-group input:focus,
+.exam-page .select-group select:focus,
+.exam-page .form-group select:focus,
+.exam-page .form-col input:focus {
+    outline: none;
+    border-color: var(--accent-green);
+}
+
+.exam-page .dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 6px 6px;
+    z-index: 50;
+    display: none;
+}
+
+.exam-page .dropdown div {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.88em;
+    color: var(--text-primary);
+}
+
+.exam-page .dropdown div:hover {
+    background: var(--accent-green-dim);
+    color: var(--accent-green);
+}
+
+.exam-page .btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: opacity 0.15s, background 0.15s;
+    color: #0d0d0d;
+}
+
+.exam-page .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.exam-page .btn-gold,
+.exam-page .btn-start,
+.exam-page .btn-primary {
+    background: var(--accent-green);
+    color: #0d0d0d;
+}
+
+.exam-page .btn-gold:hover,
+.exam-page .btn-start:hover,
+.exam-page .btn-primary:hover {
+    opacity: 0.88;
+}
+
+.exam-page .btn-green {
+    background: var(--accent-green);
+    color: #0d0d0d;
+}
+
+.exam-page .btn-purple,
+.exam-page .btn-finish {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.exam-page .btn-purple:hover,
+.exam-page .btn-finish:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.exam-page .btn-orange,
+.exam-page .btn-shuffle {
+    background: var(--accent-green-dim);
+    color: var(--accent-green);
+    border: 1px solid var(--border-color);
+}
+
+.exam-page .btn-blue,
+.exam-page .btn-page {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.exam-page .btn-exit {
+    background: transparent;
+    color: #f87171;
+    border: 1px solid #3d2020;
+}
+
+.exam-page .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.exam-page .btn-outline:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.exam-page .btn-warning {
+    background: var(--accent-green-dim);
+    color: var(--accent-green);
+    border: 1px solid var(--border-color);
+}
+
+.exam-page .btn-submit {
+    background: var(--accent-green);
+    color: #0d0d0d;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.exam-page .timer,
+.exam-page .timer-display {
+    font-size: 2em;
+    color: var(--accent-green);
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: "Courier New", monospace;
+}
+
+.exam-page .timer.warning,
+.exam-page .timer-display.warning {
+    color: #f87171;
+    animation: exam-blink 1s infinite;
+}
+
+@keyframes exam-blink {
+    50% { opacity: 0.5; }
+}
+
+.exam-page .instruction,
+.exam-page .info-bar {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 0.9em;
+}
+
+.exam-page .stage-indicator,
+.exam-page .info-bar {
+    color: var(--accent-green);
+}
+
+.exam-page .word-grid,
+.exam-page .correction-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.exam-page .word-card,
+.exam-page .correction-card {
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.exam-page .word-card .w-num {
+    font-size: 0.7em;
+    color: var(--text-secondary);
+}
+
+.exam-page .word-card .w-word,
+.exam-page .correction-card .c-word {
+    font-size: 0.92em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 3px 0;
+}
+
+.exam-page .word-card .w-pos {
+    font-size: 0.7em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.exam-page .word-card input {
+    width: 100%;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.85em;
+    text-align: center;
+}
+
+.exam-page .word-card input:focus {
+    outline: none;
+    border-color: var(--accent-green);
+}
+
+.exam-page .correction-card.border-green {
+    border-color: var(--accent-green);
+    background: var(--accent-green-dim);
+}
+
+.exam-page .correction-card.border-red {
+    border-color: #f87171;
+    background: rgba(248, 113, 113, 0.08);
+}
+
+.exam-page .correction-card.border-yellow {
+    border-color: var(--text-secondary);
+    background: var(--bg-card);
+}
+
+.exam-page .correction-card .c-answer {
+    font-size: 0.8em;
+    color: var(--accent-green);
+    margin-bottom: 6px;
+}
+
+.exam-page .correction-card .c-btns button {
+    padding: 3px 8px;
+    font-size: 0.7em;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    background: var(--bg-card);
+}
+
+.exam-page .correction-card .c-btns .btn-correct.active {
+    background: var(--accent-green);
+    color: #0d0d0d;
+}
+
+.exam-page .correction-card .c-btns .btn-wrong.active {
+    background: #f87171;
+    color: #0d0d0d;
+}
+
+.exam-page .report-info,
+.exam-page .report-photo,
+.exam-page .report-table-wrap,
+.exam-page .table-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.exam-page .report-info .r-label {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.exam-page .report-info .r-value {
+    color: var(--text-primary);
+}
+
+.exam-page .report-table th,
+.exam-page .summary-table th,
+.exam-page table th {
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.exam-page .report-table td,
+.exam-page .summary-table td,
+.exam-page table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.exam-page .report-table tr:nth-child(even) td,
+.exam-page table tr:nth-child(even) td {
+    background: var(--bg-primary);
+}
+
+.exam-page .td-green,
+.exam-page .td-correct {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.exam-page .td-red,
+.exam-page .td-wrong {
+    color: #f87171;
+    font-weight: 600;
+}
+
+.exam-page .btn-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.exam-page .hidden {
+    display: none !important;
+}
+
+.exam-page .score-bar {
+    text-align: center;
+    font-size: 1.1em;
+    margin: 10px 0;
+    color: var(--text-primary);
+}
+
+.exam-page .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.exam-page .header-title {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.exam-page .config-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+}
+
+.exam-page .config-item .type-name {
+    color: var(--text-primary);
+}
+
+.exam-page .config-item .type-available {
+    color: var(--text-secondary);
+}
+
+.exam-page .config-item .type-available span {
+    color: var(--accent-green);
+}
+
+.exam-page .type-section-title {
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 24px 0 12px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--accent-green);
+    background: var(--accent-green-dim);
+    border-radius: 0 6px 6px 0;
+}
+
+.exam-page .question-block {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.exam-page .pass-green { color: var(--accent-green); }
+.exam-page .pass-red { color: #f87171; }
+.exam-page .pass-gray { color: var(--text-secondary); }
+
+/* 单词背诵表格行状态 */
+.exam-page tr.row-known td { background: var(--accent-green-dim) !important; }
+.exam-page tr.row-unknown td { background: rgba(248, 113, 113, 0.08) !important; }
+.exam-page tr.row-current td { outline: 1px solid var(--accent-green); }
+
+/* 万圣之夜 / 盗宝大师等游戏元素 — 统一暗色底 */
+.exam-page .skill-card,
+.exam-page .treasure-card,
+.exam-page .meaning-area,
+.exam-page .hand-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.exam-page .skill-card:hover,
+.exam-page .treasure-card:hover:not(.empty-card):not(.selected-card):not(.disabled-card),
+.exam-page .meaning-area:hover,
+.exam-page .hand-card:hover {
+    border-color: var(--accent-green);
+}
+
+.exam-page .skill-card.selected,
+.exam-page .hand-card.selected,
+.exam-page .treasure-card.selected-card {
+    border-color: var(--accent-green);
+    background: var(--accent-green-dim);
+}
+
+.exam-page .skill-card .sk-name,
+.exam-page .hand-card .hc-word,
+.exam-page .meaning-area .m-title {
+    color: var(--text-primary);
+}
+
+.exam-page .hand-cards {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}

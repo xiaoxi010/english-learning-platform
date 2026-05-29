@@ -508,3 +508,21 @@ class ExamStatsDB:
         except Exception as e:
             print(f"清空记录失败: {e}")
             return False
+
+
+def get_exam_stats_db():
+    """获取当前登录用户的考试统计库（每用户独立，数据持久保存）。"""
+    try:
+        from flask import has_request_context, session
+        if has_request_context():
+            user = session.get('user')
+            if user and user.get('id'):
+                from user_data_paths import get_user_exam_stats_db_path
+                from vocabulary_manager import get_vocab_manager
+                return ExamStatsDB(
+                    get_user_exam_stats_db_path(user['id']),
+                    get_vocab_manager().db_path,
+                )
+    except Exception:
+        pass
+    return ExamStatsDB()

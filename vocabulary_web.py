@@ -1,9 +1,18 @@
 # vocabulary_web.py - 词汇数据库网页版（支持用户隔离）
 from flask import Blueprint, render_template, request, jsonify, session
 from vocabulary_manager import get_vocab_manager
+from settings_web import login_required
 import sqlite3
 
 vocabulary_bp = Blueprint('vocabulary', __name__)
+
+
+@vocabulary_bp.before_request
+def require_login():
+    from flask import redirect, url_for
+    if 'user' not in session:
+        session['next_url'] = request.url
+        return redirect(url_for('login'))
 
 
 # ==================== 页面路由 ====================

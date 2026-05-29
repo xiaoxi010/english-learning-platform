@@ -1,34 +1,18 @@
 # vocabulary_manager.py - 完整版本（添加Excel导入导出）
 import json
 import os
-import re
-import hashlib
 import sqlite3
 import pandas as pd
 from datetime import datetime
 from typing import List, Dict, Optional
 from openpyxl import Workbook, load_workbook
 
+from user_data_paths import get_user_vocabulary_db_path
+
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DB_PATH = os.path.join(_BASE_DIR, 'vocabulary.db')
-USER_DATA_DIR = os.path.join(_BASE_DIR, 'user_data')
 WRONG_BOOK_COUNT = 5
 WRONG_BOOK_MAX_WORDS = 50
-
-
-def _safe_user_key(user_id: str) -> str:
-    safe = re.sub(r'[^\w\-]', '_', user_id or '')
-    safe = safe.strip('_')[:64]
-    if not safe:
-        safe = hashlib.sha256((user_id or 'unknown').encode()).hexdigest()[:32]
-    return safe
-
-
-def get_user_vocabulary_db_path(user_id: str) -> str:
-    """每用户独立词汇库路径：user_data/{user_id}/vocabulary.db"""
-    user_dir = os.path.join(USER_DATA_DIR, _safe_user_key(user_id))
-    os.makedirs(user_dir, exist_ok=True)
-    return os.path.join(user_dir, 'vocabulary.db')
 
 
 def init_user_vocabulary(user_id: str) -> bool:
@@ -50,11 +34,12 @@ def get_vocab_manager() -> 'VocabularyManager':
             if not hasattr(g, '_vocab_manager'):
                 user = session.get('user')
                 user_id = user.get('id') if user else None
-                if user_id:
-                    g._vocab_manager = VocabularyManager(user_id=user_id)
-                else:
-                    g._vocab_manager = VocabularyManager()
+                if not user_id:
+                    raise PermissionError('需要登录后才能访问词汇数据')
+                g._vocab_manager = VocabularyManager(user_id=user_id)
             return g._vocab_manager
+    except PermissionError:
+        raise
     except Exception:
         pass
     return VocabularyManager()

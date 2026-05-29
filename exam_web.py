@@ -1,20 +1,28 @@
 # exam_web.py - 考试记录管理网页版
-from flask import Blueprint, render_template, request, jsonify, send_file
-from exam_stats_db import ExamStatsDB
+from flask import Blueprint, render_template, request, jsonify, send_file, session, redirect, url_for
+from exam_stats_db import get_exam_stats_db
 from exam_png_exporter import ExamPNGExporter
+from settings_web import login_required
 import os
 import tempfile
 
 exam_bp = Blueprint('exam', __name__)
-stats_db = ExamStatsDB()
 png_exporter = ExamPNGExporter()
+
+
+@exam_bp.before_request
+def require_login():
+    if 'user' not in session:
+        session['next_url'] = request.url
+        return redirect(url_for('login'))
+
 
 # ==================== 页面 ====================
 
 @exam_bp.route('/exam_database')
 def exam_database_page():
     """考试数据库页面"""
-    dictionaries = stats_db.get_dictionaries_list()
+    dictionaries = get_exam_stats_db().get_dictionaries_list()
     return render_template('exam_database.html', dictionaries=dictionaries, active_nav='exam_db')
 
 
@@ -23,6 +31,7 @@ def exam_database_page():
 @exam_bp.route('/api/exam/stats')
 def api_stats():
     """获取单词组统计"""
+    stats_db = get_exam_stats_db()
     dict_name = request.args.get('dict', '全部')
     sort_by = request.args.get('sort', 'group_name')
     
@@ -51,6 +60,7 @@ def api_stats():
 @exam_bp.route('/api/exam/records')
 def api_records():
     """获取详细考核记录"""
+    stats_db = get_exam_stats_db()
     dict_name = request.args.get('dict', '全部')
     limit = int(request.args.get('limit', 500))
     
@@ -69,7 +79,7 @@ def api_records():
 @exam_bp.route('/api/exam/record/<int:record_id>')
 def api_record_detail(record_id):
     """获取单条记录详情"""
-    records = stats_db.get_all_exam_records(limit=1000)
+    records = get_exam_stats_db().get_all_exam_records(limit=1000)
     for r in records:
         if r['id'] == record_id:
             r['is_passed'] = bool(r['is_passed'])
@@ -80,14 +90,14 @@ def api_record_detail(record_id):
 @exam_bp.route('/api/exam/summary')
 def api_summary():
     """获取统计摘要"""
-    summary = stats_db.get_statistics_summary()
+    summary = get_exam_stats_db().get_statistics_summary()
     return jsonify(summary)
 
 
 @exam_bp.route('/api/exam/export_png/<int:record_id>')
 def api_export_png(record_id):
     """导出PNG"""
-    records = stats_db.get_all_exam_records(limit=1000)
+    records = get_exam_stats_db().get_all_exam_records(limit=1000)
     record = None
     for r in records:
         if r['id'] == record_id:
@@ -112,7 +122,7 @@ def api_export_png(record_id):
 @exam_bp.route('/api/exam/clear', methods=['POST'])
 def api_clear():
     """清空所有记录"""
-    if stats_db.clear_all_records():
+    if get_exam_stats_db().clear_all_records():
         return jsonify({'success': True, 'message': '已清空所有记录'})
     return jsonify({'success': False, 'message': '清空失败'})
 
@@ -120,4 +130,4 @@ def api_clear():
 @exam_bp.route('/api/exam/dictionaries')
 def api_dictionaries():
     """获取词典列表"""
-    return jsonify(stats_db.get_dictionaries_list())
+    return jsonify(get_exam_stats_db().get_dictionaries_list())

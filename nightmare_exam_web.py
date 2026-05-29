@@ -1,16 +1,30 @@
 # nightmare_exam_web.py
-from flask import Blueprint, render_template, request, jsonify, session
+from flask import Blueprint, render_template, request, jsonify, session, redirect, url_for
 import sqlite3
 import json
 import random
 from difflib import SequenceMatcher
 
+from user_data_paths import get_user_skill_db_path
+from skill_db_schema import ensure_skill_database
+
 nightmare_bp = Blueprint('nightmare', __name__, url_prefix='/nightmare')
-DATABASE = 'skill_database.db'
+
+
+@nightmare_bp.before_request
+def require_login():
+    if 'user' not in session:
+        session['next_url'] = request.url
+        return redirect(url_for('login'))
 
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
+    user = session.get('user')
+    if not user or not user.get('id'):
+        raise PermissionError('需要登录')
+    db_path = get_user_skill_db_path(user['id'])
+    ensure_skill_database(db_path)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
