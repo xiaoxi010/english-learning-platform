@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菲尔人格测评报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feier.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="feier-page feier-report assess-shell">
+    <a href="{{ url_for('index') }}" class="feier-back">← 返回测评报告</a>
+
+    <header class="home-section feier-report-cover">
+        <p class="feier-badge" style="text-align:center;">吉致生涯 · 菲尔人格</p>
+        <p style="text-align:center;color:var(--text-secondary);font-size:0.88em;margin:0 0 16px;">
+            {{ r.user_name }} · {{ r.calculate_time }} · {{ r.report_id }}
+        </p>
+    </header>
+
+    <section class="home-section feier-result-hero">
+        <p class="feier-score-line">总分 <span class="feier-score-num">{{ r.total_score }}</span> 分</p>
+        <h2 class="feier-result-title">{{ r.result_title }}</h2>
+        <p class="feier-result-sub">{{ r.subtitle }}</p>
+    </section>
+
+    <section class="home-section">
+        <h3 class="feier-section-title">解读</h3>
+        <p class="feier-prose">{{ r.analysis }}</p>
+    </section>
+
+    <section class="home-section feier-hint-card">
+        <h3 class="feier-section-title">发展参考</h3>
+        <p class="feier-prose">{{ r.career_hint }}</p>
+    </section>
+
+    <p class="feier-report-disclaimer">本报告仅供娱乐与自我探索参考，不构成心理诊断或职业决策依据。</p>
+
+    <p style="margin-top:20px;text-align:center;">
+        <a href="{{ url_for('feier.start') }}" class="btn-primary feier-btn-start">重新测评</a>
+    </p>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

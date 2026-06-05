@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 测评报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mbti.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% set rep = r.report %}
+{% set dims = rep.dimensions %}
+{% set leg = rep.legacyScores %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="mbti-page mbti-report assess-shell">
+    <a href="{{ url_for('index') }}" class="mbti-back">← 返回测评报告</a>
+
+    <header class="home-section mbti-report-cover">
+        <p class="mbti-badge" style="text-align:center;">吉致生涯 · MBTI 趣味测评</p>
+        <p style="text-align:center;color:var(--text-secondary);font-size:0.88em;margin:0 0 16px;">
+            {{ r.user_name }} · {{ r.calculate_time }} · {{ r.report_id }}
+        </p>
+    </header>
+
+    <section class="home-section mbti-type-hero">
+        <p class="mbti-type-code">{{ rep.type }}</p>
+        {% if rep.another_name %}
+        <p class="mbti-type-alias">{{ rep.another_name }}</p>
+        {% endif %}
+        {% if rep.total_word %}
+        <p class="mbti-type-cn">{{ rep.total_word }}</p>
+        {% endif %}
+    </section>
+
+    <section class="home-section">
+        <h3 class="mbti-section-title">四维度倾向</h3>
+        <div class="mbti-dim-bars">
+            <div>
+                <label><span>E 外向 {{ leg.E }}%</span><span>I 内向 {{ leg.I }}%</span></label>
+                <div class="mbti-bar-track">
+                    <div class="mbti-bar-a" style="width:{{ leg.E }}%;"></div>
+                    <div class="mbti-bar-b" style="width:{{ leg.I }}%;"></div>
+                </div>
+                <p style="font-size:0.82em;color:var(--text-secondary);margin:4px 0 0;">{{ dims.EI.tendency }}（{{ dims.EI.percentageText }}）</p>
+            </div>
+            <div>
+                <label><span>N 直觉 {{ leg.N }}%</span><span>S 实感 {{ leg.S }}%</span></label>
+                <div class="mbti-bar-track">
+                    <div class="mbti-bar-a" style="width:{{ leg.N }}%;"></div>
+                    <div class="mbti-bar-b" style="width:{{ leg.S }}%;"></div>
+                </div>
+                <p style="font-size:0.82em;color:var(--text-secondary);margin:4px 0 0;">{{ dims.NS.tendency }}（{{ dims.NS.percentageText }}）</p>
+            </div>
+            <div>
+                <label><span>F 情感 {{ leg.F }}%</span><span>T 思考 {{ leg.T }}%</span></label>
+                <div class="mbti-bar-track">
+                    <div class="mbti-bar-a" style="width:{{ leg.F }}%;"></div>
+                    <div class="mbti-bar-b" style="width:{{ leg.T }}%;"></div>
+                </div>
+                <p style="font-size:0.82em;color:var(--text-secondary);margin:4px 0 0;">{{ dims.FT.tendency }}（{{ dims.FT.percentageText }}）</p>
+            </div>
+            <div>
+                <label><span>J 判断 {{ leg.J }}%</span><span>P 感知 {{ leg.P }}%</span></label>
+                <div class="mbti-bar-track">
+                    <div class="mbti-bar-a" style="width:{{ leg.J }}%;"></div>
+                    <div class="mbti-bar-b" style="width:{{ leg.P }}%;"></div>
+                </div>
+                <p style="font-size:0.82em;color:var(--text-secondary);margin:4px 0 0;">{{ dims.JP.tendency }}（{{ dims.JP.percentageText }}）</p>
+            </div>
+        </div>
+    </section>
+
+    {% if rep.personal_feature %}
+    <section class="home-section">
+        <h3 class="mbti-section-title">人格特征</h3>
+        <p class="mbti-prose">{{ rep.personal_feature }}</p>
+    </section>
+    {% endif %}
+
+    {% if rep.point_word %}
+    <section class="home-section">
+        <h3 class="mbti-section-title">典型表现</h3>
+        <ul class="mbti-points">
+            {% for pt in rep.point_word %}
+            <li>{{ pt }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+    {% for letter in rep.type %}
+    {% set dd = rep.dimensionDetails.get(letter) %}
+    {% if dd %}
+    <section class="home-section mbti-dim-detail">
+        <h4>{{ dd.title }}</h4>
+        <ul>
+            {% for line in dd.details %}
+            <li>{{ line }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+    {% endfor %}
+
+    {% if rep.personal_blind_spot %}
+    <section class="home-section">
+        <h3 class="mbti-section-title">潜在盲点</h3>
+        <p class="mbti-prose">{{ rep.personal_blind_spot }}</p>
+    </section>
+    {% endif %}
+
+    {% if rep.fit_career %}
+    <section class="home-section">
+        <h3 class="mbti-section-title">适合职业方向</h3>
+        <p class="mbti-prose">{{ rep.fit_career }}</p>
+    </section>
+    {% endif %}
+
+    {% if rep.fit_environment %}
+    <section class="home-section">
+        <h3 class="mbti-section-title">适合的工作环境</h3>
+        <p class="mbti-prose">{{ rep.fit_environment }}</p>
+    </section>
+    {% endif %}
+
+    {% if rep.development_suggestion %}
+    <section class="home-section">
+        <h3 class="mbti-section-title">发展建议</h3>
+        <p class="mbti-prose">{{ rep.development_suggestion }}</p>
+    </section>
+    {% endif %}
+
+    <p style="margin-top:20px;text-align:center;">
+        <a href="{{ url_for('mbti.start') }}" class="btn-primary">重新测评</a>
+    </p>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

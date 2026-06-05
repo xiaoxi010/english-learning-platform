@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菲尔人格测评 · 答题</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feier.css') }}">
+</head>
+<body>
+{% set content_class = 'content-area--quiz' %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="feier-page feier-quiz-page assess-shell">
+    <div class="assess-quiz-layout">
+        <div class="assess-quiz-main">
+            <a href="{{ url_for('feier.start') }}" class="feier-back">← 返回简介</a>
+
+            <header class="home-section feier-quiz-head">
+                <h2>菲尔人格测评</h2>
+                <p>共 {{ total }} 题 · 每题选一项，凭第一反应作答</p>
+                <div class="feier-progress-track"><div class="feier-progress-fill" id="feierProgressFill"></div></div>
+            </header>
+
+            <form method="post" action="{{ url_for('feier.report') }}" id="feierQuizForm" class="feier-quiz-form assess-quiz-form" novalidate>
+                <input type="hidden" name="user_name" value="{{ user_name }}">
+                {% for q in questions %}
+                {% set qi = loop.index0 %}
+                <section class="home-section feier-q-card" id="q-{{ qi }}">
+                    <p class="assess-q-title"><span class="assess-q-num">{{ q.id }}</span>. {{ q.title }}</p>
+                    <div class="assess-opt-group" role="radiogroup" aria-label="第 {{ q.id }} 题">
+                        {% for opt in q.options %}
+                        <label class="assess-opt feier-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="{{ opt.key }}">
+                            <span class="assess-opt-text"><span class="feier-opt-letter">{{ opt.key }}</span> {{ opt.text }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endfor %}
+            </form>
+        </div>
+
+        {% with legend_abcdefg=true, form_id='feierQuizForm' %}
+        {% include 'partials/assessment_quiz_sidebar.html' %}
+        {% endwith %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/assessment-quiz.js') }}"></script>
+<script>
+(function () {
+  var form = document.getElementById('feierQuizForm');
+  var total = {{ total }};
+  var fill = document.getElementById('feierProgressFill');
+
+  form._assessOnProgress = function () {
+    var count = 0;
+    for (var j = 0; j < total; j++) {
+      if (form.querySelector('input[name="ans_' + j + '"]:checked')) count++;
+    }
+    if (fill) fill.style.width = Math.round((count / total) * 100) + '%';
+  };
+
+  AssessmentQuiz.init('feierQuizForm', total, {
+    valueMap: {
+      'A': 'yes', 'B': 'maybe', 'C': 'optc', 'D': 'optd',
+      'E': 's1', 'F': 's2', 'G': 's3'
+    }
+  });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

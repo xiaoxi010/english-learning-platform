@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大五人格 BFI-2</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bfi2.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="bfi-page assess-shell">
+    <a href="{{ url_for('index') }}" class="bfi-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="bfi-alert">请将 BFI-2 数据放到 <code>data/</code>（可运行 <code>node scripts/export_bfi2_data.js</code> 导出）。</div>
+    {% endif %}
+
+    <section class="home-section bfi-hero">
+        <p class="bfi-badge">人才测评 · 大五人格 BFI-2</p>
+        <h2 class="bfi-hero-title">大五人格问卷第 2 版（BFI-2）</h2>
+        <p class="bfi-hero-desc">60 题 · 五大人格维度 · 15 个面维 · 约 6–15 分钟</p>
+    </section>
+
+    <section class="home-section bfi-intro">
+        <p>BFI-2 由 Soto 与 John 编制，张博、黎坚等修订中文版，从外向性、宜人性、尽责性、神经质、开放性五个维度及 15 个面维描绘稳定人格特质。</p>
+        <p>每题采用 <strong>1–5</strong> 点计分（1=非常不同意，5=非常同意），请根据<strong>真实感受</strong>作答，凭第一反应选择即可。</p>
+        <p class="bfi-disclaimer">测评结果仅供自我认知与职业探索参考，不构成专业心理诊断。人格具有相对稳定性，也可随经历与成长逐步变化。</p>
+    </section>
+
+    <section class="home-section">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="bfi-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('bfi2.quiz') }}">
+            <div class="bfi-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名">
+            </div>
+            <button type="submit" class="btn-primary" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

@@ -1,0 +1,127 @@
+/* 艾克森情绪稳定性测评 — 站点深色主题 */
+.ey-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 4px 48px;
+}
+
+.ey-back {
+    display: inline-block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.88em;
+    margin-bottom: 16px;
+}
+
+.ey-back:hover { color: var(--accent-green); }
+
+.ey-alert {
+    background: rgba(255, 180, 60, 0.12);
+    border: 1px solid rgba(255, 180, 60, 0.35);
+    color: #e8c070;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.88em;
+    margin-bottom: 16px;
+}
+
+.ey-hero { text-align: center; padding: 20px; }
+
+.ey-badge {
+    display: inline-block;
+    font-size: 0.82em;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.ey-hero-title { margin: 0 0 8px; font-size: 1.35em; color: var(--text-primary); }
+.ey-hero-desc { color: var(--text-secondary); font-size: 0.9em; margin: 0; }
+
+.ey-intro p { color: var(--text-secondary); line-height: 1.85; font-size: 0.92em; margin-bottom: 12px; }
+.ey-subhead { color: var(--text-primary); font-size: 1em; margin: 20px 0 10px; }
+.ey-disclaimer { font-size: 0.85em; border-top: 1px solid var(--border-color); padding-top: 12px; color: var(--text-secondary); }
+
+.ey-field label { display: block; font-size: 0.88em; color: var(--text-secondary); margin-bottom: 6px; }
+.ey-field input[type="text"] {
+    width: 100%; max-width: 320px; padding: 10px 12px;
+    border: 1px solid var(--border-color); border-radius: 8px;
+    background: var(--bg-secondary); color: var(--text-primary);
+}
+.ey-error { color: #f87171; margin-bottom: 12px; }
+.ey-btn-start, .ey-btn-submit { width: 100%; max-width: 360px; margin-top: 8px; }
+
+.ey-quiz-head h2 { margin: 0 0 8px; font-size: 1.2em; color: var(--text-primary); }
+.ey-quiz-head p { color: var(--text-secondary); font-size: 0.9em; margin: 0 0 8px; }
+.ey-quiz-hint { font-size: 0.85em; color: var(--accent-green); }
+.ey-progress-track { height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.ey-progress-fill { height: 100%; width: 0; background: var(--accent-green); transition: width 0.25s ease; }
+
+.ey-q-card { margin-bottom: 10px; }
+.ey-q-title { color: var(--text-primary); font-size: 0.94em; line-height: 1.6; margin: 0 0 10px; }
+.ey-q-num { color: var(--accent-green); font-weight: 600; }
+
+/* 答题选项样式见 assessment-common.css（.assess-opt） */
+
+.ey-report-cover {
+    text-align: center; padding: 28px 20px;
+    border: 1px solid var(--border-color); border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 160, 80, 0.08) 0%, transparent 100%);
+}
+.ey-cover-brand { font-size: 0.82em; color: var(--text-secondary); margin: 0 0 12px; }
+.ey-report-cover h1 { margin: 0; font-size: 1.5em; color: #e8a050; }
+.ey-cover-meta { font-size: 0.85em; color: var(--text-secondary); margin-top: 12px; line-height: 1.6; }
+
+.ey-section { padding: 20px; }
+.ey-section-title { margin: 0 0 16px; color: var(--text-primary); font-size: 1.1em; }
+.ey-sub-title { font-size: 0.95em; color: var(--text-secondary); margin: 16px 0 8px; }
+
+.ey-summary-card { border: 1px solid var(--border-color); border-radius: 10px; }
+.ey-summary-top { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; margin-bottom: 16px; }
+.ey-comp-score { font-size: 2.4em; font-weight: 700; color: var(--accent-green); line-height: 1; }
+.ey-comp-score span { font-size: 0.45em; color: var(--text-secondary); font-weight: 400; }
+.ey-level { margin: 0; font-size: 1.1em; color: var(--text-primary); }
+.ey-level-desc { margin: 4px 0 0; font-size: 0.9em; color: var(--text-secondary); }
+.ey-overall { color: var(--text-secondary); line-height: 1.75; font-size: 0.92em; margin: 0; }
+
+.ey-dim-table { margin-bottom: 20px; }
+.ey-dim-row {
+    display: grid; grid-template-columns: 1.2fr 0.8fr 0.8fr; gap: 8px;
+    padding: 10px 0; border-bottom: 1px solid var(--border-color);
+    font-size: 0.88em; color: var(--text-secondary);
+}
+.ey-dim-row--head { font-weight: 600; color: var(--text-primary); }
+.ey-score--high { color: #f87171; }
+.ey-score--ok { color: var(--accent-green); }
+.ey-state-bad { color: #f87171; }
+.ey-state-ok { color: var(--accent-green); }
+
+.ey-chart-canvas { display: block; margin: 16px auto; max-width: 100%; }
+
+.ey-pattern-card {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px; margin-top: 16px;
+    color: var(--text-secondary); font-size: 0.9em; line-height: 1.75;
+}
+.ey-pattern-card--main { border: 1px solid rgba(232, 160, 80, 0.35); border-radius: 8px; padding: 16px; margin-top: 0; background: rgba(232, 160, 80, 0.06); }
+.ey-pattern-card h4 { margin: 0 0 10px; color: var(--text-primary); }
+
+.ey-trigger-label { color: #e8a050; font-size: 0.88em; margin: 12px 0 6px; }
+.ey-section ul { margin: 0 0 12px; padding-left: 1.2em; color: var(--text-secondary); font-size: 0.9em; line-height: 1.7; }
+
+.ey-dim-detail {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px; margin-top: 20px;
+}
+.ey-dim-detail h4 { margin: 0 0 10px; color: var(--text-primary); font-size: 1.02em; }
+.ey-dim-core { color: var(--text-secondary); line-height: 1.75; font-size: 0.9em; }
+.ey-dim-label { color: #e8a050; font-size: 0.88em; margin: 14px 0 6px; }
+
+.ey-advice .ey-note { font-size: 0.88em; color: var(--text-secondary); line-height: 1.75; margin-top: 12px; }
+.ey-report-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+
+@media (max-width: 600px) {
+    .ey-dim-row { grid-template-columns: 1fr; gap: 4px; }
+}

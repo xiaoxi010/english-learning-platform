@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - {{ site_name | default('英语学习平台') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        .settings-layout {
+            display: flex;
+            gap: 24px;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 0;
+            flex: 1;
+        }
+        .settings-nav {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .settings-nav-item {
+            display: block;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.82em;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .settings-nav-item:hover {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+        }
+        .settings-nav-item.active {
+            background: var(--accent-green-dim);
+            border-color: var(--border-color);
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+        .settings-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .settings-panel {
+            display: none;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px 24px;
+        }
+        .settings-panel.active { display: block; }
+        .settings-panel h2 {
+            color: var(--text-primary);
+            font-size: 1em;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.78em;
+        }
+        .form-group input {
+            width: 100%;
+            max-width: 380px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            font-size: 0.85em;
+        }
+        .form-group input:focus { outline: none; border-color: var(--accent-green); }
+        .form-group input:disabled { opacity: 0.75; cursor: not-allowed; }
+        .silver-box {
+            background: var(--accent-green-dim);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            max-width: 380px;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .silver-box .num {
+            font-size: 1.6em;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+        .silver-box .label {
+            color: var(--text-secondary);
+            font-size: 0.78em;
+            margin-top: 4px;
+        }
+        .btn-save {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #0d0d0d;
+            background: var(--accent-green);
+            margin-top: 8px;
+        }
+        .btn-save:hover { opacity: 0.88; }
+        .msg { margin-top: 12px; font-size: 0.78em; }
+        .msg.success { color: var(--accent-green); }
+        .msg.error { color: #f87171; }
+        @media (max-width: 720px) {
+            .settings-layout { flex-direction: column; }
+            .settings-nav { width: 100%; flex-direction: row; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+{% set show_sidebar = true %}
+{% set active_nav = active_nav | default('settings') %}
+{% set page_title = '设置' %}
+{% include 'partials/app_shell_open.html' %}
+<div class="settings-layout">
+    <aside class="settings-nav">
+        <a class="settings-nav-item active" data-panel="account" onclick="switchSettingsPanel('account', this); return false;">账号</a>
+        <a class="settings-nav-item" data-panel="english" onclick="switchSettingsPanel('english', this); return false;">英语单词系统设置</a>
+    </aside>
+
+    <div class="settings-main">
+        <!-- 账号 -->
+        <section class="settings-panel active" id="panel-account">
+            <h2>账号</h2>
+            <div class="form-group">
+                <label for="accountEmail">绑定邮箱</label>
+                <input type="email" id="accountEmail" value="{{ account_email }}" disabled readonly>
+            </div>
+        </section>
+
+        <!-- 英语单词系统设置 -->
+        <section class="settings-panel" id="panel-english">
+            <h2>英语单词系统设置</h2>
+
+            <div class="form-group">
+                <label>用户剩余银币</label>
+                <div class="silver-box">
+                    <div class="num" id="creditsDisplay">{{ credits }}</div>
+                    <div class="label">🪙 银币余额</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="studentName">学生姓名</label>
+                <input type="text" id="studentName" value="{{ user_name }}" placeholder="请输入学生姓名">
+            </div>
+
+            <div class="form-group">
+                <label for="studentId">学生学号</label>
+                <input type="text" id="studentId" value="{{ student_id }}" placeholder="请输入学生学号">
+            </div>
+
+            <button type="button" class="btn-save" onclick="saveSettings()">保存设置</button>
+            <div class="msg" id="msg"></div>
+        </section>
+    </div>
+</div>
+{% include 'partials/app_shell_close.html' %}
+<script>
+function switchSettingsPanel(id, el) {
+    document.querySelectorAll('.settings-panel').forEach(function(p) {
+        p.classList.toggle('active', p.id === 'panel-' + id);
+    });
+    document.querySelectorAll('.settings-nav-item').forEach(function(n) {
+        n.classList.toggle('active', n === el);
+    });
+}
+
+async function saveSettings() {
+    const studentName = document.getElementById('studentName').value.trim();
+    const studentId = document.getElementById('studentId').value.trim();
+    const msg = document.getElementById('msg');
+    if (!studentName) {
+        msg.textContent = '学生姓名不能为空';
+        msg.className = 'msg error';
+        switchSettingsPanel('english', document.querySelector('.settings-nav-item[data-panel="english"]'));
+        return;
+    }
+    try {
+        const resp = await fetch('/api/settings/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_name: studentName, student_id: studentId }),
+        });
+        const result = await resp.json();
+        msg.textContent = result.message;
+        msg.className = 'msg ' + (result.success ? 'success' : 'error');
+    } catch (e) {
+        msg.textContent = '保存失败: ' + e.message;
+        msg.className = 'msg error';
+    }
+}
+</script>
+</body>
+</html>

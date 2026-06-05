@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霍兰德职业兴趣测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/holland.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="hl-page assess-shell">
+    <a href="{{ url_for('index') }}" class="hl-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="hl-alert">霍兰德题库未就绪，请确认 <code>data/holland_questions.json</code> 等文件存在（或保留小程序 data 目录）。</div>
+    {% endif %}
+
+    <section class="home-section hl-hero">
+        <p class="hl-badge">人才测评 · 霍兰德</p>
+        <h2 class="hl-hero-title">霍兰德职业兴趣测评</h2>
+        <p class="hl-hero-desc">RIASEC 六维 · 人格类型与职业匹配</p>
+    </section>
+
+    <section class="home-section hl-intro">
+        <p>本测试基于美国著名职业指导专家约翰・霍兰德（John Holland）于 1959 年提出的经典职业兴趣理论。该理论是全球应用最广泛的职业测评工具之一，核心观点认为：人的人格类型、兴趣与职业高度相关，从事与自身兴趣匹配的职业，不仅能大幅提升工作积极性和满意度，更能充分发挥个人潜能，获得职业成就感。</p>
+        <p>霍兰德将人的职业兴趣划分为六大核心类型：现实型（R）、研究型（I）、艺术型（A）、社会型（S）、企业型（E）、常规型（C）。每个人的职业兴趣都是这六种类型的不同组合，通过测试找到你的主导兴趣类型，就能精准匹配更适合你的职业方向、工作环境和发展路径。</p>
+        <h3 class="hl-subhead">测试说明</h3>
+        <ul class="hl-list">
+            <li>本测试共 90 道选择题，请根据真实想法和日常行为作答</li>
+            <li>答案没有对错之分，越真实的回答，结果越准确</li>
+            <li>全程约 3–5 分钟，完成后将生成专属职业兴趣报告</li>
+        </ul>
+        <p class="hl-disclaimer">免责声明：本测试基于霍兰德职业兴趣理论开发，仅供个人职业探索和兴趣参考，不构成专业职业指导、就业建议或心理诊断。</p>
+    </section>
+
+    <section class="home-section hl-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="hl-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('holland.quiz') }}" class="hl-form">
+            <div class="hl-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名">
+            </div>
+            <button type="submit" class="btn-primary hl-btn-start" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

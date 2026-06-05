@@ -1,0 +1,47 @@
+<header class="top-bar{% if jilin_system_toolbar %} top-bar--jilin-system{% endif %}">
+    {% if jilin_system_toolbar %}
+    <div class="top-bar-jilin-main">
+        <a href="{{ jilin_back_url or url_for('gaokao_apply.index') }}" class="top-back-btn gk-system-back">← 返回信息填写</a>
+        {% include 'gaokao_apply/partials/jilin_system_toolbar.html' %}
+    </div>
+    <div class="top-bar-right top-bar-right--jilin">
+        <button type="button" class="gk-system-options-btn" id="jilinApplyOptionsBtn">报考选项</button>
+        {% if logged_in_user %}
+        <span class="local-user">{{ user_name }}</span>
+        {% if student_id %}<span class="user-id">{{ student_id }}</span>{% endif %}
+        <span class="user-id" title="剩余积分">💰 {{ credits }}</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">登出</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">登录</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="top-bar-left">
+        {% if top_back_url %}
+        <div class="top-bar-head">
+            <a href="{{ top_back_url }}" class="top-back-btn">{{ top_back_label or '返回主界面' }}</a>
+            {% if page_title %}
+            <h1 class="top-title">{{ page_title }}</h1>
+            {% endif %}
+        </div>
+        {% else %}
+        {% if page_title %}
+        <h1 class="top-title">{{ page_title }}</h1>
+        {% endif %}
+        {% if page_subtitle %}
+        <p class="top-subtitle">{{ page_subtitle }}</p>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="top-bar-right">
+        {% if logged_in_user %}
+        <span class="local-user">{{ user_name }}</span>
+        {% if student_id %}<span class="user-id">{{ student_id }}</span>{% endif %}
+        <span class="user-id" title="剩余积分">💰 {{ credits }}</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">登出</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-btn">登录</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</header>

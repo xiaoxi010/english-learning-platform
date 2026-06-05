@@ -1,0 +1,147 @@
+/* MBTI 趣味测评 */
+.mbti-page { max-width: 720px; margin: 0 auto; padding-bottom: 32px; }
+.mbti-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+.mbti-back:hover { color: var(--accent-green); }
+.mbti-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    color: #e879f9;
+    background: rgba(232, 121, 249, 0.12);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.mbti-hero-title { margin: 0 0 8px; font-size: 1.35em; }
+.mbti-hero-desc { color: var(--text-secondary); margin: 0; }
+.mbti-intro p { color: var(--text-secondary); line-height: 1.7; margin: 0 0 12px; }
+.mbti-form-card { padding: 20px; }
+
+.mbti-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 360px;
+}
+
+.mbti-field {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.mbti-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+.mbti-field input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary, var(--bg-card));
+    color: var(--text-primary);
+}
+
+.mbti-btn-start {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    text-align: center;
+    box-sizing: border-box;
+}
+.mbti-error { color: #ff6b6b; margin-bottom: 10px; }
+.mbti-alert {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    margin-bottom: 16px;
+    font-size: 0.9em;
+}
+
+.mbti-quiz-head h2 { margin: 0 0 6px; }
+.mbti-quiz-head p { margin: 0 0 12px; color: var(--text-secondary); font-size: 0.9em; }
+.mbti-progress-track {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.mbti-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #c026d3, #e879f9);
+    transition: width 0.25s ease;
+}
+.mbti-q-card { margin-bottom: 10px; }
+.mbti-opt .assess-opt-text { font-size: 0.88em; }
+
+.mbti-opt-letter {
+    display: inline-block;
+    min-width: 1.25em;
+    font-weight: 600;
+    color: #e879f9;
+}
+
+.mbti-type-hero {
+    text-align: center;
+    padding: 24px 16px;
+}
+.mbti-type-code {
+    font-size: 2.4em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #e879f9;
+    margin: 0 0 6px;
+}
+.mbti-type-alias { font-size: 1.1em; color: var(--text-primary); margin: 0 0 4px; }
+.mbti-type-cn { color: var(--text-secondary); font-size: 0.92em; margin: 0; }
+.mbti-section-title { margin: 0 0 12px; font-size: 1.05em; }
+.mbti-dim-bars { display: flex; flex-direction: column; gap: 12px; }
+.mbti-dim-bar label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88em;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+}
+.mbti-bar-track {
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+}
+.mbti-bar-a {
+    height: 100%;
+    background: linear-gradient(90deg, #7c9cff, #a78bfa);
+}
+.mbti-bar-b {
+    height: 100%;
+    background: linear-gradient(90deg, #f472b6, #e879f9);
+}
+.mbti-prose {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 0.92em;
+    margin: 0 0 12px;
+}
+.mbti-points { margin: 0; padding-left: 1.2em; color: var(--text-secondary); font-size: 0.9em; line-height: 1.65; }
+.mbti-points li { margin-bottom: 6px; }
+.mbti-dim-detail {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-left: 3px solid #e879f9;
+    background: rgba(232, 121, 249, 0.06);
+}
+.mbti-dim-detail h4 { margin: 0 0 8px; font-size: 0.95em; }
+.mbti-dim-detail ul { margin: 0; padding-left: 1.1em; font-size: 0.88em; color: var(--text-secondary); line-height: 1.6; }

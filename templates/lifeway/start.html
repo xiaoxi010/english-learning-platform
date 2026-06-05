@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生道路解读</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lifeway.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="lw-page assess-shell">
+    <a href="{{ url_for('index') }}" class="lw-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="lw-alert">请将小程序云端的 <strong>lifeway.json</strong> 放到 <code>data/lifeway.json</code> 后重启服务。</div>
+    {% endif %}
+
+    <section class="home-section lw-intro-card">
+        <p class="lw-welcome-lead">欢迎<span class="lw-name">「{{ welcome_name }}」</span>来到毕达哥拉斯测评，赴一场以数字为钥的生命蓝图解码之旅。</p>
+        <p>在这里，没有宿命的定论，没有绝对的优劣，只有透过专属数字标识，为你解锁天赋底色、人生课题与成长方向的理性探索。数字生命学的源头，可追溯至对数字规律与生命关联的深度研究，核心思想源于「数字是理解生命秩序的重要语言」。它认为数字不仅是量化工具，更承载着个体在成长过程中的行为模式、能量倾向与发展脉络，能揭示人的性格本质与潜能倾向。这一研究方向历经演变，经现代学者系统化梳理，结合生命科学、行为心理学与数据科学的视角，逐渐形成以个体数字标识为核心的分析体系，成为兼具科学性与启发性的自我认知工具，广泛应用于生涯规划、家庭教育、人际沟通、团队协作等领域。</p>
+        <p>本次测评聚焦一个人的核心数字、天赋数字和个人发展周期等方面，让你获得详尽的数字生命学解析，解锁专属数字标签，读懂自己的天赋潜能与成长课题，也能更通透地理解他人的行为模式，在家庭教育中因材施教，在人际相处中高效同频。现在，就让我们以数字为媒，开启这场深刻而温暖的自我探索之旅吧！</p>
+        <p class="lw-note">注：本测评结果为基于数字规律与行为分析的参考性解读，不构成人生定论。</p>
+    </section>
+
+    <section class="home-section lw-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="lw-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('lifeway.report') }}" id="lifewayForm" class="lw-form">
+            <div class="lw-field">
+                <label for="user_name">昵称/姓名</label>
+                <input type="text" id="user_name" name="user_name" placeholder="请输入" maxlength="32">
+            </div>
+            <div class="lw-field">
+                <label for="user_name_pinyin">姓名拼音(小写)</label>
+                <input type="text" id="user_name_pinyin" name="user_name_pinyin" placeholder="如：zhangsan" pattern="[a-zA-Z]+" required>
+            </div>
+            <div class="lw-field">
+                <label>生日</label>
+                <div class="lw-picker-row">
+                    <select id="birth_year" name="birth_year" class="lw-select" required>
+                        <option value="">年</option>
+                        {% for y in years %}<option value="{{ y }}">{{ y }}年</option>{% endfor %}
+                    </select>
+                    <select id="birth_month" name="birth_month" class="lw-select" required>
+                        <option value="">月</option>
+                        {% for m in months %}<option value="{{ m }}">{{ m }}月</option>{% endfor %}
+                    </select>
+                    <select id="birth_day" name="birth_day" class="lw-select" required>
+                        <option value="">日</option>
+                        {% for d in days %}<option value="{{ d }}">{{ d }}日</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="birth_date" id="birth_date">
+            <button type="submit" class="lw-btn-primary">完成</button>
+        </form>
+    </section>
+</div>
+
+<script>
+(function () {
+    var y = document.getElementById('birth_year');
+    var m = document.getElementById('birth_month');
+    var d = document.getElementById('birth_day');
+    var hidden = document.getElementById('birth_date');
+    var form = document.getElementById('lifewayForm');
+    function refreshDays() {
+        var max = new Date(parseInt(y.value, 10), parseInt(m.value, 10), 0).getDate();
+        var cur = d.value;
+        d.innerHTML = '<option value="">日</option>';
+        for (var i = 1; i <= max; i++) {
+            var o = document.createElement('option');
+            o.value = i; o.textContent = i + '日';
+            if (String(i) === String(cur)) o.selected = true;
+            d.appendChild(o);
+        }
+    }
+    y.addEventListener('change', refreshDays);
+    m.addEventListener('change', refreshDays);
+    form.addEventListener('submit', function (e) {
+        if (!y.value || !m.value || !d.value) { e.preventDefault(); alert('请选择生日'); return; }
+        hidden.value = y.value + '-' + String(m.value).padStart(2, '0') + '-' + String(d.value).padStart(2, '0');
+    });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

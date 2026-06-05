@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="200" viewBox="0 0 440 200">
+  <text x="220" y="100"
+        transform="rotate(-35 220 100)"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family="Microsoft YaHei, PingFang SC, SimHei, sans-serif"
+        font-size="16"
+        fill="#64748b"
+        fill-opacity="0.32"
+        font-weight="600">??????????????</text>
+</svg>

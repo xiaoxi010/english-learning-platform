@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>艾克森情绪稳定性测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/eysenck.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="ey-page assess-shell">
+    <a href="{{ url_for('index') }}" class="ey-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="ey-alert">请将 <code>data/eysenck_questions.json</code> 放到 data 目录（项目已预导出 210 题）。</div>
+    {% endif %}
+
+    <section class="home-section ey-hero">
+        <p class="ey-badge">人才测评 · 艾克森</p>
+        <h2 class="ey-hero-title">艾克森情绪稳定性测评</h2>
+        <p class="ey-hero-desc">210 题 · 七维情绪状态 · 约 15–25 分钟</p>
+    </section>
+
+    <section class="home-section ey-intro">
+        <p>汉斯·艾森克（Hans Eysenck），英国伦敦大学心理学教授，当代极具影响力的心理学家，编制了多种全球广泛应用的心理测评量表，艾森克人格问卷（EPQ）更是各领域经典工具。</p>
+        <p>本次测评共 <strong>210</strong> 道题，基于其人格维度理论研发，可科学评估情绪稳定程度，助力识别自卑、抑郁、焦虑、强迫症等常见情绪与心理困扰。</p>
+        <p>测评设计科学、信效度高，无需专业知识，简单作答即可清晰呈现自身情绪状态。</p>
+        <h3 class="ey-subhead">特别说明</h3>
+        <p class="ey-disclaimer">本测评结果仅作为自我情绪认知的参考依据，不构成专业心理诊断结论；若存在持续情绪困扰，建议及时寻求专业心理咨询师或医疗机构的帮助。有效作答建议答题时长 10–40 分钟。</p>
+    </section>
+
+    <section class="home-section ey-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="ey-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('eysenck.quiz') }}" class="ey-form">
+            <div class="ey-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名">
+            </div>
+            <button type="submit" class="btn-primary ey-btn-start" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

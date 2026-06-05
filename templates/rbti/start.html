@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBTI 抽象人格测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rbti.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="rbti-page assess-shell">
+    <a href="{{ url_for('index') }}" class="rbti-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="rbti-alert">请将 RBTI 数据放到 <code>data/</code>（可运行 <code>node scripts/export_rbti_data.js</code> 导出）。</div>
+    {% endif %}
+
+    <section class="home-section rbti-hero">
+        <p class="rbti-badge">趣味测评 · RBTI</p>
+        <h2 class="rbti-hero-title">RBTI 年度抽象人格测评</h2>
+        <p class="rbti-hero-desc">31 题 · 四轴十六型 · 约 5–10 分钟</p>
+    </section>
+
+    <section class="home-section rbti-intro">
+        <p>{{ meta.about or 'RBTI（Really Balanced Type Indicator，纯属虚构）通过 31 道情境题，统计你在荒谬、较真、搞心态、摆烂四条主轴上的倾向，并细分为 12 个维度。' }}</p>
+        <p>没有 100% 贴合的选项很正常，请选<strong>相对最贴近</strong>的一项；幽默表述若不完全符合生活，按第一直觉理解即可。</p>
+        <p class="rbti-disclaimer">结果仅供娱乐，不构成心理诊断或职业建议。</p>
+    </section>
+
+    <section class="home-section rbti-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="rbti-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('rbti.quiz') }}" class="rbti-form">
+            <div class="rbti-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名" autocomplete="name">
+            </div>
+            <button type="submit" class="btn-primary rbti-btn-start" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

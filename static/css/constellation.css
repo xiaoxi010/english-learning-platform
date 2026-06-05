@@ -1,0 +1,220 @@
+/* 星血趣味测评 — 星象青绿主题 */
+.xb-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.xb-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.xb-back:hover { color: #14b8a6; }
+
+.xb-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    color: #0d9488;
+    background: rgba(20, 184, 166, 0.12);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+
+.xb-hero-title { margin: 0 0 6px; font-size: 1.5em; }
+.xb-hero-desc { margin: 0; color: var(--text-secondary); font-size: 0.92em; }
+
+.xb-intro p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0 0 12px;
+    font-size: 0.92em;
+}
+
+.xb-welcome-name { color: #5eead4; font-weight: 600; }
+.xb-note { font-size: 0.85em; opacity: 0.85; }
+
+.xb-alert {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(255, 180, 60, 0.1);
+    border: 1px solid rgba(255, 180, 60, 0.35);
+    color: #e8c070;
+    font-size: 0.88em;
+    margin-bottom: 16px;
+    line-height: 1.55;
+}
+
+.xb-form-card { padding: 20px; }
+
+.xb-form {
+    max-width: 420px;
+}
+
+.xb-field { margin-bottom: 16px; }
+
+.xb-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+.xb-picker-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.xb-select {
+    flex: 1;
+    min-width: 88px;
+    padding: 10px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary, var(--bg-card));
+    color: var(--text-primary);
+    font-size: 0.9em;
+}
+
+.xb-select--full { width: 100%; max-width: 280px; }
+
+.xb-btn-submit {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    margin-top: 8px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.xb-error { color: #ff6b6b; margin-bottom: 10px; }
+
+/* 报告 */
+.xb-report-head {
+    text-align: center;
+    padding: 16px 12px 20px;
+}
+
+.xb-result-constellation {
+    margin: 0 0 8px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #5eead4;
+    letter-spacing: 0.06em;
+}
+
+.xb-result-sub {
+    margin: 0;
+    font-size: 0.95em;
+    color: var(--text-secondary);
+}
+
+.xb-card {
+    margin-bottom: 14px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(20, 184, 166, 0.2);
+    background: rgba(20, 184, 166, 0.04);
+}
+
+.xb-card--blood {
+    border-color: rgba(94, 234, 212, 0.25);
+}
+
+.xb-card--combo .xb-details + .xb-details {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.xb-card-title {
+    margin: 0 0 12px;
+    font-size: 1.05em;
+    color: var(--text-primary);
+}
+
+.xb-subtitle {
+    margin: 14px 0 8px;
+    font-size: 0.95em;
+    color: #5eead4;
+}
+
+.xb-label {
+    display: inline-block;
+    min-width: 5em;
+    color: var(--text-secondary);
+    margin-right: 6px;
+}
+
+.xb-info-grid {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.xb-info-row { margin: 0; font-size: 0.92em; color: var(--text-secondary); }
+
+.xb-prose {
+    margin: 8px 0 0;
+    line-height: 1.75;
+    font-size: 0.92em;
+    color: var(--text-secondary);
+}
+
+.xb-list {
+    margin: 8px 0 0;
+    padding-left: 1.3em;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    line-height: 1.65;
+}
+
+.xb-tags {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.xb-tags li {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.85em;
+    background: rgba(20, 184, 166, 0.12);
+    color: #99f6e4;
+    border: 1px solid rgba(45, 212, 191, 0.3);
+}
+
+.xb-details summary {
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.xb-details summary::-webkit-details-marker { display: none; }
+
+.xb-details[open] summary { margin-bottom: 10px; }
+
+.xb-trait-block {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.xb-trait-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.xb-disclaimer {
+    text-align: center;
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    margin-top: 20px;
+    opacity: 0.85;
+}

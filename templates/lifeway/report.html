@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生道路解读报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lifeway.css') }}">
+</head>
+<body>
+{% set r = report.result %}
+{% set i = report.interpretation %}
+{% set p = r.pyramid %}
+{% macro lw_block(title, text) %}
+<section class="home-section lw-content-block">
+    <h4>{{ title }}</h4>
+    <p class="lw-text">{{ text }}</p>
+</section>
+{% endmacro %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="lw-page lw-report assess-shell">
+    <a href="{{ url_for('index') }}" class="lw-back">← 返回测评报告</a>
+    {% if not data_ready %}<div class="lw-alert">解读文案需 <code>data/lifeway.json</code>，当前为计算结果展示。</div>{% endif %}
+
+    <header class="home-section lw-report-head">
+        <h2>{{ report.user_name }} · 人生道路解读</h2>
+        <p>生日 {{ report.birth_display }} · 拼音 {{ report.user_name_pinyin }} · {{ report.calculate_time }}</p>
+    </header>
+
+    <nav class="lw-tabs">
+        <button type="button" class="lw-tab active" data-tab="overview">总览</button>
+        <button type="button" class="lw-tab" data-tab="family">原生家庭</button>
+        <button type="button" class="lw-tab" data-tab="behavior">做人做事</button>
+        <button type="button" class="lw-tab" data-tab="temperament">性情数字</button>
+        <button type="button" class="lw-tab" data-tab="lifepath">生命道路</button>
+    </nav>
+
+    <!-- 总览 -->
+    <div class="lw-panel active" id="lw-overview">
+        <section class="home-section">
+            <h3>生命数字总览</h3>
+            <div class="lw-overview-grid">
+                <div class="lw-pyramid-block">
+                    <h4 class="lw-peak-label">高峰数字</h4>
+                    <div class="lw-peak-pyramid">
+                        <div class="lw-p-top">{{ p.peak.top }}</div>
+                        <div class="lw-p-mid">{{ p.peak.middle }}</div>
+                        <div class="lw-p-base"><span>{{ p.peak.bottom_left }}</span><span>{{ p.peak.bottom_right }}</span></div>
+                    </div>
+                </div>
+                <div class="lw-pyramid-block">
+                    <h4 class="lw-challenge-label">挑战数字</h4>
+                    <div class="lw-challenge-pyramid">
+                        <div class="lw-c-top"><span>{{ p.challenge.top_left }}</span><span>{{ p.challenge.top_right }}</span></div>
+                        <div class="lw-c-mid">{{ p.challenge.middle }}</div>
+                        <div class="lw-c-bot">{{ p.challenge.bottom }}</div>
+                    </div>
+                </div>
+                <div class="lw-data-tables">
+                    <div class="lw-table-card lw-yellow">
+                        <div class="lw-table-title">名字图表</div>
+                        <div class="lw-kv"><span>表现数字</span><strong>{{ r.name_chart.show_num }}</strong></div>
+                        <div class="lw-kv"><span>内驱数字</span><strong>{{ r.name_chart.inner_num }}</strong></div>
+                        <div class="lw-kv"><span>个性数字</span><strong>{{ r.name_chart.personal_num }}</strong></div>
+                        <div class="lw-kv highlight"><span>成熟数字</span><strong>{{ r.name_chart.maturity_num }}</strong></div>
+                    </div>
+                    <div class="lw-life-path-box">
+                        <div class="lw-life-path-val">{{ r.life_path.value }}</div>
+                        <div>生命道路</div>
+                    </div>
+                    <div class="lw-table-card lw-gray">
+                        <div class="lw-kv"><span>黑洞数字</span><strong>{{ r.black_hole or '/' }}</strong></div>
+                        <div class="lw-kv"><span>个人年</span><strong>{{ r.person_year }}</strong></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% for key, label in [('stage1','阶段一'),('stage2','阶段二'),('stage3','阶段三'),('stage4','阶段四')] %}
+        {% set st = r.life_stages[key] %}
+        <section class="home-section lw-stage-card">
+            <h4>{{ label }} · {{ st.range }}岁</h4>
+            <p>循环 {{ st.cycle }} · 高峰 {{ st.peak }} · 挑战 {{ st.challenge }}</p>
+        </section>
+        {% endfor %}
+    </div>
+
+    <!-- 原生家庭 -->
+    <div class="lw-panel" id="lw-family">
+        <p class="lw-stage-hint">人生阶段 {{ r.life_stages.stage1.range }}岁</p>
+        {{ lw_block('小时生存环境的揭秘', '第一循环数字 ' ~ r.details.first_cycle ~ '：' ~ i.first_cycle.num) }}
+        {{ lw_block('从小建立的生存安全模式', i.constraints.model_summary ~ ' — ' ~ i.constraints.model_detail) }}
+        {{ lw_block('能量纯正的表现', i.constraints.energy_good) }}
+        {{ lw_block('能量过少的表现', i.constraints.energy_less) }}
+        {{ lw_block('能量过多的表现', i.constraints.energy_more) }}
+        {{ lw_block('如何打破制约模式', i.constraints.break_detail_text) }}
+        {{ lw_block('面对自己生命阶段中的劣势', i.challenge_nums.first.face_detail) }}
+        {{ lw_block('翻越生命中「自我成见」的大山', i.challenge_nums.first.breakthrough_detail) }}
+    </div>
+
+    <!-- 做人做事 -->
+    <div class="lw-panel" id="lw-behavior">
+        {{ lw_block('表现数字：' ~ r.name_chart.show_num, '表现数字代表我们学习和工作中的优势以及行为方式。') }}
+        {{ lw_block('核心的优势与天资', i.show_num.good_core) }}
+        {{ lw_block('其他的优势与天资', i.show_num.good_other) }}
+        {{ lw_block('可能需要弥补的不足', i.show_num.bad) }}
+        <section class="home-section lw-content-block">
+            <h4>孩子时期的兴趣与表现</h4>
+            <p class="lw-text"><strong>行为特点：</strong>{{ i.show_num.child_special }}</p>
+            <p class="lw-text"><strong>适合兴趣班：</strong>{{ i.show_num.child_interest }}</p>
+        </section>
+        {{ lw_block('个性数字：' ~ r.name_chart.personal_num, i.personal_num.special) }}
+        {% for item in i.personal_num.detail_items %}
+        {% if item.term %}
+        <section class="home-section lw-content-block">
+            <h4>{{ item.term }}</h4>
+            <p class="lw-text">{{ item.detail }}</p>
+        </section>
+        {% endif %}
+        {% endfor %}
+        {{ lw_block('内驱数字：' ~ r.name_chart.inner_num, '内驱数字表示与最亲近人的交往方式。') }}
+        {{ lw_block('你内心中最想成为的自己', i.inner_num.core_special ~ '\n' ~ i.inner_num.core_special_2) }}
+        {{ lw_block('你也喜欢这样的自己', i.inner_num.core_detail) }}
+        {{ lw_block('你欣赏这样的人或伴侣', i.inner_num.admire_detail) }}
+        {{ lw_block('怎样跟内驱数字是' ~ r.details.inner_num.second ~ '的人互动', i.inner_num.interaction_detail) }}
+        {{ lw_block('内驱数字是' ~ r.details.inner_num.second ~ '的人底线', i.inner_num.bottom_line_detail) }}
+        {{ lw_block('个人年：' ~ r.person_year, i.person_year.word) }}
+        {{ lw_block(i.person_year.class, i.person_year.special) }}
+        {{ lw_block('给你的建议', i.person_year.advice) }}
+    </div>
+
+    <!-- 性情数字 -->
+    <div class="lw-panel" id="lw-temperament">
+        <div class="lw-temp-grid">
+            <div class="lw-temp-item"><span>头脑</span><strong>{{ r.temperament.head }}</strong></div>
+            <div class="lw-temp-item"><span>情绪</span><strong>{{ r.temperament.emotion }}</strong></div>
+            <div class="lw-temp-item"><span>身体</span><strong>{{ r.temperament.body }}</strong></div>
+            <div class="lw-temp-item"><span>直觉</span><strong>{{ r.temperament.intuition }}</strong></div>
+        </div>
+        {{ lw_block('头脑数字 ' ~ r.temperament.head, i.temperament.head.summary ~ '\n' ~ i.temperament.head.money) }}
+        {{ lw_block('情绪数字 ' ~ r.temperament.emotion, i.temperament.emotion.summary ~ '\n' ~ i.temperament.emotion.detail) }}
+        {{ lw_block('注意健康方面', i.temperament.emotion.health) }}
+        {{ lw_block('身体数字 ' ~ r.temperament.body, i.temperament.body.summary ~ '\n' ~ i.temperament.body.detail) }}
+        {{ lw_block('直觉数字 ' ~ r.temperament.intuition, i.temperament.intuition.summary) }}
+    </div>
+
+    <!-- 生命道路 -->
+    <div class="lw-panel" id="lw-lifepath">
+        {{ lw_block(r.life_path.value, i.life_path.summary) }}
+        {% for n in range(1, 6) %}
+        {% set w = i.life_path['word' ~ n] %}
+        {% if w and w != '暂无数据' %}
+        {{ lw_block(w, i.life_path['word_mean' ~ n]) }}
+        {% endif %}
+        {% endfor %}
+        <section class="home-section">
+            <h3>高峰数字解读</h3>
+            {% for label, hn in [('第一高峰', i.high_nums.first), ('第二高峰', i.high_nums.second), ('第三高峰', i.high_nums.third), ('第四高峰', i.high_nums.forth)] %}
+            <div class="lw-content-block">
+                <h4>{{ label }}</h4>
+                <p class="lw-text">{{ hn.summary }}</p>
+                <p class="lw-text">{{ hn.detail }}</p>
+            </div>
+            {% endfor %}
+        </section>
+        <section class="home-section">
+            <h3>挑战数字解读</h3>
+            {% for label, cn in [('第一挑战', i.challenge_nums.first), ('第二挑战', i.challenge_nums.second), ('第三挑战', i.challenge_nums.third), ('第四挑战', i.challenge_nums.forth)] %}
+            <div class="lw-content-block">
+                <h4>{{ label }}</h4>
+                <p class="lw-text">{{ cn.summary }}</p>
+                <p class="lw-text">{{ cn.detail }}</p>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
+
+    <div class="lw-actions">
+        <a href="{{ url_for('lifeway.start') }}" class="btn-secondary lw-btn">重新填写</a>
+        <a href="{{ url_for('index') }}" class="btn-primary lw-btn">返回测评报告</a>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.lw-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-tab');
+        document.querySelectorAll('.lw-tab').forEach(function (b) { b.classList.remove('active'); });
+        document.querySelectorAll('.lw-panel').forEach(function (p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('lw-' + id).classList.add('active');
+    });
+});
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

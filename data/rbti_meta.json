@@ -1,0 +1,43 @@
+{
+  "name": "RBTI 年度抽象人格测评",
+  "questionCount": 31,
+  "axes": [
+    {
+      "key": "R",
+      "label": "荒谬",
+      "clusters": [
+        "C1",
+        "C7",
+        "C11"
+      ]
+    },
+    {
+      "key": "B",
+      "label": "较真",
+      "clusters": [
+        "C2",
+        "C6",
+        "C9"
+      ]
+    },
+    {
+      "key": "T",
+      "label": "搞心态",
+      "clusters": [
+        "C3",
+        "C8",
+        "C10"
+      ]
+    },
+    {
+      "key": "I",
+      "label": "摆烂",
+      "clusters": [
+        "C4",
+        "C5",
+        "C12"
+      ]
+    }
+  ],
+  "about": "RBTI（Really Balanced Type Indicator，纯属虚构）是一套年度抽象人格测评，通过 31 道情境题统计你在「荒谬 / 较真 / 搞心态 / 摆烂」四条主轴上的倾向，并细分为 12 个维度。结果仅供娱乐，不构成任何心理诊断或职业建议。"
+}

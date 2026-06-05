@@ -1,0 +1,15 @@
+{
+  "name": "BFI-2 大五人格量表第二版",
+  "developer": "Oliver P. John & Christopher J. Soto (2017)",
+  "chineseRevision": "张博、黎坚等 (2021)",
+  "questionCount": 60,
+  "reliability": "α系数 0.86-0.92",
+  "testRetestReliability": "0.80-0.88 (3个月)",
+  "ratingLabels": {
+    "1": "非常不同意",
+    "2": "不太同意",
+    "3": "态度中立",
+    "4": "比较同意",
+    "5": "非常同意"
+  }
+}

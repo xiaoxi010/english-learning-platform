@@ -1,0 +1,24 @@
+{
+  "province": "新疆",
+  "slug": "xinjiang",
+  "data_year": 2026,
+  "record_year": 2025,
+  "expert_source": "28、新疆（2026届）高考志愿填报大数据专家版最新.xlsx",
+  "strong_source": "",
+  "datasets": {
+    "early": "xinjiang_2026_expert_early",
+    "undergraduate": "xinjiang_2026_expert_undergraduate",
+    "junior": "xinjiang_2026_expert_junior",
+    "strong": "xinjiang_2026_strong_base"
+  },
+  "counts": {
+    "early": 0,
+    "undergraduate": 12107,
+    "junior": 0
+  },
+  "imported_at": "2026-06-04T15:48:48",
+  "storage": "sqlite",
+  "db_file": "data.undergraduate.db",
+  "db_undergraduate": "data.undergraduate.db",
+  "db_other": "data.other.db"
+}

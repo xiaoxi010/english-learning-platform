@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考报考</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gaokao_apply.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="gk-page">
+    <h2 class="gk-page-title">高考报考</h2>
+    <p class="gk-page-desc">与小程序同源数据：各省 2025 年一分一段表，查分数对应位次。</p>
+    {% if available_count < province_total %}
+    <p class="gk-data-warn">已加载 {{ available_count }} / {{ province_total }} 省数据。请将云存储 JSON 放入 <code>data/score_rank/</code>，或运行 <code>node scripts/export_score_rank_data.js "下载目录"</code>。</p>
+    {% endif %}
+
+    <div class="gk-card-grid">
+        <a href="{{ url_for('gaokao_apply.score_rank_page') }}" class="gk-card">
+            <span class="gk-card-badge">查询</span>
+            <h3>分数与位次</h3>
+            <p>选择省份与科目，输入高考分数，查询位次与同分人数</p>
+            <span class="gk-card-go">进入查询 →</span>
+        </a>
+        <a href="{{ url_for('gaokao_apply.apply_system_page') }}" class="gk-card">
+            <span class="gk-card-badge">系统</span>
+            <h3>{{ system_status.title or '高考报考系统' }}</h3>
+            <p>吉林省普通高考与强基计划数据查询</p>
+            <span class="gk-card-go">进入系统 →</span>
+        </a>
+    </div>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

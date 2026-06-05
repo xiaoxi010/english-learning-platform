@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菲尔人格测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/feier.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="feier-page assess-shell">
+    <a href="{{ url_for('index') }}" class="feier-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="feier-alert">请将菲尔人格数据放到 <code>data/</code>（可运行 <code>node scripts/export_feier_data.js</code> 导出）。</div>
+    {% endif %}
+
+    <section class="home-section feier-hero">
+        <p class="feier-badge">趣味测评 · 菲尔人格</p>
+        <h2 class="feier-hero-title">菲尔人格测评</h2>
+        <p class="feier-hero-desc">10 题 · 经典 Phil McGraw 测验 · 约 2–3 分钟</p>
+    </section>
+
+    <section class="home-section feier-intro">
+        <p>{{ meta.intro }}</p>
+        <h3 class="feier-subhead">测试说明</h3>
+        <ul class="feier-list">
+            <li>本测评共 10 道选择题，请根据第一反应和真实日常行为作答。</li>
+            <li>答案没有对错之分，越真诚结果越贴合实际情况。</li>
+            <li>完成后立即生成专属结果报告。</li>
+        </ul>
+        <p class="feier-disclaimer">{{ meta.disclaimer }}</p>
+    </section>
+
+    <section class="home-section feier-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="feier-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('feier.quiz') }}" class="feier-form">
+            <div class="feier-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名" autocomplete="name">
+            </div>
+            <button type="submit" class="btn-primary feier-btn-start" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

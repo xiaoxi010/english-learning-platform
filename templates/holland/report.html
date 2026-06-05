@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霍兰德职业兴趣测评报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/holland.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="hl-page hl-report assess-shell">
+    <a href="{{ url_for('index') }}" class="hl-back">← 返回测评报告</a>
+
+    <header class="home-section hl-report-cover">
+        <p class="hl-cover-brand">吉致生涯 · Jizhi Career</p>
+        <h1 class="hl-cover-h1">霍兰德</h1>
+        <h2 class="hl-cover-h2">职业兴趣测评报告</h2>
+        <p class="hl-cover-sub">人格类型 · 兴趣职业</p>
+        {% if r.user_name %}<p class="hl-cover-name">{{ r.user_name }}</p>{% endif %}
+        <p class="hl-cover-meta">{{ r.calculate_time }} · 共 {{ r.question_count }} 题</p>
+    </header>
+
+    <section class="home-section hl-section">
+        <div class="hl-section-head">
+            <h3>测评结果</h3>
+            <span class="hl-triple-badge">{{ r.triple_code_display }}</span>
+        </div>
+        {% if r.triple_name %}<p class="hl-triple-name">{{ r.triple_name }}</p>{% endif %}
+        <p class="hl-hint">得分最高三维（RIASEC 序）：{{ r.top_three_sorted }}</p>
+
+        <h4 class="hl-block-title">六维测评条形图</h4>
+        <div class="hl-bar-chart">
+            {% for row in r.bar_rows %}
+            <div class="hl-bar-row">
+                <span class="hl-bar-label">{{ row.name }}</span>
+                <div class="hl-bar-track">
+                    <div class="hl-bar-fill {% if row.in_top3 %}hl-bar-fill--top{% endif %}" style="width: {{ row.pct }}%"></div>
+                </div>
+                <span class="hl-bar-num">{{ row.value }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h4 class="hl-block-title">六维测评雷达图</h4>
+        <canvas id="hlRadar" class="hl-radar-canvas" width="320" height="320"
+                data-labels="{{ r.radar_labels | join('||') }}"
+                data-values="{{ r.radar_values | join(',') }}"
+                data-max="{{ r.max_score }}"></canvas>
+    </section>
+
+    {% if r.dim_cards %}
+    <section class="home-section hl-section">
+        <h3 class="hl-section-title">典型职业参考</h3>
+        {% for item in r.dim_cards %}
+        <article class="hl-dim-card">
+            <h4>{{ item.dim.name }} <span class="hl-dim-score">得分 {{ item.score }}</span></h4>
+            {% if item.dim.introduction %}<p class="hl-dim-intro">{{ item.dim.introduction }}</p>{% endif %}
+            {% if item.dim.advantages %}
+            <p class="hl-dim-label">优势</p>
+            <ul>{% for adv in item.dim.advantages %}<li>{{ adv }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if item.dim.disadvantages %}
+            <p class="hl-dim-label">劣势</p>
+            <ul>{% for dis in item.dim.disadvantages %}<li>{{ dis }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% if item.dim.typical_careers %}
+            <p class="hl-dim-label">推荐职业</p>
+            <div class="hl-tags">
+                {% for c in item.dim.typical_careers %}<span class="hl-tag">{{ c }}</span>{% endfor %}
+            </div>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if r.match_rows %}
+    <section class="home-section hl-section hl-match">
+        <h3 class="hl-match-head">CAREER MATCH · 职业匹配</h3>
+        {% for row in r.match_rows %}
+        <div class="hl-match-row">
+            <span class="hl-match-label">{{ row.name }}</span>
+            <div class="hl-match-track-wrap">
+                <div class="hl-match-track">
+                    <div class="hl-match-fill" style="width: {{ row.rate }}%"></div>
+                </div>
+                <span class="hl-match-pct">{{ row.rate }}%</span>
+            </div>
+        </div>
+        {% endfor %}
+        <p class="hl-match-summary">{{ r.match_summary }}</p>
+    </section>
+    {% endif %}
+
+    <div class="hl-report-actions">
+        <a href="{{ url_for('holland.start') }}" class="btn-secondary">重新测评</a>
+        <a href="{{ url_for('index') }}" class="btn-primary">返回测评报告</a>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/holland_radar.js') }}"></script>
+<script>
+  (function () {
+    var el = document.getElementById('hlRadar');
+    if (el && window.HollandRadar) {
+      var labels = (el.getAttribute('data-labels') || '').split('||');
+      var values = (el.getAttribute('data-values') || '').split(',').map(Number);
+      var max = Number(el.getAttribute('data-max')) || 15;
+      window.HollandRadar.draw(el, labels, values, max);
+    }
+  })();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

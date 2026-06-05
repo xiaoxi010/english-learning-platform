@@ -1,0 +1,24 @@
+{
+  "province": "宁夏",
+  "slug": "ningxia",
+  "data_year": 2026,
+  "record_year": 2025,
+  "expert_source": "9、2026-宁夏-专家版.xlsx",
+  "strong_source": "",
+  "datasets": {
+    "early": "ningxia_2026_expert_early",
+    "undergraduate": "ningxia_2026_expert_undergraduate",
+    "junior": "ningxia_2026_expert_junior",
+    "strong": "ningxia_2026_strong_base"
+  },
+  "counts": {
+    "early": 427,
+    "undergraduate": 8963,
+    "junior": 4772
+  },
+  "imported_at": "2026-06-04T15:44:28",
+  "storage": "sqlite",
+  "db_file": "data.undergraduate.db",
+  "db_undergraduate": "data.undergraduate.db",
+  "db_other": "data.other.db"
+}

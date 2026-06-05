@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} · 高考报考</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gaokao_apply.css') }}">
+</head>
+<body class="page-jilin-data">
+{% include 'partials/app_shell_open.html' %}
+
+<div class="gk-data-page"
+     id="jilinDataPage"
+     data-dataset="{{ default_batch }}"
+     data-default-batch="{{ default_batch }}"
+     data-gaokao-province="{{ gaokao_province }}"
+     data-province-batches="{{ province_batches | tojson | e }}"
+     data-batch-labels="{{ batch_labels | tojson | e }}"
+     data-search-url="{{ search_url }}"
+     data-schools-url="{{ schools_url }}"
+     data-filters-url="{{ filters_url }}"
+     data-enabled="{{ '1' if record_count else '0' }}"
+     data-strong-columns="{{ strong_columns | tojson | e }}"
+     data-profile-url="{{ url_for('gaokao_apply.index') }}"
+     data-plan-url="{{ plan_url }}">
+    <header class="sr-header">
+        <h1 class="sr-title">{{ page_title }}</h1>
+        <p class="sr-subtitle">{{ page_subtitle }}</p>
+        {% if not record_count %}
+        <p class="gk-data-warn">「{{ gaokao_province }}」志愿数据尚未导入。请运行 <code>python import_gaokao_provinces.py</code> 或返回上一页更换高考省份。</p>
+        {% endif %}
+    </header>
+
+    <select class="gk-data-select gk-visually-hidden" id="jilinCategorySelect" aria-hidden="true" tabindex="-1">
+        <option value="">全部</option>
+    </select>
+    <select class="gk-data-select gk-visually-hidden" id="jilinTypeSelect" aria-hidden="true" tabindex="-1">
+        <option value="">全部</option>
+    </select>
+
+    <div class="gk-data-table-wrap" id="jilinStrongWrap" hidden>
+        <table class="gk-data-table" id="jilinDataTable">
+            <thead id="jilinDataThead">
+                <tr>
+                    <th>概率</th>
+                    <th>大学</th>
+                    <th>专业</th>
+                    <th>学制</th>
+                    <th>学费</th>
+                    <th>专业招收人数</th>
+                    <th>类型</th>
+                    <th class="gk-data-th-chart">过去3年分数</th>
+                    <th class="gk-data-th-chart">过去3年专业位次</th>
+                </tr>
+            </thead>
+            <tbody id="jilinDataTbody">
+                <tr class="gk-data-empty"><td colspan="9">切换到「强基计划」标签查看数据，或选择其他批次并填写筛选条件</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="gk-school-list-wrap" id="jilinSchoolListWrap">
+        <div class="gk-school-list" id="jilinSchoolList" aria-live="polite">
+            <div class="gk-school-empty">请先在上一页选择院校地域与目标专业</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="gk-apply-drawer" id="jilinApplyDrawer" hidden>
+    <div class="gk-apply-drawer-backdrop" id="jilinApplyDrawerBackdrop"></div>
+    <aside class="gk-apply-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="jilinApplyDrawerTitle">
+        <div class="gk-apply-drawer-head">
+            <h2 class="gk-apply-drawer-title" id="jilinApplyDrawerTitle">报考选项</h2>
+            <button type="button" class="gk-apply-drawer-close" id="jilinApplyDrawerClose" aria-label="关闭">×</button>
+        </div>
+        <div class="gk-data-tabs gk-apply-drawer-tabs" id="jilinDrawerTabs">
+            {% for tab in province_batches %}
+            <button type="button"
+                    class="gk-data-tab{% if tab.id == default_batch %} gk-data-tab--on{% endif %}"
+                    data-tab-id="{{ tab.id }}"
+                    data-dataset="{{ tab.bucket }}"
+                    data-batch="{{ tab.batch or '' }}">{{ tab.label }}</button>
+            {% endfor %}
+        </div>
+        <div class="gk-drawer-search">
+            <input type="text" class="gk-data-input" id="jilinDrawerSchoolInput" placeholder="输入院校名称" autocomplete="off">
+            <button type="button" class="gk-drawer-search-btn" id="jilinDrawerSearchBtn">搜索</button>
+        </div>
+        <div class="gk-drawer-section">
+            <div class="gk-drawer-section-title">搜索结果</div>
+            <div class="gk-drawer-table-wrap">
+                <table class="gk-drawer-table" id="jilinDrawerSearchTable">
+                    <thead>
+                        <tr>
+                            <th>院校</th>
+                            <th>省份</th>
+                            <th>地域</th>
+                            <th>筛选</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jilinDrawerSearchTbody">
+                        <tr class="gk-drawer-empty"><td colspan="5">输入院校名称后点击搜索</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="gk-drawer-section">
+            <div class="gk-drawer-section-title">已添加大学</div>
+            <div class="gk-drawer-table-wrap">
+                <table class="gk-drawer-table" id="jilinDrawerAddedTable">
+                    <thead>
+                        <tr>
+                            <th>院校</th>
+                            <th>省份</th>
+                            <th>地域</th>
+                            <th>筛选</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jilinDrawerAddedTbody">
+                        <tr class="gk-drawer-empty"><td colspan="5">暂无手动添加的院校</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </aside>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+<script src="{{ url_for('static', filename='js/gaokao-jilin-data.js') }}"></script>
+</body>
+</html>

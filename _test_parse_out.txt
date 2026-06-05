@@ -1,0 +1,7 @@
+﻿吉林: rows=19609 cols=64 plan=False school=北京大学 prov=北京 batch=提前批A段 plan_cat=
+安徽: rows=43190 cols=70 plan=True school=阿拉善职业技术学院 prov=内蒙古 batch=高职(专科)批 plan_cat=
+北京: rows=5751 cols=77 plan=False school=安徽财经大学 prov=安徽 batch=本科批 plan_cat=
+山东: rows=35760 cols=68 plan=False school=清华大学 prov=北京 batch=一段线 plan_cat=
+四川: rows=42287 cols=67 plan=False school=北京大学 prov=北京 batch=本科批B段 plan_cat=
+新疆: rows=19859 cols=67 plan=True school=清华大学 prov=北京 batch=本科一批 plan_cat=
+江苏: rows=28995 cols=74 plan=True school=国防科技大学 prov=湖南 batch=本科提前批 plan_cat=军队院校

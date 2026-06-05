@@ -1,0 +1,375 @@
+/* 霍兰德职业兴趣测评 — 站点深色主题 */
+.hl-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 4px 48px;
+}
+
+.hl-back {
+    display: inline-block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.88em;
+    margin-bottom: 16px;
+}
+
+.hl-back:hover { color: var(--accent-green); }
+
+.hl-alert {
+    background: rgba(255, 180, 60, 0.12);
+    border: 1px solid rgba(255, 180, 60, 0.35);
+    color: #e8c070;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.88em;
+    margin-bottom: 16px;
+}
+
+.hl-hero { text-align: center; padding: 20px; }
+
+.hl-badge {
+    display: inline-block;
+    font-size: 0.82em;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.hl-hero-title {
+    margin: 0 0 8px;
+    font-size: 1.35em;
+    color: var(--text-primary);
+}
+
+.hl-hero-desc {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.hl-intro p,
+.hl-intro li {
+    color: var(--text-secondary);
+    line-height: 1.85;
+    font-size: 0.92em;
+}
+
+.hl-subhead {
+    color: var(--text-primary);
+    font-size: 1em;
+    margin: 20px 0 10px;
+}
+
+.hl-list {
+    padding-left: 1.2em;
+    margin: 0 0 16px;
+}
+
+.hl-disclaimer {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    opacity: 0.85;
+}
+
+.hl-form-card { padding: 20px; }
+
+.hl-field { margin-bottom: 16px; }
+
+.hl-field label {
+    display: block;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.hl-field input[type="text"] {
+    width: 100%;
+    max-width: 320px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.hl-error { color: #f87171; margin-bottom: 12px; }
+
+.hl-btn-start,
+.hl-btn-submit {
+    width: 100%;
+    max-width: 360px;
+    margin-top: 8px;
+}
+
+/* 答题页 */
+.hl-quiz-head h2 {
+    margin: 0 0 8px;
+    font-size: 1.2em;
+    color: var(--text-primary);
+}
+
+.hl-quiz-head p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin: 0 0 12px;
+}
+
+.hl-progress-track {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.hl-progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--accent-green);
+    transition: width 0.25s ease;
+}
+
+.hl-q-card { margin-bottom: 12px; }
+
+.hl-q-title {
+    color: var(--text-primary);
+    font-size: 0.95em;
+    line-height: 1.6;
+    margin: 0 0 12px;
+}
+
+.hl-q-num { color: var(--accent-green); font-weight: 600; }
+
+/* 答题选项样式见 assessment-common.css（.assess-opt） */
+
+/* 报告 */
+.hl-report-cover {
+    text-align: center;
+    padding: 28px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(62, 207, 142, 0.06) 0%, transparent 100%);
+}
+
+.hl-cover-brand {
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    margin: 0 0 16px;
+}
+
+.hl-cover-h1 {
+    font-size: 2em;
+    margin: 0;
+    color: var(--accent-green);
+    letter-spacing: 0.08em;
+}
+
+.hl-cover-h2 {
+    font-size: 1.1em;
+    margin: 8px 0;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.hl-cover-sub { color: var(--text-secondary); font-size: 0.9em; margin: 0; }
+
+.hl-cover-name {
+    font-size: 1.25em;
+    color: #d4af37;
+    margin: 16px 0 8px;
+    font-weight: 600;
+}
+
+.hl-cover-meta { font-size: 0.85em; color: var(--text-secondary); margin: 0; }
+
+.hl-section { padding: 20px; }
+
+.hl-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.hl-section-head h3,
+.hl-section-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.1em;
+}
+
+.hl-triple-badge {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #d4af37;
+    letter-spacing: 0.12em;
+}
+
+.hl-triple-name { color: var(--accent-green); font-size: 0.95em; margin: 0 0 8px; }
+
+.hl-hint { font-size: 0.88em; color: var(--text-secondary); margin-bottom: 20px; }
+
+.hl-block-title {
+    font-size: 0.95em;
+    color: #d4af37;
+    margin: 20px 0 12px;
+}
+
+.hl-bar-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 36px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.hl-bar-label { font-size: 0.82em; color: var(--text-secondary); }
+
+.hl-bar-track {
+    height: 10px;
+    background: var(--bg-secondary);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.hl-bar-fill {
+    height: 100%;
+    background: rgba(139, 139, 139, 0.5);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.hl-bar-fill--top { background: var(--accent-green); }
+
+.hl-bar-num {
+    text-align: right;
+    font-size: 0.88em;
+    color: var(--text-primary);
+}
+
+.hl-radar-canvas {
+    display: block;
+    margin: 12px auto;
+    max-width: 100%;
+}
+
+.hl-dim-card {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.hl-dim-card:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+
+.hl-dim-card h4 {
+    margin: 0 0 12px;
+    color: var(--text-primary);
+    font-size: 1.05em;
+}
+
+.hl-dim-score {
+    font-size: 0.85em;
+    color: var(--accent-green);
+    font-weight: normal;
+}
+
+.hl-dim-intro {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.9em;
+}
+
+.hl-dim-label {
+    font-size: 0.88em;
+    color: #d4af37;
+    margin: 14px 0 6px;
+}
+
+.hl-dim-card ul {
+    margin: 0;
+    padding-left: 1.2em;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    line-height: 1.7;
+}
+
+.hl-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hl-tag {
+    font-size: 0.82em;
+    padding: 4px 10px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.hl-match-head {
+    font-size: 0.9em;
+    letter-spacing: 0.06em;
+    color: #d4af37;
+    margin: 0 0 16px;
+}
+
+.hl-match-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.hl-match-label { color: var(--text-primary); font-size: 0.92em; }
+
+.hl-match-track {
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.hl-match-track-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hl-match-fill {
+    height: 100%;
+    background: var(--accent-green);
+    border-radius: 4px;
+}
+
+.hl-match-pct {
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    min-width: 36px;
+}
+
+.hl-match-summary {
+    margin-top: 16px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+    line-height: 1.75;
+}
+
+.hl-report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+    .hl-bar-row { grid-template-columns: 72px 1fr 28px; }
+    .hl-match-row { grid-template-columns: 1fr; }
+}

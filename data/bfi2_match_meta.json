@@ -1,0 +1,88 @@
+{
+  "teamRoles": [
+    {
+      "key": "leader",
+      "label": "领导者",
+      "intro": "擅长目标决策与推动落地，适合带领团队突破复杂任务。"
+    },
+    {
+      "key": "executor",
+      "label": "执行者",
+      "intro": "踏实可靠、重视计划与交付，适合把战略拆解为可执行结果。"
+    },
+    {
+      "key": "creator",
+      "label": "创意者",
+      "intro": "思维发散、善于提出新方案，适合创新类产品与内容岗位。"
+    },
+    {
+      "key": "coordinator",
+      "label": "协调者",
+      "intro": "善于沟通整合资源，适合跨部门协同与项目管理型角色。"
+    },
+    {
+      "key": "supporter",
+      "label": "支持者",
+      "intro": "亲和力强、关注团队氛围，适合培训、客服与协作支持类岗位。"
+    },
+    {
+      "key": "critic",
+      "label": "批评者",
+      "intro": "善于质疑与质量控制，适合评审、风控与需要独立判断的角色。"
+    }
+  ],
+  "workEnvironments": [
+    {
+      "key": "innovative",
+      "label": "创新型环境",
+      "intro": "强调快速迭代与试错，适合互联网、科技与研发场景。"
+    },
+    {
+      "key": "traditional",
+      "label": "传统型环境",
+      "intro": "强调制度与流程稳定，适合机关单位、银行与大型国企。"
+    },
+    {
+      "key": "highPressure",
+      "label": "高压型环境",
+      "intro": "节奏快、任务密集，适合金融、医疗与应急管理等领域。"
+    },
+    {
+      "key": "teamOriented",
+      "label": "团队型环境",
+      "intro": "强调协作与集体决策，适合人力、咨询与教育行业。"
+    },
+    {
+      "key": "independent",
+      "label": "独立型环境",
+      "intro": "强调自主安排与深度工作，适合科研、编程与创作类岗位。"
+    }
+  ],
+  "careerTypes": [
+    {
+      "key": "management",
+      "label": "管理类职业",
+      "intro": "整合资源、带团队拿结果的中高层管理通道。"
+    },
+    {
+      "key": "technical",
+      "label": "技术类职业",
+      "intro": "依赖专业深度与系统思维的技术路径。"
+    },
+    {
+      "key": "service",
+      "label": "服务类职业",
+      "intro": "面向人际支持与用户体验的岗位体系。"
+    },
+    {
+      "key": "creative",
+      "label": "创意类职业",
+      "intro": "内容、设计与创新产品相关的工作形态。"
+    },
+    {
+      "key": "sales",
+      "label": "销售类职业",
+      "intro": "需要影响力、客户开拓与目标导向的岗位。"
+    }
+  ]
+}

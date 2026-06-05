@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直播模板</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/live_template.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="lt-page">
+    <h2 class="lt-page-title">直播模板</h2>
+    <p class="lt-page-desc">用于直播讲解、现场填写的测评表格模板。</p>
+
+    <div class="lt-card-grid">
+        <a href="{{ url_for('live_template.gaokao_career_cao') }}" class="lt-template-card">
+            <span class="lt-template-badge">高考志愿</span>
+            <h3>普通高考职业测评表</h3>
+            <p>童路人普通高考升学意向测评表 · 使用人：<strong>曹先生</strong></p>
+            <span class="lt-template-go">打开表格 →</span>
+        </a>
+    </div>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

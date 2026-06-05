@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 趣味测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mbti.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="mbti-page assess-shell">
+    <a href="{{ url_for('index') }}" class="mbti-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="mbti-alert">请将 MBTI 数据放到 <code>data/</code>（可运行 <code>node scripts/export_mbti_data.js</code> 导出）。</div>
+    {% endif %}
+
+    <section class="home-section mbti-hero">
+        <p class="mbti-badge">趣味测评 · MBTI</p>
+        <h2 class="mbti-hero-title">MBTI 趣味测评 · 48 题精确版</h2>
+        <p class="mbti-hero-desc">四维度人格类型 · 约 8–15 分钟</p>
+    </section>
+
+    <section class="home-section mbti-intro">
+        <p>本测评采用 48 道陈述题，从<strong>外向 E / 内向 I</strong>、<strong>直觉 N / 实感 S</strong>、<strong>情感 F / 思考 T</strong>、<strong>判断 J / 感知 P</strong> 四个维度组合出您的 16 型人格类型。</p>
+        <p>每题请在「完全不同意」到「完全同意」五个等级中选择最符合您日常感受的一项，凭第一反应作答即可。</p>
+        <p style="font-size:0.88em;color:var(--text-secondary);">结果仅供趣味探索与自我了解参考，不构成专业心理诊断。</p>
+    </section>
+
+    <section class="home-section mbti-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="mbti-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('mbti.quiz') }}" class="mbti-form">
+            <div class="mbti-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名" autocomplete="name">
+            </div>
+            <button type="submit" class="btn-primary mbti-btn-start" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

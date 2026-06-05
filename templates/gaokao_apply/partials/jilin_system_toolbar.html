@@ -1,0 +1,26 @@
+<div class="gk-system-metrics">
+    <label class="gk-system-metric">
+        <span class="gk-system-metric-label">分数</span>
+        <input type="number" class="gk-data-input gk-system-metric-input" id="jilinScoreInput" min="0" max="900" autocomplete="off">
+    </label>
+    <label class="gk-system-metric">
+        <span class="gk-system-metric-label">位次</span>
+        <input type="number" class="gk-data-input gk-system-metric-input" id="jilinRankInput" min="1" autocomplete="off">
+    </label>
+    <label class="gk-system-metric">
+        <span class="gk-system-metric-label">上浮</span>
+        <input type="number" class="gk-data-input gk-system-metric-input" id="jilinFloatUpInput" min="0" autocomplete="off">
+    </label>
+    <label class="gk-system-metric">
+        <span class="gk-system-metric-label">下浮</span>
+        <input type="number" class="gk-data-input gk-system-metric-input" id="jilinFloatDownInput" min="0" autocomplete="off">
+    </label>
+</div>
+<div class="gk-system-top-actions">
+    <button type="button" class="gk-system-draft-btn" id="jilinSaveDraftBtn">保存草稿</button>
+    <button type="button" class="gk-system-plan-btn" id="jilinGeneratePlanBtn">生成志愿表</button>
+    <button type="button" class="gk-system-clear-btn" id="jilinClearPreferBtn" title="长按3秒清空全部优选">
+        <span class="gk-system-clear-btn-progress" aria-hidden="true"></span>
+        <span class="gk-system-clear-btn-label">清空</span>
+    </button>
+</div>

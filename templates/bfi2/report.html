@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大五人格 BFI-2 报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bfi2.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% set res = r.result %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="bfi-page bfi-report assess-shell">
+    <a href="{{ url_for('index') }}" class="bfi-back">← 返回测评报告</a>
+
+    <header class="home-section bfi-report-cover">
+        <p class="bfi-cover-brand">吉致生涯 · 大五人格 BFI-2</p>
+        <h1>{{ r.user_name }}</h1>
+        <p class="bfi-cover-meta">报告编号 {{ r.report_id }} · {{ r.calculate_time }}</p>
+        <p class="bfi-cover-meta">{{ r.summary }}</p>
+    </header>
+
+    <section class="home-section">
+        <h3 class="bfi-section-title">五大人格维度（原始分 12–60）</h3>
+        <div class="bfi-dim-table">
+            <div class="bfi-dim-row bfi-dim-row--head">
+                <span>维度</span><span>名称</span><span>得分</span><span>水平</span>
+            </div>
+            {% for d in res.dimensionReports %}
+            <div class="bfi-dim-row">
+                <span>{{ d.id }}</span>
+                <span>{{ d.name }}</span>
+                <span>{{ d.score }}</span>
+                <span class="bfi-level {% if d.level in ['high','veryHigh'] %}bfi-level--hi{% elif d.level in ['low','veryLow'] %}bfi-level--lo{% endif %}">{{ d.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <canvas id="bfiRadar" class="bfi-chart-canvas" width="360" height="360" aria-label="五维雷达图"></canvas>
+    </section>
+
+    <section class="home-section">
+        <h3 class="bfi-section-title">维度与面维解读</h3>
+        {% for d in res.dimensionReports %}
+        <article class="bfi-dim-block">
+            <h4>{{ d.name }}（{{ d.id }}）· {{ d.label }} · {{ d.score }} 分</h4>
+            <p style="color:var(--text-secondary);font-size:0.9em;line-height:1.65;margin:0 0 10px;">{{ d.description }}</p>
+            <div class="bfi-facet-grid">
+                {% for f in d.facets %}
+                <div class="bfi-facet-chip">
+                    <strong>{{ f.name }}</strong><br>
+                    {{ f.score }} 分 · {{ f.label }}
+                </div>
+                {% endfor %}
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+
+    {% for sec in res.matchSections %}
+    <section class="home-section">
+        <h3 class="bfi-section-title">{{ sec.title }}</h3>
+        {% for row in sec.rows %}
+        <div class="bfi-match-row">
+            <div>
+                <div>{{ row.label }}</div>
+                <div class="bfi-match-intro">{{ row.intro }}</div>
+            </div>
+            <span class="bfi-match-pct">{{ row.percent }}%</span>
+        </div>
+        {% endfor %}
+    </section>
+    {% endfor %}
+
+    <p style="margin-top:20px;text-align:center;">
+        <a href="{{ url_for('bfi2.start') }}" class="btn-primary">重新测评</a>
+    </p>
+</div>
+
+<script>
+(function () {
+  var dims = {{ res.dimensionReports | tojson }};
+  var canvas = document.getElementById('bfiRadar');
+  if (!canvas || !dims.length) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  var cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.36;
+  var order = ['E', 'A', 'C', 'N', 'O'];
+  var byId = {};
+  dims.forEach(function (d) { byId[d.id] = d; });
+  var n = order.length;
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  for (var ring = 12; ring <= 60; ring += 12) {
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var a = -Math.PI / 2 + (2 * Math.PI * i) / n;
+      var rr = (R * ring) / 60;
+      var x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(124, 156, 255, 0.35)';
+  ctx.strokeStyle = '#7c9cff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  order.forEach(function (id, j) {
+    var d = byId[id];
+    var sc = Math.max(12, Math.min(60, Number(d && d.score) || 30));
+    var ang = -Math.PI / 2 + (2 * Math.PI * j) / n;
+    var rad = (R * sc) / 60;
+    var px = cx + rad * Math.cos(ang), py = cy + rad * Math.sin(ang);
+    if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  });
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  order.forEach(function (id, k) {
+    var ang = -Math.PI / 2 + (2 * Math.PI * k) / n;
+    var lx = cx + (R + 16) * Math.cos(ang), ly = cy + (R + 16) * Math.sin(ang);
+    var lab = byId[id] ? byId[id].name : id;
+    ctx.fillText(lab, lx, ly + 4);
+  });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

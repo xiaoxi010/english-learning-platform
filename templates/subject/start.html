@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学科能力测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="sub-page assess-shell">
+    <a href="{{ url_for('index') }}" class="sub-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="sub-alert">请将 <strong>subjectAbilityData.json</strong> 放到 <code>data/</code>（或保留小程序 data 目录），详见 data/README.txt。</div>
+    {% endif %}
+
+    <section class="home-section sub-hero">
+        <p class="sub-badge">学科能力</p>
+        <h2 class="sub-hero-title">学科优劣分析</h2>
+        <p class="sub-hero-desc">五大核心学科 · 多维拆解 · 看见天赋与短板</p>
+    </section>
+
+    <section class="home-section sub-intro">
+        <p class="sub-welcome-lead">欢迎<span class="sub-name">「{{ welcome_name }}」</span>来到学科针对测评。</p>
+        <p>你是不是还在逼孩子死磕数学，哪怕他对数字毫无敏感度？是不是还在硬压孩子背古诗文，哪怕他提笔就抵触？当下太多家庭教育陷入盲目跟风的误区，无视差异，盲目跟风。</p>
+        <p>老祖宗说过「龙生九子，各有不同」——没有笨孩子，只有被放错赛道的孩子。本次学科能力测评，围绕语文、数学、英语、物理、化学、生物、政治、历史、地理等学科，从学习天赋、思维模式、接受能力、兴趣倾向等维度，拆解孩子的专属学科画像。</p>
+        <p>测评的意义，是帮你找准教育方向，顺着天赋培养，比逼着孩子「全面平庸」更有价值。请客观看待孩子的每一份不同，认真完成本次测评。</p>
+        <p class="sub-note">本测评仅支持 2000 年 1 月 1 日及以后出生的青少年。测评结果为参考性解读，不构成定论。</p>
+    </section>
+
+    <section class="home-section sub-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="sub-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('subject.report') }}" id="subjectForm" class="sub-form">
+            <div class="sub-field">
+                <label for="name">姓名</label>
+                <input type="text" id="name" name="name" required placeholder="请输入">
+            </div>
+            <div class="sub-field">
+                <label for="gender">性别</label>
+                <select id="gender" name="gender" class="sub-select">
+                    <option value="">请选择</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+            <div class="sub-field">
+                <label>出生日期</label>
+                <div class="sub-picker-row">
+                    <select id="birth_year" name="birth_year" class="sub-select" required>
+                        <option value="">年</option>
+                        {% for y in years %}{% if y >= 2000 %}<option value="{{ y }}">{{ y }}年</option>{% endif %}{% endfor %}
+                    </select>
+                    <select id="birth_month" name="birth_month" class="sub-select" required>
+                        <option value="">月</option>
+                        {% for m in months %}<option value="{{ m }}">{{ m }}月</option>{% endfor %}
+                    </select>
+                    <select id="birth_day" name="birth_day" class="sub-select" required>
+                        <option value="">日</option>
+                        {% for d in days %}<option value="{{ d }}">{{ d }}日</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="sub-field">
+                <label for="ethnicity">民族（选填）</label>
+                <input type="text" id="ethnicity" name="ethnicity" placeholder="请输入">
+            </div>
+            <input type="hidden" name="birth_date" id="birth_date">
+            <button type="submit" class="btn-primary sub-submit">完成</button>
+        </form>
+    </section>
+</div>
+
+<script>
+(function () {
+    var y = document.getElementById('birth_year');
+    var m = document.getElementById('birth_month');
+    var d = document.getElementById('birth_day');
+    var hidden = document.getElementById('birth_date');
+    var form = document.getElementById('subjectForm');
+    function refreshDays() {
+        if (!y.value || !m.value) return;
+        var max = new Date(parseInt(y.value, 10), parseInt(m.value, 10), 0).getDate();
+        var cur = d.value;
+        d.innerHTML = '<option value="">日</option>';
+        for (var i = 1; i <= max; i++) {
+            var o = document.createElement('option');
+            o.value = i; o.textContent = i + '日';
+            if (String(i) === String(cur)) o.selected = true;
+            d.appendChild(o);
+        }
+    }
+    y.addEventListener('change', refreshDays);
+    m.addEventListener('change', refreshDays);
+    form.addEventListener('submit', function (e) {
+        if (!y.value || !m.value || !d.value) { e.preventDefault(); alert('请选择出生日期'); return; }
+        if (parseInt(y.value, 10) < 2000) { e.preventDefault(); alert('请选择2000年及以后的日期'); return; }
+        hidden.value = y.value + '-' + String(m.value).padStart(2, '0') + '-' + String(d.value).padStart(2, '0');
+    });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

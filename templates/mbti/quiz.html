@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBTI 趣味测评 · 答题</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mbti.css') }}">
+</head>
+<body>
+{% set content_class = 'content-area--quiz' %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="mbti-page mbti-quiz-page assess-shell">
+    <div class="assess-quiz-layout">
+        <div class="assess-quiz-main">
+            <a href="{{ url_for('mbti.start') }}" class="mbti-back">← 返回简介</a>
+
+            <header class="home-section mbti-quiz-head">
+                <h2>MBTI 趣味测评（48 题）</h2>
+                <p>共 {{ total }} 题 · 每题 A–E 五档：完全不同意 → 完全同意</p>
+                <div class="mbti-progress-track"><div class="mbti-progress-fill" id="mbtiProgressFill"></div></div>
+            </header>
+
+            <form method="post" action="{{ url_for('mbti.report') }}" id="mbtiQuizForm" class="mbti-quiz-form assess-quiz-form" novalidate>
+                <input type="hidden" name="user_name" value="{{ user_name }}">
+                {% for q in questions %}
+                {% set qi = loop.index0 %}
+                <section class="home-section mbti-q-card" id="q-{{ qi }}">
+                    <p class="assess-q-title"><span class="assess-q-num">{{ q.id }}</span>. {{ q.text }}</p>
+                    <div class="assess-opt-group" role="radiogroup" aria-label="第 {{ q.id }} 题">
+                        {% set mbti_letters = ['A', 'B', 'C', 'D', 'E'] %}
+                        {% for opt in likert_options %}
+                        <label class="assess-opt mbti-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="{{ opt.value }}">
+                            <span class="assess-opt-text"><span class="mbti-opt-letter">{{ mbti_letters[loop.index0] }}</span> {{ opt.label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endfor %}
+            </form>
+        </div>
+
+        {% with legend_likert5=true, form_id='mbtiQuizForm' %}
+        {% include 'partials/assessment_quiz_sidebar.html' %}
+        {% endwith %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/assessment-quiz.js') }}"></script>
+<script>
+(function () {
+  var form = document.getElementById('mbtiQuizForm');
+  var total = {{ total }};
+  var fill = document.getElementById('mbtiProgressFill');
+
+  form._assessOnProgress = function () {
+    var count = 0;
+    for (var j = 0; j < total; j++) {
+      if (form.querySelector('input[name="ans_' + j + '"]:checked')) count++;
+    }
+    if (fill) fill.style.width = Math.round((count / total) * 100) + '%';
+  };
+
+  AssessmentQuiz.init('mbtiQuizForm', total, {
+    valueMap: { '-2': 'l1', '-1': 'l2', '0': 'l3', '1': 'l4', '2': 'l5' }
+  });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

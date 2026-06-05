@@ -1,0 +1,104 @@
+    <section class="gc-section" id="gcScoresSection">
+        <h2 class="gc-section-title">成绩（普通类）</h2>
+        <label class="gc-score-province">高考省份（位次查询与志愿数据，已支持 {{ gaokao_province_options | length }} 省）
+            <div class="gc-combobox" id="gaokaoProvinceCombo">
+                <input type="text"
+                       class="gc-combobox-input"
+                       name="gaokao_province"
+                       data-field="gaokao_province"
+                       value="{{ default_gaokao_province_label }}"
+                       placeholder="如：北京市"
+                       autocomplete="off"
+                       aria-expanded="false"
+                       aria-controls="gaokaoProvinceListbox"
+                       aria-autocomplete="list"
+                       role="combobox">
+                <button type="button"
+                        class="gc-combobox-btn"
+                        id="gaokaoProvinceToggle"
+                        aria-label="展开省份列表"
+                        tabindex="-1">▾</button>
+                <ul class="gc-combobox-dropdown"
+                    id="gaokaoProvinceListbox"
+                    role="listbox"
+                    hidden>
+                    {% for opt in gaokao_province_options %}
+                    <li role="option" data-value="{{ opt.value }}">{{ opt.label }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </label>
+        <div class="gc-rank-float-row">
+            <label class="gc-rank-float-field">位次上浮
+                <input type="number"
+                       class="gc-score-ref-input"
+                       name="rank_float_up"
+                       data-field="rank_float_up"
+                       min="0"
+                       step="1"
+                       value="0"
+                       placeholder="0"
+                       autocomplete="off">
+            </label>
+            <label class="gc-rank-float-field">位次下浮
+                <input type="number"
+                       class="gc-score-ref-input"
+                       name="rank_float_down"
+                       data-field="rank_float_down"
+                       min="0"
+                       step="1"
+                       value="0"
+                       placeholder="0"
+                       autocomplete="off">
+            </label>
+        </div>
+        <div class="gc-elective-bar">
+            <span class="gc-elective-label">选科</span>
+            <div class="gc-elective-btns" id="electiveBtns">
+                <button type="button" class="gc-elec-btn" data-elec="phy">物</button>
+                <button type="button" class="gc-elec-btn" data-elec="chem">化</button>
+                <button type="button" class="gc-elec-btn" data-elec="bio">生</button>
+                <button type="button" class="gc-elec-btn" data-elec="his">历</button>
+                <button type="button" class="gc-elec-btn" data-elec="pol">政</button>
+                <button type="button" class="gc-elec-btn" data-elec="geo">地</button>
+                <button type="button" class="gc-elec-btn" data-elec="tech">技</button>
+            </div>
+            <input type="hidden" name="score_subjects_0" data-field="score_subjects_0" id="scoreSubjectsHidden" value="">
+            <div class="gc-elective-actions">
+                <button type="button" class="gc-btn gc-auto-calc-btn" id="btnAutoCalc" data-default-label="自动计算" aria-pressed="false">自动计算</button>
+            </div>
+        </div>
+        <div class="gc-score-store" hidden aria-hidden="true">
+            <input type="text" data-field="score_phy_0" tabindex="-1">
+            <input type="text" data-field="score_his_0" tabindex="-1">
+            <input type="text" data-field="score_chem_0" tabindex="-1">
+            <input type="text" data-field="score_bio_0" tabindex="-1">
+            <input type="text" data-field="score_pol_0" tabindex="-1">
+            <input type="text" data-field="score_geo_0" tabindex="-1">
+            <input type="text" data-field="score_tech_0" tabindex="-1">
+        </div>
+        <table class="gc-table gc-table--scores">
+            <thead>
+                <tr>
+                    <th>总分</th><th>位次</th><th>同位次人数</th>
+                    <th>语文</th><th>数学</th><th>英语</th>
+                    <th class="gc-elec-th" data-elec-th="0">选考1</th>
+                    <th class="gc-elec-th" data-elec-th="1">选考2</th>
+                    <th class="gc-elec-th" data-elec-th="2">选考3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-score-row="0">
+                    <td><input type="text" name="score_total_0" data-field="score_total_0" data-score-total="1"></td>
+                    <td><input type="text" name="score_rank_0" data-field="score_rank_0" data-last-year-rank="1"></td>
+                    <td><input type="text" name="score_same_0" data-field="score_same_0" data-last-year-same="1"></td>
+                    <td><input type="text" name="score_cn_0" data-field="score_cn_0" data-core-col="cn"></td>
+                    <td><input type="text" name="score_math_0" data-field="score_math_0" data-core-col="math"></td>
+                    <td><input type="text" name="score_en_0" data-field="score_en_0" data-core-col="en"></td>
+                    <td><input type="text" data-elec-slot="0" data-score-row="0" autocomplete="off"></td>
+                    <td><input type="text" data-elec-slot="1" data-score-row="0" autocomplete="off"></td>
+                    <td><input type="text" data-elec-slot="2" data-score-row="0" autocomplete="off"></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>

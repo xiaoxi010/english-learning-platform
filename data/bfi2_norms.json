@@ -1,0 +1,46 @@
+{
+  "mainDimensions": {
+    "veryLow": {
+      "max": 24,
+      "label": "很低"
+    },
+    "low": {
+      "max": 32,
+      "label": "偏低"
+    },
+    "medium": {
+      "max": 42,
+      "label": "中等"
+    },
+    "high": {
+      "max": 52,
+      "label": "偏高"
+    },
+    "veryHigh": {
+      "max": 60,
+      "label": "很高"
+    }
+  },
+  "facets": {
+    "veryLow": {
+      "max": 8,
+      "label": "很低"
+    },
+    "low": {
+      "max": 11,
+      "label": "偏低"
+    },
+    "medium": {
+      "max": 14,
+      "label": "中等"
+    },
+    "high": {
+      "max": 17,
+      "label": "偏高"
+    },
+    "veryHigh": {
+      "max": 20,
+      "label": "很高"
+    }
+  }
+}

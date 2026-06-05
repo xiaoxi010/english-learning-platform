@@ -1,0 +1,444 @@
+/* 吉致测评通用：禁止复制正文，保留表单可编辑；答题选项可点区域优化 */
+
+.assess-shell,
+.assess-shell .home-section {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.assess-shell input:not([type="radio"]):not([type="checkbox"]),
+.assess-shell textarea,
+.assess-shell select {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.assess-shell a {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* 答题选项 */
+.assess-opt-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.assess-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: border-color 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.assess-opt:hover {
+    border-color: rgba(62, 207, 142, 0.45);
+}
+
+.assess-opt--on,
+.assess-opt:has(input:checked) {
+    border-color: var(--accent-green);
+    background: rgba(62, 207, 142, 0.08);
+    color: var(--text-primary);
+}
+
+.assess-opt-input {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--accent-green);
+}
+
+.assess-opt-text {
+    flex: 1;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.assess-q-title {
+    color: var(--text-primary);
+    font-size: 0.94em;
+    line-height: 1.6;
+    margin: 0 0 12px;
+}
+
+.assess-q-num {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.assess-quiz-form {
+    padding-bottom: 24px;
+}
+
+/* 题号跳转时 scrollIntoView / scrollTo 的顶部留白 */
+.hl-q-card,
+.ey-q-card,
+.cat-q-card,
+.bfi-q-card,
+.mbti-q-card,
+.rbti-q-card,
+.feier-q-card {
+    scroll-margin-top: 20px;
+    scroll-margin-bottom: 24px;
+}
+
+/* 双击 / 强制跳转到未作答题时的临时高亮 */
+.hl-q-card.assess-q-card--jump,
+.ey-q-card.assess-q-card--jump,
+.cat-q-card.assess-q-card--jump,
+.bfi-q-card.assess-q-card--jump,
+.mbti-q-card.assess-q-card--jump,
+.rbti-q-card.assess-q-card--jump,
+.feier-q-card.assess-q-card--jump {
+    border-color: rgba(232, 200, 100, 0.85);
+    box-shadow: 0 0 0 1px rgba(232, 200, 100, 0.45);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* 答题页：左侧题目 + 右侧总览 */
+.hl-page.hl-quiz-page,
+.ey-page.ey-quiz-page,
+.cat-page.cat-quiz-page,
+.bfi-page.bfi-quiz-page,
+.mbti-page.mbti-quiz-page,
+.rbti-page.rbti-quiz-page,
+.feier-page.feier-quiz-page {
+    max-width: 1280px;
+}
+
+.assess-quiz-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    width: 100%;
+}
+
+.assess-quiz-main {
+    flex: 1;
+    min-width: 0;
+    /* 为右侧固定栏留出空间，避免题目与侧栏重叠 */
+    margin-right: 300px;
+}
+
+/* 固定在可视区域内（相对视口，不随 .content-area 滚动） */
+.assess-quiz-sidebar {
+    position: fixed;
+    width: 280px;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+.assess-sidebar-card {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.assess-sidebar-label {
+    margin: 0 0 4px;
+    font-size: 0.78em;
+    color: var(--text-secondary);
+}
+
+.assess-sidebar-name {
+    margin: 0 0 12px;
+    font-size: 1.05em;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.assess-sidebar-time {
+    margin: 0 0 12px;
+    font-size: 0.92em;
+    color: var(--accent-green);
+    font-variant-numeric: tabular-nums;
+}
+
+.assess-sidebar-stat {
+    margin: 0;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+.assess-sidebar-stat strong {
+    color: var(--text-primary);
+}
+
+.assess-sidebar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.assess-legend-chip {
+    font-size: 0.72em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 2px solid transparent;
+}
+
+.assess-overview-hint {
+    margin: 0 0 8px;
+    font-size: 0.72em;
+    color: var(--text-secondary);
+}
+
+.assess-overview-scroll {
+    flex: 1;
+    min-height: 80px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2px;
+}
+
+.assess-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
+.assess-overview-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 4px 2px;
+    font-size: 0.78em;
+    font-variant-numeric: tabular-nums;
+    border: 2px solid #5a5a5a;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s, color 0.12s;
+}
+
+.assess-overview-cell:hover {
+    color: var(--text-primary);
+    border-color: #8a8a8a;
+}
+
+.assess-overview-cell--active {
+    box-shadow: 0 0 0 1px var(--accent-green);
+}
+
+/* 未答：灰框 */
+.assess-cell--none {
+    border-color: #5a5a5a !important;
+    background: var(--bg-secondary) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* 是：绿 */
+.assess-cell--yes {
+    border-color: #3ecf8e !important;
+    background: rgba(62, 207, 142, 0.18) !important;
+    color: #3ecf8e !important;
+}
+
+/* 否：红 */
+.assess-cell--no {
+    border-color: #f87171 !important;
+    background: rgba(248, 113, 113, 0.15) !important;
+    color: #f87171 !important;
+}
+
+/* 不确定：黄 */
+.assess-cell--maybe {
+    border-color: #e8b84a !important;
+    background: rgba(232, 184, 74, 0.15) !important;
+    color: #e8c070 !important;
+}
+
+/* 选项 C（卡特尔等三选一）：蓝 */
+.assess-cell--optc {
+    border-color: #60a5fa !important;
+    background: rgba(96, 165, 250, 0.18) !important;
+    color: #60a5fa !important;
+}
+
+.assess-cell--optd {
+    border-color: #e879f9 !important;
+    background: rgba(232, 121, 249, 0.16) !important;
+    color: #e879f9 !important;
+}
+
+/* BFI-2 五点量表 */
+.assess-cell--s1 {
+    border-color: #f87171 !important;
+    background: rgba(248, 113, 113, 0.14) !important;
+    color: #f87171 !important;
+}
+.assess-cell--s2 {
+    border-color: #fb923c !important;
+    background: rgba(251, 146, 60, 0.14) !important;
+    color: #fb923c !important;
+}
+.assess-cell--s3 {
+    border-color: #a3a3a3 !important;
+    background: rgba(163, 163, 163, 0.12) !important;
+    color: #333333 !important;
+}
+.assess-cell--s4 {
+    border-color: #4ade80 !important;
+    background: rgba(74, 222, 128, 0.14) !important;
+    color: #4ade80 !important;
+}
+.assess-cell--s5 {
+    border-color: #3ecf8e !important;
+    background: rgba(62, 207, 142, 0.18) !important;
+    color: #3ecf8e !important;
+}
+
+/* MBTI 李克特 -2～2 */
+.assess-cell--l1 {
+    border-color: #f87171 !important;
+    background: rgba(248, 113, 113, 0.14) !important;
+    color: #f87171 !important;
+}
+.assess-cell--l2 {
+    border-color: #fb923c !important;
+    background: rgba(251, 146, 60, 0.14) !important;
+    color: #fb923c !important;
+}
+.assess-cell--l3 {
+    border-color: #a3a3a3 !important;
+    background: rgba(163, 163, 163, 0.12) !important;
+    color: #333333 !important;
+}
+.assess-cell--l4 {
+    border-color: #a78bfa !important;
+    background: rgba(167, 139, 250, 0.14) !important;
+    color: #a78bfa !important;
+}
+.assess-cell--l5 {
+    border-color: #e879f9 !important;
+    background: rgba(232, 121, 249, 0.16) !important;
+    color: #e879f9 !important;
+}
+
+.assess-sidebar-legend--scale5 {
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.assess-sidebar-legend--scale5 .assess-legend-chip {
+    min-width: 28px;
+    padding: 2px 6px;
+    font-size: 0.72em;
+}
+
+.assess-sidebar-submit {
+    width: 100%;
+    margin-top: 4px;
+}
+
+@media (max-width: 960px) {
+    .assess-quiz-layout {
+        flex-direction: column;
+    }
+
+    .assess-quiz-main {
+        margin-right: 0;
+    }
+
+    .assess-quiz-sidebar {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        max-height: none !important;
+        box-shadow: none;
+    }
+
+    .assess-overview-scroll {
+        max-height: 220px;
+    }
+
+    .assess-overview-grid {
+        grid-template-columns: repeat(8, 1fr);
+    }
+}
+
+/* 吉致核心测评密码页 */
+.assess-gate-page {
+    max-width: 480px;
+    margin: 0 auto;
+}
+.assess-gate-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+.assess-gate-back:hover {
+    color: var(--accent-green);
+}
+.assess-gate-card {
+    padding: 28px 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-card, #fff);
+}
+.assess-gate-title {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+.assess-gate-desc {
+    margin: 0 0 20px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+.assess-gate-error {
+    margin: 0 0 12px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(220, 38, 38, 0.08);
+    color: #b91c1c;
+    font-size: 0.88rem;
+}
+.assess-gate-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.assess-gate-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.assess-gate-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    -webkit-user-select: text;
+    user-select: text;
+}
+.assess-gate-submit {
+    margin-top: 8px;
+    width: 100%;
+}

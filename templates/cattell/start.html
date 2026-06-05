@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡特尔 16PF 人格因素测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cattell.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="cat-page assess-shell">
+    <a href="{{ url_for('index') }}" class="cat-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="cat-alert">请将 <code>data/cattell_questions.json</code> 等文件放到 data 目录（可运行 <code>node scripts/export_cattell_data.js</code> 导出）。</div>
+    {% endif %}
+
+    <section class="home-section cat-hero">
+        <p class="cat-badge">人才测评 · 卡特尔 16PF</p>
+        <h2 class="cat-hero-title">卡特尔 16PF 人格因素测评</h2>
+        <p class="cat-hero-desc">187 题 · 16 维人格 · 4 项次元因素 · 约 25–40 分钟</p>
+    </section>
+
+    <section class="home-section cat-intro">
+        <p>卡特尔 16 种人格因素测验（16PF）由心理学家雷蒙德·卡特尔编制，从 16 个相对独立的人格维度描绘性格全貌，并推导适应能力、职业潜力等特质。</p>
+        <p>本测评包含 <strong>187</strong> 道标准化题目（其中第 1、2、187 题为效度说明题，不计入维度得分），完成后将生成 16 维度分析、8 项次元人格因素解读及职业匹配建议。</p>
+        <h3 class="cat-subhead">作答说明</h3>
+        <p>每题请在 A、B、C 三个选项中选择最符合您真实情况的一项；无对错之分，请凭第一反应作答。</p>
+        <p class="cat-disclaimer">本测评结果仅供自我认知与职业探索参考，不构成专业心理诊断或就业决策依据。</p>
+    </section>
+
+    <section class="home-section cat-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="cat-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('cattell.quiz') }}" class="cat-form">
+            <div class="cat-field">
+                <label for="user_name">姓名</label>
+                <input type="text" id="user_name" name="user_name" required maxlength="32" placeholder="请输入姓名">
+            </div>
+            <button type="submit" class="btn-primary cat-btn-start" {% if not data_ready %}disabled{% endif %}>开始测评</button>
+        </form>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

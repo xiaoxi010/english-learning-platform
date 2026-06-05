@@ -1,0 +1,24 @@
+{
+  "province": "江西",
+  "slug": "jiangxi",
+  "data_year": 2026,
+  "record_year": 2025,
+  "expert_source": "12、2026-江西-专家版.xlsx",
+  "strong_source": "",
+  "datasets": {
+    "early": "jiangxi_2026_expert_early",
+    "undergraduate": "jiangxi_2026_expert_undergraduate",
+    "junior": "jiangxi_2026_expert_junior",
+    "strong": "jiangxi_2026_strong_base"
+  },
+  "counts": {
+    "early": 0,
+    "undergraduate": 0,
+    "junior": 0
+  },
+  "imported_at": "2026-06-04T15:49:18",
+  "storage": "sqlite",
+  "db_file": "data.undergraduate.db",
+  "db_undergraduate": "data.undergraduate.db",
+  "db_other": "data.other.db"
+}

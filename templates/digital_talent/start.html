@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字天赋解读</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/digital_talent.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="dt-page assess-shell">
+    <a href="{{ url_for('index') }}" class="dt-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="dt-alert">
+        解读数据库尚未加载。请将小程序云端的 <strong>Personality.json</strong> 放到
+        <code>data/Personality.json</code> 后重启服务（详见 data/README.txt）。
+    </div>
+    {% endif %}
+
+    <section class="dt-intro home-section">
+        <div class="dt-welcome">
+            <p class="dt-welcome-lead">
+                欢迎<span class="dt-name">「{{ welcome_name }}」</span>来到数字天赋解读，赴一场以数字为钥的生命蓝图解码之旅。
+            </p>
+            <p>在这里，没有宿命的定论，没有绝对的优劣，只有透过生日数字，为你解锁天赋底色，人生课题与成长方向的理性探索。生命密码的源头，可追溯至2500年前古希腊数学家、哲学家毕达哥拉斯提出的「万物皆数」核心思想。他认为数字是宇宙的基本语言，蕴含着万物运行的规律，不仅是计算工具，更承载着精神意义与能量频率，能揭示人的性格本质与潜能倾向。这一古老智慧历经千年演变，经现代学者系统化梳理，结合中国易经、阴阳、五行的智慧，逐渐形成以出生日期为核心的测评体系，成为兼具科学性与趣味性的自我认知工具，广泛应用于生涯规划、家庭教育、人际沟通、职场选用育留等领域。</p>
+            <p>本次测评聚焦一个人的主性格、天赋数字、缺失数字、12组联合码和个人流年等方面，让你获得详尽的生命密码解析，解锁专属数字标签，读懂自己的天赋潜能与成长课题，也能更通透地理解他人的行为模式，在家庭教育中因材施教，在人际相处中高效同频。现在，就让我们以数字为媒，开启这场深刻而温暖的自我探索之旅吧！</p>
+            <p class="dt-note">注：双胞胎、龙凤胎或多胞胎不适用此测评，可联系后台咨询师进行一对一解析。</p>
+        </div>
+    </section>
+
+    <section class="dt-form-section home-section">
+        <h3 class="dt-form-title">你的生日</h3>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, msg in messages %}
+        <p class="dt-error">{{ msg }}</p>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form class="dt-form" method="post" action="{{ url_for('digital_talent.report') }}" id="birthForm">
+            <div class="dt-picker-row">
+                <div class="dt-picker-group">
+                    <label class="dt-label" for="birth_year">年</label>
+                    <select id="birth_year" name="birth_year" class="dt-select" required>
+                        <option value="">请选择</option>
+                        {% for y in years %}
+                        <option value="{{ y }}">{{ y }}年</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="dt-picker-group">
+                    <label class="dt-label" for="birth_month">月</label>
+                    <select id="birth_month" name="birth_month" class="dt-select" required>
+                        <option value="">请选择</option>
+                        {% for m in months %}
+                        <option value="{{ m }}">{{ m }}月</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="dt-picker-group">
+                    <label class="dt-label" for="birth_day">日</label>
+                    <select id="birth_day" name="birth_day" class="dt-select" required>
+                        <option value="">请选择</option>
+                        {% for d in days %}
+                        <option value="{{ d }}">{{ d }}日</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="birth_date" id="birth_date" value="">
+            <button type="submit" class="btn-primary dt-submit">完成</button>
+        </form>
+    </section>
+</div>
+
+<script>
+(function () {
+    const y = document.getElementById('birth_year');
+    const m = document.getElementById('birth_month');
+    const d = document.getElementById('birth_day');
+    const hidden = document.getElementById('birth_date');
+    const form = document.getElementById('birthForm');
+
+    function daysInMonth(year, month) {
+        if (!year || !month) return 31;
+        return new Date(year, month, 0).getDate();
+    }
+
+    function refreshDays() {
+        const max = daysInMonth(parseInt(y.value, 10), parseInt(m.value, 10));
+        const cur = d.value;
+        d.innerHTML = '<option value="">请选择</option>';
+        for (let i = 1; i <= max; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = i + '日';
+            if (String(i) === String(cur)) opt.selected = true;
+            d.appendChild(opt);
+        }
+    }
+
+    y.addEventListener('change', refreshDays);
+    m.addEventListener('change', refreshDays);
+
+    form.addEventListener('submit', function (e) {
+        const yy = y.value, mm = m.value, dd = d.value;
+        if (!yy || !mm || !dd) {
+            e.preventDefault();
+            alert('请完整选择出生年月日');
+            return;
+        }
+        hidden.value = yy + '-' + String(mm).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+    });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

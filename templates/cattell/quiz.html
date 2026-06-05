@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡特尔 16PF · 答题</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cattell.css') }}">
+</head>
+<body>
+{% set content_class = 'content-area--quiz' %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="cat-page cat-quiz-page assess-shell">
+    <div class="assess-quiz-layout">
+        <div class="assess-quiz-main">
+            <a href="{{ url_for('cattell.start') }}" class="cat-back">← 返回简介</a>
+
+            <header class="home-section cat-quiz-head">
+                <h2>卡特尔 16PF 人格因素测评</h2>
+                <p>共 {{ total }} 题 · 每题选择 A、B 或 C</p>
+                <div class="cat-progress-track"><div class="cat-progress-fill" id="catProgressFill"></div></div>
+            </header>
+
+            <form method="post" action="{{ url_for('cattell.report') }}" id="catQuizForm" class="cat-quiz-form assess-quiz-form" novalidate>
+                <input type="hidden" name="user_name" value="{{ user_name }}">
+                {% for q in questions %}
+                {% set qi = loop.index0 %}
+                <section class="home-section cat-q-card{% if not q.isScored %} cat-q-card--warmup{% endif %}" id="q-{{ qi }}">
+                    <p class="assess-q-title"><span class="assess-q-num">{{ q.id }}</span>. {{ q.title }}</p>
+                    <div class="assess-opt-group" role="radiogroup" aria-label="第 {{ q.id }} 题">
+                        <label class="assess-opt cat-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="A">
+                            <span class="assess-opt-text">A. {{ q.optionA }}</span>
+                        </label>
+                        <label class="assess-opt cat-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="B">
+                            <span class="assess-opt-text">B. {{ q.optionB }}</span>
+                        </label>
+                        <label class="assess-opt cat-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="C">
+                            <span class="assess-opt-text">C. {{ q.optionC }}</span>
+                        </label>
+                    </div>
+                </section>
+                {% endfor %}
+            </form>
+        </div>
+
+        {% with legend_abc=true, form_id='catQuizForm' %}
+        {% include 'partials/assessment_quiz_sidebar.html' %}
+        {% endwith %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/assessment-quiz.js') }}"></script>
+<script>
+(function () {
+  var form = document.getElementById('catQuizForm');
+  var total = {{ total }};
+  var fill = document.getElementById('catProgressFill');
+
+  form._assessOnProgress = function () {
+    var count = 0;
+    for (var j = 0; j < total; j++) {
+      if (form.querySelector('input[name="ans_' + j + '"]:checked')) count++;
+    }
+    if (fill) fill.style.width = Math.round((count / total) * 100) + '%';
+  };
+
+  AssessmentQuiz.init('catQuizForm', total, {
+    valueMap: { 'A': 'yes', 'B': 'maybe', 'C': 'optc' }
+  });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡特尔 16PF 测评报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cattell.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% set res = r.result %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="cat-page cat-report assess-shell">
+    <a href="{{ url_for('index') }}" class="cat-back">← 返回测评报告</a>
+
+    <header class="home-section cat-report-cover">
+        <p class="cat-cover-brand">吉致生涯 · 卡特尔 16PF</p>
+        <h1>{{ r.user_name }}</h1>
+        <p class="cat-cover-meta">报告编号 {{ r.report_id }} · {{ r.calculate_time }}</p>
+        <p class="cat-cover-meta">{{ r.summary }}</p>
+    </header>
+
+    <section class="home-section">
+        <h3 class="cat-section-title">16 种人格因素（标准分 1–10）</h3>
+        <div class="cat-dim-table">
+            <div class="cat-dim-row cat-dim-row--head">
+                <span>代号</span><span>因素</span><span>标准分</span><span>水平</span>
+            </div>
+            {% for d in res.dimensionAnalysis %}
+            <div class="cat-dim-row">
+                <span>{{ d.id }}</span>
+                <span>{{ d.name }}</span>
+                <span>{{ d.standardScore }}</span>
+                <span class="cat-level {% if d.level in ['高分','偏高'] %}cat-level--high{% elif d.level in ['低分','偏低'] %}cat-level--low{% endif %}">{{ d.level }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <canvas id="catRadar16" class="cat-chart-canvas" width="360" height="360" aria-label="16维雷达图"></canvas>
+    </section>
+
+    <section class="home-section">
+        <h3 class="cat-section-title">各维度解读（节选）</h3>
+        {% for d in res.dimensionAnalysis %}
+        {% if d.level in ['高分', '低分', '偏高', '偏低'] %}
+        <article class="cat-dim-desc">
+            <h4>{{ d.name }}（{{ d.id }}）· {{ d.level }} · 标准分 {{ d.standardScore }}</h4>
+            <p>{{ d.description[:320] }}{% if d.description|length > 320 %}…{% endif %}</p>
+            {% if d.suitableCareers %}
+            <p><strong>参考职业方向：</strong>{{ d.suitableCareers | join('、') }}</p>
+            {% endif %}
+        </article>
+        {% endif %}
+        {% endfor %}
+    </section>
+
+    <section class="home-section">
+        <h3 class="cat-section-title">次元人格因素</h3>
+        <div class="cat-secondary-grid">
+            {% for f in res.secondaryFactors %}
+            <article class="cat-secondary-card">
+                <h4>{{ f.name }}</h4>
+                <p class="cat-secondary-meta">{{ f.id }} · {{ f.score }} 分 · {{ f.level }}</p>
+                <p>{{ f.description[:200] }}{% if f.description|length > 200 %}…{% endif %}</p>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-section">
+        <h3 class="cat-section-title">职业匹配度 Top {{ res.careerRank|length }}</h3>
+        <ol class="cat-career-list">
+            {% for c in res.careerRank %}
+            <li>
+                <span>{{ loop.index }}. {{ c.name }}</span>
+                <span class="cat-career-pct">{{ c.percent }}%</span>
+            </li>
+            {% endfor %}
+        </ol>
+    </section>
+
+    <p style="margin-top:20px;text-align:center;">
+        <a href="{{ url_for('cattell.start') }}" class="btn-primary">重新测评</a>
+    </p>
+</div>
+
+<script>
+(function () {
+  var dims = {{ res.dimensionAnalysis | tojson }};
+  var canvas = document.getElementById('catRadar16');
+  if (!canvas || !dims.length) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  var cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.36;
+  var n = dims.length;
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  for (var ring = 2; ring <= 10; ring += 2) {
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var a = -Math.PI / 2 + (2 * Math.PI * i) / n;
+      var rr = (R * ring) / 10;
+      var x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+  ctx.fillStyle = 'rgba(232, 168, 74, 0.35)';
+  ctx.strokeStyle = '#e8a84a';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (var j = 0; j < n; j++) {
+    var ang = -Math.PI / 2 + (2 * Math.PI * j) / n;
+    var sc = Math.max(1, Math.min(10, Number(dims[j].standardScore) || 5));
+    var rad = (R * sc) / 10;
+    var px = cx + rad * Math.cos(ang), py = cy + rad * Math.sin(ang);
+    if (j === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  for (var k = 0; k < n; k++) {
+    var aa = -Math.PI / 2 + (2 * Math.PI * k) / n;
+    var lx = cx + (R + 14) * Math.cos(aa), ly = cy + (R + 14) * Math.sin(aa);
+    ctx.fillText(dims[k].id, lx, ly + 3);
+  }
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

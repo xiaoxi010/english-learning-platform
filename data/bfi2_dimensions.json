@@ -1,0 +1,72 @@
+{
+  "E": {
+    "name": "外向性",
+    "nameEn": "Extraversion",
+    "facets": {
+      "sociability": "社交性",
+      "assertiveness": "自信果断性",
+      "energyLevel": "精力水平"
+    },
+    "description": {
+      "low": "内向、安静、喜欢独处、社交耗能",
+      "medium": "社交适中，能在独处与互动间切换",
+      "high": "外向、热情、喜欢社交、精力充沛"
+    }
+  },
+  "A": {
+    "name": "宜人性",
+    "nameEn": "Agreeableness",
+    "facets": {
+      "compassion": "同情心",
+      "respectfulness": "尊重他人",
+      "trust": "信任他人"
+    },
+    "description": {
+      "low": "竞争心强、怀疑他人、直言不讳",
+      "medium": "合作友好，但也有自己的原则",
+      "high": "善良、体贴、乐于助人、信任他人"
+    }
+  },
+  "C": {
+    "name": "尽责性",
+    "nameEn": "Conscientiousness",
+    "facets": {
+      "organization": "条理性",
+      "productiveness": "效率性",
+      "responsibility": "责任感"
+    },
+    "description": {
+      "low": "灵活随性、缺乏规划、容易拖延",
+      "medium": "有一定的责任心和条理性",
+      "high": "自律严谨、有责任心、做事有条理"
+    }
+  },
+  "N": {
+    "name": "神经质",
+    "nameEn": "Neuroticism",
+    "facets": {
+      "anxiety": "焦虑",
+      "depression": "抑郁",
+      "emotionalVolatility": "情绪波动"
+    },
+    "description": {
+      "low": "情绪稳定、冷静、抗压能力强",
+      "medium": "情绪基本稳定，偶尔会有波动",
+      "high": "情绪敏感、容易焦虑、情绪化"
+    }
+  },
+  "O": {
+    "name": "开放性",
+    "nameEn": "Openness",
+    "facets": {
+      "aestheticSensitivity": "审美敏感性",
+      "intellectualCuriosity": "智力好奇心",
+      "creativeImagination": "创造性想象力"
+    },
+    "description": {
+      "low": "务实、传统、保守、喜欢熟悉的事物",
+      "medium": "对新事物持开放态度，但也重视传统",
+      "high": "好奇、富有想象力、喜欢尝试新事物"
+    }
+  }
+}

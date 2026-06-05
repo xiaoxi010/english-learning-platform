@@ -1,0 +1,25 @@
+{
+  "province": "山西",
+  "slug": "shanxi",
+  "data_year": 2026,
+  "record_year": 2025,
+  "expert_source": "20、山西-2026-专家版0330.xlsx",
+  "strong_source": "李老师：2025年强基计划分数线 - 山西.xlsx",
+  "datasets": {
+    "early": "shanxi_2026_expert_early",
+    "undergraduate": "shanxi_2026_expert_undergraduate",
+    "junior": "shanxi_2026_expert_junior",
+    "strong": "shanxi_2026_strong_base"
+  },
+  "counts": {
+    "strong": 65,
+    "early": 2178,
+    "undergraduate": 20747,
+    "junior": 11123
+  },
+  "imported_at": "2026-06-04T15:46:48",
+  "storage": "sqlite",
+  "db_file": "data.undergraduate.db",
+  "db_undergraduate": "data.undergraduate.db",
+  "db_other": "data.other.db"
+}

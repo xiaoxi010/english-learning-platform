@@ -1,0 +1,202 @@
+/* RBTI 年度抽象人格测评 — 紫粉趣味主题 */
+.rbti-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-bottom: 32px;
+}
+
+.rbti-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.rbti-back:hover { color: #c026d3; }
+
+.rbti-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    color: #e879f9;
+    background: rgba(232, 121, 249, 0.12);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.rbti-hero-title { margin: 0 0 8px; font-size: 1.35em; }
+.rbti-hero-desc { color: var(--text-secondary); margin: 0; }
+.rbti-intro p { color: var(--text-secondary); line-height: 1.7; margin: 0 0 12px; }
+.rbti-disclaimer { font-size: 0.88em; opacity: 0.85; }
+
+.rbti-form-card { padding: 20px; }
+
+.rbti-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 360px;
+}
+
+.rbti-field {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.rbti-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+.rbti-field input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary, var(--bg-card));
+    color: var(--text-primary);
+}
+
+.rbti-btn-start {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.rbti-error { color: #ff6b6b; margin-bottom: 10px; }
+.rbti-alert {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    margin-bottom: 16px;
+    font-size: 0.9em;
+}
+
+.rbti-quiz-head h2 { margin: 0 0 6px; }
+.rbti-quiz-head p { margin: 0 0 12px; color: var(--text-secondary); font-size: 0.9em; }
+.rbti-progress-track {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.rbti-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #a855f7, #e879f9);
+    transition: width 0.25s ease;
+}
+
+.rbti-q-card { margin-bottom: 10px; }
+.rbti-opt .assess-opt-text { font-size: 0.88em; line-height: 1.45; }
+
+/* 报告 */
+.rbti-type-hero {
+    text-align: center;
+    padding: 20px 16px;
+}
+
+.rbti-hero-label {
+    margin: 0 0 8px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+.rbti-type-emoji {
+    font-size: 3rem;
+    margin: 0 0 8px;
+    line-height: 1;
+}
+
+.rbti-type-code {
+    font-size: 1.35em;
+    font-weight: 700;
+    color: #e879f9;
+    margin: 0;
+}
+
+.rbti-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.rbti-tag {
+    font-size: 0.82em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(168, 85, 247, 0.15);
+    color: #d8b4fe;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.rbti-summary {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 0.92em;
+    margin: 0;
+}
+
+.rbti-section-title { margin: 0 0 12px; font-size: 1.05em; }
+
+.rbti-axis-bars { display: flex; flex-direction: column; gap: 12px; }
+
+.rbti-axis-row label {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 0.88em;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+}
+
+.rbti-axis-level { font-size: 0.85em; color: #d8b4fe; }
+
+.rbti-axis-track {
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.rbti-axis-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7c3aed, #e879f9);
+}
+
+.rbti-prose {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.92em;
+    margin: 0;
+}
+
+.rbti-dim-row {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.rbti-dim-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.rbti-dim-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.rbti-dim-name { font-weight: 600; font-size: 0.95em; }
+.rbti-dim-score { font-size: 0.82em; color: #d8b4fe; }
+.rbti-dim-sub { font-size: 0.82em; color: var(--text-secondary); margin: 0 0 6px; }
+.rbti-dim-desc { font-size: 0.88em; color: var(--text-secondary); line-height: 1.65; margin: 0; }

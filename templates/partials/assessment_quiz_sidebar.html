@@ -1,0 +1,62 @@
+{# 答题页右侧总览：姓名、作答时间、题号网格、提交（form 属性关联主表单） #}
+<aside class="assess-quiz-sidebar" aria-label="题目作答总览">
+    <div class="assess-sidebar-card">
+        <p class="assess-sidebar-label">测评人</p>
+        <p class="assess-sidebar-name">{{ user_name }}</p>
+        <p class="assess-sidebar-label">作答时间</p>
+        <p class="assess-sidebar-time" id="assessOverviewClock">—</p>
+        <p class="assess-sidebar-stat">已答 <strong id="assessOverviewAnswered">0</strong> / {{ total }} 题</p>
+    </div>
+
+    <div class="assess-sidebar-legend{% if legend_scale5 %} assess-sidebar-legend--scale5{% endif %}" aria-hidden="true">
+        <span class="assess-legend-chip assess-cell--none">未答</span>
+        {% if legend_likert5 %}
+        <span class="assess-legend-chip assess-cell--l1">A</span>
+        <span class="assess-legend-chip assess-cell--l2">B</span>
+        <span class="assess-legend-chip assess-cell--l3">C</span>
+        <span class="assess-legend-chip assess-cell--l4">D</span>
+        <span class="assess-legend-chip assess-cell--l5">E</span>
+        {% elif legend_scale5 %}
+        <span class="assess-legend-chip assess-cell--s1">1</span>
+        <span class="assess-legend-chip assess-cell--s2">2</span>
+        <span class="assess-legend-chip assess-cell--s3">3</span>
+        <span class="assess-legend-chip assess-cell--s4">4</span>
+        <span class="assess-legend-chip assess-cell--s5">5</span>
+        {% elif legend_abcdefg %}
+        <span class="assess-legend-chip assess-cell--yes">A</span>
+        <span class="assess-legend-chip assess-cell--maybe">B</span>
+        <span class="assess-legend-chip assess-cell--optc">C</span>
+        <span class="assess-legend-chip assess-cell--optd">D</span>
+        <span class="assess-legend-chip assess-cell--s1">E</span>
+        <span class="assess-legend-chip assess-cell--s2">F</span>
+        <span class="assess-legend-chip assess-cell--s3">G</span>
+        {% elif legend_abcd %}
+        <span class="assess-legend-chip assess-cell--yes">A</span>
+        <span class="assess-legend-chip assess-cell--maybe">B</span>
+        <span class="assess-legend-chip assess-cell--optc">C</span>
+        <span class="assess-legend-chip assess-cell--optd">D</span>
+        {% elif legend_abc %}
+        <span class="assess-legend-chip assess-cell--yes">A</span>
+        <span class="assess-legend-chip assess-cell--maybe">B</span>
+        <span class="assess-legend-chip assess-cell--optc">C</span>
+        {% elif show_uncertain %}
+        <span class="assess-legend-chip assess-cell--yes">是</span>
+        <span class="assess-legend-chip assess-cell--no">否</span>
+        <span class="assess-legend-chip assess-cell--maybe">不确定</span>
+        {% else %}
+        <span class="assess-legend-chip assess-cell--yes">是</span>
+        <span class="assess-legend-chip assess-cell--no">否</span>
+        {% endif %}
+    </div>
+
+    <div class="assess-overview-scroll">
+        <p class="assess-overview-hint">双击题号跳转到对应题目</p>
+        <div class="assess-overview-grid" id="assessOverviewGrid" role="navigation" aria-label="题号跳转">
+            {% for q in questions %}
+            <button type="button" class="assess-overview-cell assess-cell--none" data-qi="{{ loop.index0 }}" title="第 {{ q.id }} 题 · 双击跳转">{{ q.id }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button type="submit" class="btn-primary assess-sidebar-submit" form="{{ form_id }}">{{ submit_label | default('提交并查看报告') }}</button>
+</aside>

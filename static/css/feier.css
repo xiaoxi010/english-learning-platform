@@ -1,0 +1,149 @@
+/* 菲尔人格测评 — 青绿趣味主题 */
+.feier-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-bottom: 32px;
+}
+
+.feier-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.feier-back:hover { color: #2dd4bf; }
+
+.feier-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    color: #2dd4bf;
+    background: rgba(45, 212, 191, 0.12);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.feier-hero-title { margin: 0 0 8px; font-size: 1.35em; }
+.feier-hero-desc { color: var(--text-secondary); margin: 0; }
+.feier-intro p { color: var(--text-secondary); line-height: 1.7; margin: 0 0 12px; }
+.feier-subhead { font-size: 1em; margin: 16px 0 8px; }
+.feier-list {
+    margin: 0 0 12px;
+    padding-left: 1.2em;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    font-size: 0.92em;
+}
+.feier-list li { margin-bottom: 6px; }
+.feier-disclaimer { font-size: 0.88em; opacity: 0.85; color: var(--text-secondary); }
+
+.feier-form-card { padding: 20px; }
+.feier-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 360px;
+}
+.feier-field { width: 100%; margin-bottom: 16px; }
+.feier-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+.feier-field input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary, var(--bg-card));
+    color: var(--text-primary);
+}
+.feier-btn-start {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.feier-error { color: #ff6b6b; margin-bottom: 10px; }
+.feier-alert {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    margin-bottom: 16px;
+    font-size: 0.9em;
+}
+
+.feier-quiz-head h2 { margin: 0 0 6px; }
+.feier-quiz-head p { margin: 0 0 12px; color: var(--text-secondary); font-size: 0.9em; }
+.feier-progress-track {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.feier-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #14b8a6, #5eead4);
+    transition: width 0.25s ease;
+}
+
+.feier-q-card { margin-bottom: 10px; }
+.feier-opt-letter {
+    display: inline-block;
+    min-width: 1.1em;
+    font-weight: 600;
+    color: #2dd4bf;
+}
+.feier-opt .assess-opt-text { font-size: 0.88em; line-height: 1.45; }
+
+.feier-result-hero {
+    text-align: center;
+    padding: 20px 16px;
+}
+.feier-score-line {
+    margin: 0 0 10px;
+    font-size: 0.95em;
+    color: var(--text-secondary);
+}
+.feier-score-num {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #5eead4;
+}
+.feier-result-title {
+    margin: 0 0 8px;
+    font-size: 1.4em;
+    color: #5eead4;
+}
+.feier-result-sub {
+    margin: 0;
+    font-size: 0.92em;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.feier-section-title { margin: 0 0 12px; font-size: 1.05em; }
+.feier-prose {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.92em;
+    margin: 0;
+}
+.feier-hint-card {
+    border-left: 3px solid #14b8a6;
+    background: rgba(20, 184, 166, 0.06);
+}
+.feier-report-disclaimer {
+    text-align: center;
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    margin: 16px 0 0;
+    opacity: 0.85;
+}

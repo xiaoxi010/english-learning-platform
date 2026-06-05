@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>普通高考职业测评表 · {{ user_label }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/live_template.css') }}">
+</head>
+<body class="page-gaokao-career">
+{% include 'partials/app_shell_open.html' %}
+
+<div class="gc-form" id="gaokaoCareerForm"
+     data-user="{{ user_label }}"
+     data-default-name="{{ default_name }}"
+     data-score-lookup-url="{{ score_rank_lookup_url }}"
+     data-score-ref-url="{{ score_ref_search_url }}"
+     data-score-ref-lookup-url="{{ score_ref_lookup_url }}"
+     data-score-ref-schools-url="{{ score_ref_schools_url }}"
+     data-score-ref-enabled="{{ '1' if score_ref_count else '0' }}"
+     data-enrollment-plan-url="{{ enrollment_plan_search_url }}"
+     data-enrollment-plan-schools-url="{{ enrollment_plan_schools_url }}"
+     data-enrollment-plan-enabled="{{ '1' if enrollment_plan_count else '0' }}"
+     data-enrollment-plan-province="吉林"
+     data-elective-rating-url="{{ elective_rating_url }}">
+    <div class="gc-toolbar no-print">
+        <a href="{{ url_for('live_template.index') }}" class="gc-back">← 直播模板</a>
+        <span class="gc-user-badge">使用人：{{ user_label }}</span>
+        <div class="gc-toolbar-actions">
+            <button type="button" class="gc-btn gc-btn--danger" id="gcClearForm" title="清空全部填写内容与本地草稿">清空</button>
+            <button type="button" class="gc-btn" id="gcSaveDraft">保存草稿</button>
+            <button type="button" class="gc-btn gc-btn--primary" id="gcExportPdf" title="在对话框中选择「另存为 PDF」或 Microsoft Print to PDF">导出 PDF</button>
+        </div>
+    </div>
+
+    <header class="gc-sheet-header">
+        <h1 class="gc-sheet-title">童路人普通高考升学意向测评表</h1>
+        <p class="gc-sheet-sub">基本信息 · 直播填写版</p>
+    </header>
+
+    <!-- 基本信息 -->
+    <section class="gc-section">
+        <h2 class="gc-section-title">基本信息</h2>
+        <div class="gc-grid gc-grid--basic-4">
+            <label>姓名<input type="text" name="name" value="{{ default_name }}" data-field="name" autocomplete="off"></label>
+            <label>性别<input type="text" name="gender" data-field="gender" autocomplete="off"></label>
+            <label>民族<input type="text" name="ethnicity" data-field="ethnicity" autocomplete="off"></label>
+            <label>政治面貌<input type="text" name="politics" data-field="politics" autocomplete="off"></label>
+            <label>身高<input type="text" name="height" data-field="height" inputmode="decimal" autocomplete="off"></label>
+            <label>体重<input type="text" name="weight" data-field="weight" inputmode="decimal" autocomplete="off"></label>
+            <label>裸眼视力<input type="text" name="vision" data-field="vision" autocomplete="off"></label>
+            <label>出生日期<input type="text" name="birthday" data-field="birthday" autocomplete="off"></label>
+            <label>色盲色弱<input type="text" name="color_blind" data-field="color_blind" autocomplete="off"></label>
+            <label>有无口吃<input type="text" name="stutter" data-field="stutter" autocomplete="off"></label>
+            <label>户籍类别<input type="text" name="hukou_type" data-field="hukou_type" autocomplete="off"></label>
+            <label>应往届生<input type="text" name="graduate_type" data-field="graduate_type" autocomplete="off"></label>
+            <label>是否左利手<input type="text" name="left_handed" data-field="left_handed" autocomplete="off"></label>
+            <label>父亲学历<input type="text" name="parent_edu_father" data-field="parent_edu_father" autocomplete="off"></label>
+            <label>母亲学历<input type="text" name="parent_edu_mother" data-field="parent_edu_mother" autocomplete="off"></label>
+            <label>家庭年收入<input type="text" name="family_income" data-field="family_income" autocomplete="off"></label>
+            <label>家庭资源<input type="text" name="family_resources" data-field="family_resources" autocomplete="off"></label>
+            <label>直系亲属，本人有无精神病史<input type="text" name="mental_history" data-field="mental_history" autocomplete="off"></label>
+            <label>父母职业<input type="text" name="parent_occupation" data-field="parent_occupation" autocomplete="off"></label>
+            <label>联系电话<input type="text" name="phone" data-field="phone" autocomplete="off"></label>
+        </div>
+    </section>
+
+    <!-- 个性特长 -->
+    <section class="gc-section">
+        <h2 class="gc-section-title">个性特长</h2>
+        <label class="gc-block-label">简单描述孩子对未来职业、人生的规划
+            <textarea name="life_plan" rows="3" data-field="life_plan"></textarea>
+        </label>
+        <div class="gc-grid gc-grid--triple">
+            <label>学生感兴趣的学科<textarea name="like_subjects" rows="2" data-field="like_subjects"></textarea></label>
+            <label>对自己创新能力的评价<textarea name="innovation" rows="2" data-field="innovation"></textarea></label>
+            <label>对未来职业有帮助的特长<textarea name="career_talent" rows="2" data-field="career_talent"></textarea></label>
+        </div>
+        <label class="gc-block-label">学生不喜欢的学科
+            <textarea name="dislike_subjects" rows="2" data-field="dislike_subjects"></textarea>
+        </label>
+    </section>
+
+    <!-- 成绩 -->
+    <section class="gc-section" id="gcScoresSection">
+        <h2 class="gc-section-title">成绩（普通类）</h2>
+        <label class="gc-score-province">高考省份（用于位次查询）
+            <div class="gc-combobox" id="gaokaoProvinceCombo">
+                <input type="text"
+                       class="gc-combobox-input"
+                       name="gaokao_province"
+                       data-field="gaokao_province"
+                       placeholder="如：北京市"
+                       autocomplete="off"
+                       aria-expanded="false"
+                       aria-controls="gaokaoProvinceListbox"
+                       aria-autocomplete="list"
+                       role="combobox">
+                <button type="button"
+                        class="gc-combobox-btn"
+                        id="gaokaoProvinceToggle"
+                        aria-label="展开省份列表"
+                        tabindex="-1">▾</button>
+                <ul class="gc-combobox-dropdown"
+                    id="gaokaoProvinceListbox"
+                    role="listbox"
+                    hidden>
+                    {% for opt in gaokao_province_options %}
+                    <li role="option" data-value="{{ opt.value }}">{{ opt.label }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </label>
+        <div class="gc-elective-bar">
+            <span class="gc-elective-label">选科</span>
+            <div class="gc-elective-btns" id="electiveBtns">
+                <button type="button" class="gc-elec-btn" data-elec="phy">物</button>
+                <button type="button" class="gc-elec-btn" data-elec="chem">化</button>
+                <button type="button" class="gc-elec-btn" data-elec="bio">生</button>
+                <button type="button" class="gc-elec-btn" data-elec="his">历</button>
+                <button type="button" class="gc-elec-btn" data-elec="pol">政</button>
+                <button type="button" class="gc-elec-btn" data-elec="geo">地</button>
+                <button type="button" class="gc-elec-btn" data-elec="tech">技</button>
+            </div>
+            <input type="hidden" name="score_subjects_0" data-field="score_subjects_0" id="scoreSubjectsHidden" value="">
+            <div class="gc-elective-actions">
+                <button type="button" class="gc-btn gc-elec-rating-btn" id="btnElecRating" data-default-label="选科评级">选科评级</button>
+                <button type="button" class="gc-btn gc-elec-optimal-btn" id="btnElecOptimal" data-default-label="最优选科">最优选科</button>
+                <button type="button" class="gc-btn gc-auto-calc-btn" id="btnAutoCalc" data-default-label="自动计算" aria-pressed="false">自动计算</button>
+            </div>
+        </div>
+        <div class="gc-score-store" hidden aria-hidden="true">
+            <input type="text" data-field="score_phy_0" tabindex="-1">
+            <input type="text" data-field="score_his_0" tabindex="-1">
+            <input type="text" data-field="score_chem_0" tabindex="-1">
+            <input type="text" data-field="score_bio_0" tabindex="-1">
+            <input type="text" data-field="score_pol_0" tabindex="-1">
+            <input type="text" data-field="score_geo_0" tabindex="-1">
+            <input type="text" data-field="score_tech_0" tabindex="-1">
+        </div>
+        <table class="gc-table gc-table--scores">
+            <thead>
+                <tr>
+                    <th>总分</th><th>位次</th><th>同位次人数</th>
+                    <th>语文</th><th>数学</th><th>英语</th>
+                    <th class="gc-elec-th" data-elec-th="0">选考1</th>
+                    <th class="gc-elec-th" data-elec-th="1">选考2</th>
+                    <th class="gc-elec-th" data-elec-th="2">选考3</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in range(2) %}
+                <tr data-score-row="{{ i }}">
+                    <td><input type="text" name="score_total_{{ i }}" data-field="score_total_{{ i }}" {% if i == 0 %}data-score-total="1"{% endif %}></td>
+                    <td><input type="text" name="score_rank_{{ i }}" data-field="score_rank_{{ i }}" {% if i == 0 %}data-last-year-rank="1"{% endif %}></td>
+                    <td><input type="text" name="score_same_{{ i }}" data-field="score_same_{{ i }}" {% if i == 0 %}data-last-year-same="1"{% endif %}></td>
+                    <td><input type="text" name="score_cn_{{ i }}" data-field="score_cn_{{ i }}" {% if i == 0 %}data-core-col="cn"{% endif %}></td>
+                    <td><input type="text" name="score_math_{{ i }}" data-field="score_math_{{ i }}" {% if i == 0 %}data-core-col="math"{% endif %}></td>
+                    <td><input type="text" name="score_en_{{ i }}" data-field="score_en_{{ i }}" {% if i == 0 %}data-core-col="en"{% endif %}></td>
+                    {% if i == 0 %}
+                    <td><input type="text" data-elec-slot="0" data-score-row="0" autocomplete="off"></td>
+                    <td><input type="text" data-elec-slot="1" data-score-row="0" autocomplete="off"></td>
+                    <td><input type="text" data-elec-slot="2" data-score-row="0" autocomplete="off"></td>
+                    {% else %}
+                    <td><input type="text" name="score_elec1_{{ i }}" data-field="score_elec1_{{ i }}"></td>
+                    <td><input type="text" name="score_elec2_{{ i }}" data-field="score_elec2_{{ i }}"></td>
+                    <td><input type="text" name="score_elec3_{{ i }}" data-field="score_elec3_{{ i }}"></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 院校专业分数参考（吉林2026） -->
+    <section class="gc-section" id="gcScoreRefSection" hidden>
+        <h2 class="gc-section-title">{{ score_ref_title }}</h2>
+        {% if not score_ref_count %}
+        <p class="gc-note">参考数据尚未导入，请将 Excel 放入 data/college_major_scores/ 后刷新。</p>
+        {% endif %}
+        <div class="gc-score-ref-bar no-print" id="scoreRefBar">
+            <label class="gc-score-ref-field" id="scoreRefSchoolLabel">
+                <span class="gc-score-ref-search-label">院校</span>
+            </label>
+            <label class="gc-score-ref-field" id="scoreRefMajorLabel">
+                <span class="gc-score-ref-search-label">专业</span>
+            </label>
+            <span class="gc-score-ref-meta" id="scoreRefMeta" aria-live="polite"></span>
+        </div>
+        <div class="gc-score-ref-table-wrap">
+            <table class="gc-table gc-table--score-ref">
+                <colgroup>
+                    <col class="gc-score-col gc-score-col--narrow">
+                    <col class="gc-score-col gc-score-col--title">
+                    <col class="gc-score-col gc-score-col--title">
+                    <col class="gc-score-col gc-score-col--note">
+                    <col class="gc-score-col gc-score-col--narrow">
+                    <col class="gc-score-col gc-score-col--narrow">
+                    <col class="gc-score-col gc-score-col--narrow">
+                    <col class="gc-score-col gc-score-col--narrow">
+                </colgroup>
+                <thead>
+                    <tr>
+                        {% for col in score_ref_columns %}
+                        <th>{{ col.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="scoreRefTbody">
+                    <tr class="gc-score-ref-empty"><td colspan="{{ score_ref_columns|length }}">输入院校或专业关键词开始查询</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 去年招生简章查询（吉林省2025招生计划） -->
+    <section class="gc-section" id="gcEnrollPlanSection" hidden>
+        <h2 class="gc-section-title">去年招生简章查询</h2>
+        <p class="gc-hint gc-enroll-plan-hint">默认查询<strong>吉林省 {{ enrollment_plan_year }} 年</strong>招生计划（含普通类与体育艺术类）。同一院校、同一专业若代号或备注不同，视为不同招生方向。</p>
+        {% if not enrollment_plan_count %}
+        <p class="gc-note">招生计划数据尚未导入，请运行 jilin_2025_enrollment_loader.py 生成 JSON 后刷新。</p>
+        {% endif %}
+        <div class="gc-score-ref-bar no-print" id="enrollPlanBar">
+            <label class="gc-score-ref-field gc-enroll-plan-province">
+                <span class="gc-score-ref-search-label">省份</span>
+                <input type="text"
+                       class="gc-score-ref-search-input"
+                       id="enrollPlanProvince"
+                       value="吉林省"
+                       readonly
+                       tabindex="-1"
+                       aria-readonly="true">
+            </label>
+            <label class="gc-score-ref-field" id="enrollPlanSchoolLabel">
+                <span class="gc-score-ref-search-label">院校</span>
+            </label>
+            <label class="gc-score-ref-field" id="enrollPlanMajorLabel">
+                <span class="gc-score-ref-search-label">专业</span>
+            </label>
+            <span class="gc-score-ref-meta" id="enrollPlanMeta" aria-live="polite"></span>
+        </div>
+        <div class="gc-enroll-plan-filters no-print" id="enrollPlanFilters">
+            {% for flt in enrollment_plan_filters %}
+            <label class="gc-enroll-plan-filter">
+                <span class="gc-score-ref-search-label">{{ flt.label }}</span>
+                <select class="gc-enroll-plan-select" data-enroll-filter="{{ flt.key }}" aria-label="{{ flt.label }}">
+                    {% for opt in flt.options %}
+                    <option value="{{ opt.value }}">{{ opt.label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            {% endfor %}
+        </div>
+        <div class="gc-score-ref-table-wrap">
+            <table class="gc-table gc-table--score-ref gc-table--enroll-plan">
+                <colgroup>
+                    <col class="gc-enroll-col gc-enroll-col--code">
+                    <col class="gc-enroll-col gc-enroll-col--school">
+                    <col class="gc-enroll-col gc-enroll-col--major">
+                    <col class="gc-enroll-col gc-enroll-col--batch">
+                    <col class="gc-enroll-col gc-enroll-col--category">
+                    <col class="gc-enroll-col gc-enroll-col--duration">
+                    <col class="gc-enroll-col gc-enroll-col--plan">
+                    <col class="gc-enroll-col gc-enroll-col--reselect">
+                    <col class="gc-enroll-col gc-enroll-col--gender">
+                    <col class="gc-enroll-col gc-enroll-col--enroll-remark">
+                    <col class="gc-enroll-col gc-enroll-col--note">
+                </colgroup>
+                <thead>
+                    <tr>
+                        {% for col in enrollment_plan_columns %}
+                        <th>{{ col.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="enrollPlanTbody">
+                    <tr class="gc-score-ref-empty"><td colspan="{{ enrollment_plan_columns|length }}">输入院校或专业关键词开始查询</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 提前批 -->
+    <section class="gc-section" id="gcEarlySection">
+        <h2 class="gc-section-title">提前批的机会（根据自己的需求选择 2–3 个大类）</h2>
+        <p class="gc-hint">点选感兴趣的提前批大类（可多选），下方仅显示已选条目的政策说明与意向填写。</p>
+        <div class="gc-major-bar">
+            <div class="gc-major-btns" id="earlyGroupBtns">
+                {% for item in early_batch %}
+                <button type="button"
+                        class="gc-major-btn"
+                        data-early-group="{{ item.id }}"
+                        data-search-text="{{ item.button_label }} {{ item.desc }}">{{ item.button_label }}</button>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="early_selected_groups" data-field="early_selected_groups" id="earlyGroupsHidden" value="">
+            <input type="hidden" name="early_selected_schools" data-field="early_selected_schools" id="earlySchoolsHidden" value="">
+        </div>
+        <div class="gc-major-panels">
+            {% for item in early_batch %}
+            <div class="gc-major-panel" data-early-panel="{{ item.id }}" hidden>
+                <div class="gc-panel-head">
+                    <h3 class="gc-major-panel-title">{{ item.title }}</h3>
+                    <button type="button" class="gc-btn gc-part-clear-btn no-print" data-clear-kind="early-panel" hidden>重选</button>
+                </div>
+                {% if item.layout == 'school_sections' %}
+                {% if item.desc %}
+                <p class="gc-major-panel-desc gc-major-panel-desc--lead">{{ item.desc }}</p>
+                {% endif %}
+                {% for sec in item.sections %}
+                <div class="gc-early-subsec">
+                    <div class="gc-panel-head gc-panel-head--sub">
+                        <h4 class="gc-early-subsec-title">{{ sec.title }}</h4>
+                        <button type="button" class="gc-btn gc-part-clear-btn no-print" data-clear-kind="early-subsec" hidden>重选</button>
+                    </div>
+                    {% if sec.subtitle %}
+                    <p class="gc-early-subsec-hint">{{ sec.subtitle }}</p>
+                    {% endif %}
+                    <div class="gc-major-btns gc-early-school-btns">
+                        {% for school in sec.schools %}
+                        <button type="button"
+                                class="gc-major-btn gc-early-school-btn"
+                                data-early-school="{{ school.id }}"
+                                data-search-text="{{ school.label }}">{{ school.label }}</button>
+                        {% endfor %}
+                    </div>
+                    <label class="gc-early-note-row">意向/备注
+                        <input type="text" data-field="{{ sec.note_field }}" autocomplete="off">
+                    </label>
+                </div>
+                {% endfor %}
+                {% if item.extra_notice or item.extra_row %}
+                <div class="gc-early-subsec gc-early-subsec--extra">
+                    <div class="gc-panel-head gc-panel-head--sub">
+                        <span class="gc-early-subsec-title">补充选项</span>
+                        {% if item.extra_row %}
+                        <button type="button" class="gc-btn gc-part-clear-btn no-print" data-clear-kind="early-subsec" hidden>重选</button>
+                        {% endif %}
+                    </div>
+                    {% if item.extra_notice %}
+                    <p class="gc-early-extra-notice">{{ item.extra_notice }}</p>
+                    {% else %}
+                    <div class="gc-major-btns gc-early-school-btns gc-early-extra-row">
+                        {% for school in item.extra_row %}
+                        <button type="button"
+                                class="gc-major-btn gc-early-school-btn gc-early-school-btn--extra"
+                                data-early-school="{{ school.id }}"
+                                data-search-text="{{ school.label }} {{ school.hint }}">
+                            <span class="gc-early-school-label">{{ school.label }}</span>
+                            {% if school.hint %}<span class="gc-early-school-hint">{{ school.hint }}</span>{% endif %}
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <label class="gc-early-note-row">意向/备注
+                        <input type="text" data-field="{{ item.extra_note_field }}" autocomplete="off">
+                    </label>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="gc-major-panel-body">
+                    <p class="gc-major-panel-desc">{{ item.desc }}</p>
+                    <label class="gc-early-note-row">意向/备注
+                        <input type="text" data-field="{{ item.note_field }}" autocomplete="off">
+                    </label>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- 高考流程时间节点 -->
+    <section class="gc-section gc-section--timeline" id="gcTimelineSection">
+        <div class="gc-section-head">
+            <h2 class="gc-section-title">高考流程时间节点（详见各类别详细规定）</h2>
+            <button type="button"
+                    class="gc-btn gc-timeline-show-all-btn no-print"
+                    id="btnTimelineShowAll"
+                    aria-pressed="false"
+                    title="开启后显示全部高考流程时间节点">完整显示</button>
+            <input type="hidden" name="timeline_show_all" data-field="timeline_show_all" id="timelineShowAllHidden" value="0">
+        </div>
+
+        <div class="gc-timeline-block" data-timeline-for="early_5" hidden>
+        <h3 class="gc-subtitle">公安警校</h3>
+        <table class="gc-table gc-table--compact gc-table--timeline-police">
+            <colgroup>
+                <col class="gc-tl-col gc-tl-col--cat">
+                <col class="gc-tl-col gc-tl-col--url">
+                <col class="gc-tl-col gc-tl-col--political">
+                <col><col><col><col>
+            </colgroup>
+            <thead><tr><th>类别</th><th>信息填报网址</th><th>政治考察</th><th>面试、体检和体能测评</th><th>志愿填报</th><th>志愿填报批次</th><th>结果查询</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>公安警校</td>
+                    <td colspan="2"></td>
+                    <td>本科：6月24日至28日<br>专科：7月中下旬</td>
+                    <td>6月26日20:00至6月30日14:00</td>
+                    <td>本科A批次；专科D批次</td>
+                    <td>登录本省公安院校公安专业招生信息填报平台查询本人面试、体检和体能测评结果</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <div class="gc-timeline-block" data-timeline-for="early_8" hidden>
+        <h3 class="gc-subtitle">军事院校</h3>
+        <table class="gc-table gc-table--compact">
+            <thead><tr><th>政治考核</th><th>面试、心理检测</th><th>体格检查</th><th>填报志愿</th><th>征集时间</th><th>填报批次</th></tr></thead>
+            <tbody>
+                <tr>
+                    <td>当地武装部（注意政审时间）</td>
+                    <td>6月26日–6月29日</td>
+                    <td>6月27日至7月2日</td>
+                    <td>6月26日20:00至6月30日</td>
+                    <td>7月10日20时至11日12时</td>
+                    <td>本科A批次</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <p class="gc-note gc-timeline-block" data-timeline-for="early_5,early_8" hidden>公安警校、军事院校最需注意视力，考生需提前做好视力矫正工作。</p>
+
+        <div class="gc-timeline-block" data-timeline-for="early_1" hidden>
+        <h3 class="gc-subtitle">强基计划</h3>
+        <p class="gc-timeline-text">3月底至4月，39所985院校发布招生简章，考生网上报名；6月7日至9日参加统一高考；7月4日前各校确定参加考核名单并组织考核；7月5日前高校折算综合成绩，择优录取。（一般只能报一个院校，1个专业志愿）</p>
+        </div>
+
+        <div class="gc-timeline-block" data-timeline-for="early_2" hidden>
+        <h3 class="gc-subtitle">高校专项</h3>
+        <p class="gc-timeline-text">4月25日前高校公布招生简章，考生完成报名；5月20日前省市完成考生基本条件审核并公示名单；5月底前高校完成考生其他条件审核并公示名单；6月7日–9日参考统一高考；高考后至出分前高校组织考核；高考出分前高校确定并公示资格名单；高考出分后考生填报志愿，在提前批B段，只能填1个院校志愿。</p>
+        </div>
+
+        <div class="gc-timeline-block" data-timeline-for="early_6,early_7" hidden>
+        <h3 class="gc-subtitle">五大官校</h3>
+        <p class="gc-timeline-text">报考北京电子科技学院、国际关系学院、外交学院、上海海关学院、中国消防救援学院以及中央司法警官学院的考生须登录本省教育考试院或学校官网招生简章，完成政审、面试、体检、体能测试等工作；志愿填报安排在本科提前批A段。（1+1顺序志愿）</p>
+        </div>
+
+        <div class="gc-timeline-block gc-timeline-block--always">
+        <h3 class="gc-subtitle">志愿填报时间</h3>
+        <table class="gc-table">
+            <thead><tr><th></th><th>第一次填报</th><th>第二次填报</th></tr></thead>
+            <tbody>
+                <tr><td>时间</td><td>6月26日20:00至6月30日14:00</td><td>7月29日20:00至7月31日14:00</td></tr>
+                <tr><td>批次</td><td>本科提前批(A/B段)、本科普通批(C段)、高职(专科)提前批(D/E/G段)、艺体类本科批(H段)等</td><td>高职(专科)批(F段)、艺体类高职(专科)批(I段)</td></tr>
+            </tbody>
+        </table>
+        <p class="gc-hint gc-hint--sm">录取、征集时间详见考试院当年公布的具体日程。</p>
+        </div>
+    </section>
+
+    <!-- 地域选择 -->
+    <section class="gc-section" id="gcRegionSection">
+        <div class="gc-section-head">
+            <h2 class="gc-section-title">地域选择</h2>
+            <button type="button"
+                    class="gc-btn gc-collapse-mode-btn no-print"
+                    id="btnRegionCollapseMode"
+                    aria-pressed="false"
+                    title="切换地域区块的折叠方式">自动折叠</button>
+        </div>
+        <h3 class="gc-subtitle">省份选择</h3>
+        <div class="gc-region-rows">
+            {% for row in region_rows %}
+            <div class="gc-region-row gc-collapse">
+                <div class="gc-collapse-head">
+                    <button type="button" class="gc-collapse-trigger gc-region-row-label" aria-expanded="false">
+                        <span class="gc-collapse-indicator">
+                            <span class="gc-collapse-chevron" aria-hidden="true">▸</span>
+                            <span class="gc-collapse-count" hidden>0</span>
+                        </span>
+                        <span>{{ row.title }}</span>
+                    </button>
+                    <button type="button" class="gc-btn gc-part-clear-btn no-print" data-clear-kind="region-row" title="重选本地区" hidden>重选</button>
+                </div>
+                <div class="gc-collapse-body" hidden>
+                    <div class="gc-region-province-list">
+                        {% for prov in row.provinces %}
+                        <label class="gc-region-province{% if prov.is_municipality %} gc-region-province--municipality{% endif %}">
+                            <input type="checkbox" data-field="{{ prov.field }}">
+                            <span class="gc-region-province-name">{{ prov.name }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <div class="gc-region-row-footer">
+                        <label class="gc-region-favorite-wrap">
+                            <span class="gc-region-favorite-label">喜欢的城市</span>
+                            <input type="text"
+                                   class="gc-region-favorite-cities"
+                                   data-field="{{ row.field_prefix }}_favorite_cities"
+                                   autocomplete="off"
+                                   placeholder="填写喜欢的城市">
+                        </label>
+                        <button type="button"
+                                class="gc-btn gc-region-noncapital-btn gc-region-noncapital-btn--accept"
+                                data-accept-label="可以接受非省会城市"
+                                data-reject-label="不能接受非省会城市"
+                                aria-pressed="false">可以接受非省会城市</button>
+                        <input type="hidden"
+                               class="gc-region-noncapital-value"
+                               data-field="{{ row.field_prefix }}_non_capital"
+                               value="accept">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <label class="gc-block-label">其他补充事宜
+            <textarea name="region_extra" rows="2" data-field="region_extra"></textarea>
+        </label>
+    </section>
+
+    <!-- 专业意向 -->
+    <section class="gc-section" id="gcMajorSection">
+        <div class="gc-section-head">
+            <h2 class="gc-section-title">专业意向选择</h2>
+            <button type="button"
+                    class="gc-btn gc-collapse-mode-btn no-print"
+                    id="btnMajorCollapseMode"
+                    aria-pressed="false"
+                    title="切换学科门类的折叠方式">自动折叠</button>
+        </div>
+        <p class="gc-hint">按学科门类浏览，点选专业类别（可多选）后，在本门类下方点选具体专业；每类最下方可填备注。</p>
+        <div class="gc-major-bars">
+            <div class="gc-major-search">
+                <label class="gc-major-search-label" for="majorGroupSearch">搜索类别/专业</label>
+                <input type="search"
+                       id="majorGroupSearch"
+                       class="gc-major-search-input"
+                       autocomplete="off"
+                       enterkeyhint="search">
+                <button type="button" class="gc-major-search-clear" id="majorGroupSearchClear" hidden>清除</button>
+                <span class="gc-major-search-meta" id="majorSearchMeta" aria-live="polite"></span>
+            </div>
+            <input type="hidden" name="major_selected_groups" data-field="major_selected_groups" id="majorGroupsHidden" value="">
+            <input type="hidden" name="major_selected_items" data-field="major_selected_items" id="majorItemsHidden" value="">
+        </div>
+        <div class="gc-major-disciplines">
+            {% for disc in major_disciplines %}
+            <div class="gc-major-discipline gc-collapse" data-discipline="{{ disc.id }}">
+                <div class="gc-collapse-head">
+                    <button type="button" class="gc-collapse-trigger gc-major-discipline-title" aria-expanded="false">
+                        <span class="gc-collapse-indicator">
+                            <span class="gc-collapse-chevron" aria-hidden="true">▸</span>
+                            <span class="gc-collapse-count" hidden>0</span>
+                        </span>
+                        <span>{{ disc.title }}</span>
+                    </button>
+                    <button type="button" class="gc-btn gc-part-clear-btn no-print" data-clear-kind="major-discipline" title="重选本门类下类别与专业" hidden>重选</button>
+                </div>
+                <div class="gc-collapse-body" hidden>
+                    <div class="gc-major-bar">
+                        <div class="gc-major-btns gc-major-cat-btns" id="majorCatBtns_{{ disc.id }}">
+                            {% for cat in disc.categories %}
+                            <button type="button"
+                                    class="gc-major-btn"
+                                    data-major-group="{{ cat.group_id }}"
+                                    data-search-text="{{ cat.search_text }}">{{ cat.title }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="gc-major-panels">
+                        {% for cat in disc.categories %}
+                        <div class="gc-major-panel" data-major-panel="{{ cat.group_id }}" hidden>
+                            <div class="gc-panel-head">
+                                <h3 class="gc-major-panel-title">{{ cat.title }}</h3>
+                                <button type="button" class="gc-btn gc-part-clear-btn no-print" data-clear-kind="major-panel" title="重选本类别下专业" hidden>重选</button>
+                            </div>
+                            <div class="gc-major-btns gc-major-item-btns">
+                                {% for item in cat.majors %}
+                                <button type="button"
+                                        class="gc-major-btn gc-major-item-btn"
+                                        data-major-item="{{ item.item_id }}"
+                                        data-search-text="{{ item.label }}">{{ item.label }}</button>
+                                {% endfor %}
+                            </div>
+                            {% if score_ref_columns %}
+                            <div class="gc-score-plan-block gc-score-plan-block--off" data-score-plan-block="{{ cat.group_id }}">
+                                <p class="gc-score-plan-hint gc-hint gc-hint--sm">院校专业分数参考仅适用于高考省份为「吉林省」的考生。</p>
+                                <div class="gc-score-plan-result" hidden>
+                                    <h4 class="gc-score-plan-title">选择方案</h4>
+                                    <div class="gc-score-ref-table-wrap gc-score-plan-table-wrap">
+                                        <table class="gc-table gc-table--score-plan">
+                                            <colgroup>
+                                                <col class="gc-score-col gc-score-col--seq">
+                                                <col class="gc-score-col gc-score-col--narrow">
+                                                <col class="gc-score-col gc-score-col--title">
+                                                <col class="gc-score-col gc-score-col--title">
+                                                <col class="gc-score-col gc-score-col--note">
+                                                <col class="gc-score-col gc-score-col--narrow">
+                                                <col class="gc-score-col gc-score-col--narrow">
+                                                <col class="gc-score-col gc-score-col--narrow">
+                                                <col class="gc-score-col gc-score-col--narrow">
+                                                <col class="gc-score-col gc-score-col--action">
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th>序号</th>
+                                                    {% for col in score_ref_columns %}
+                                                    <th>{{ col.label }}</th>
+                                                    {% endfor %}
+                                                    <th class="gc-score-plan-actions-head no-print">排序操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="gc-score-plan-list"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="gc-score-plan-drafts"></div>
+                                <button type="button"
+                                        class="gc-score-plan-add gc-btn no-print"
+                                        title="添加一行院校专业"
+                                        disabled>+</button>
+                                <input type="hidden"
+                                       data-field="score_plans_{{ cat.id }}"
+                                       class="gc-score-plan-hidden"
+                                       value="">
+                            </div>
+                            {% endif %}
+                            <label class="gc-early-note-row gc-major-panel-note-row">备注
+                                <input type="text" data-field="{{ cat.note_field }}" autocomplete="off">
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+<div class="gc-print-watermark" aria-hidden="true">
+    <span class="gc-print-watermark__item">童路人普通高考升学意向测评表</span>
+    <span class="gc-print-watermark__item">童路人普通高考升学意向测评表</span>
+    <span class="gc-print-watermark__item">童路人普通高考升学意向测评表</span>
+    <span class="gc-print-watermark__item">童路人普通高考升学意向测评表</span>
+</div>
+<script src="{{ url_for('static', filename='js/gaokao-career-form.js') }}"></script>
+</body>
+</html>

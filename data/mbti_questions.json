@@ -1,0 +1,290 @@
+[
+  {
+    "id": 1,
+    "text": "你经常结交新朋友。",
+    "dimension": "EI",
+    "reverse": false
+  },
+  {
+    "id": 2,
+    "text": "复杂和新颖的想法比简单直接的想法更能激发你的兴趣。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 3,
+    "text": "你通常更容易被能引起你情感共鸣的观点说服，而不是被事实性的论据所打动。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 4,
+    "text": "你的生活和工作空间都很干净整洁。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 5,
+    "text": "你觉得与陌生人建立关系或自我推销是一件非常令人畏惧的事情。",
+    "dimension": "EI",
+    "reverse": true
+  },
+  {
+    "id": 6,
+    "text": "你经常会花时间探索一些不切实际但很有趣的想法。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 7,
+    "text": "你认为如果人们更多地依靠理性而不是情感，世界会变得更好。",
+    "dimension": "FT",
+    "reverse": true
+  },
+  {
+    "id": 8,
+    "text": "你喜欢提前做好计划，而不是临时决定。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 9,
+    "text": "你更喜欢和少数几个亲密的朋友在一起，而不是参加大型聚会。",
+    "dimension": "EI",
+    "reverse": true
+  },
+  {
+    "id": 10,
+    "text": "你对事物的理解更倾向于关注整体和可能性，而不是具体的细节。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 11,
+    "text": "你很难向别人表达自己的情感。",
+    "dimension": "FT",
+    "reverse": true
+  },
+  {
+    "id": 12,
+    "text": "你经常会拖延，直到最后一刻才完成任务。",
+    "dimension": "JP",
+    "reverse": true
+  },
+  {
+    "id": 13,
+    "text": "你是一个非常有活力的人。",
+    "dimension": "EI",
+    "reverse": false
+  },
+  {
+    "id": 14,
+    "text": "你喜欢讨论抽象的概念和理论。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 15,
+    "text": "你认为诚实永远是最好的策略，即使这会伤害到别人的感情。",
+    "dimension": "FT",
+    "reverse": true
+  },
+  {
+    "id": 16,
+    "text": "你喜欢有规律的生活。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 17,
+    "text": "你在社交场合中总是很活跃。",
+    "dimension": "EI",
+    "reverse": false
+  },
+  {
+    "id": 18,
+    "text": "你更相信自己的直觉，而不是经验和事实。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 19,
+    "text": "你总是会考虑自己的行为会对他人产生什么影响。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 20,
+    "text": "你喜欢把事情安排得井井有条。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 21,
+    "text": "你更喜欢独自工作，而不是和团队一起工作。",
+    "dimension": "EI",
+    "reverse": true
+  },
+  {
+    "id": 22,
+    "text": "你对艺术和美学有很强的鉴赏力。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 23,
+    "text": "你认为逻辑比情感更重要。",
+    "dimension": "FT",
+    "reverse": true
+  },
+  {
+    "id": 24,
+    "text": "你通常会提前很久就开始准备重要的事情。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 25,
+    "text": "你经常会忘记把东西放在哪里。",
+    "dimension": "JP",
+    "reverse": true
+  },
+  {
+    "id": 26,
+    "text": "你很容易和别人打成一片。",
+    "dimension": "EI",
+    "reverse": false
+  },
+  {
+    "id": 27,
+    "text": "你喜欢思考事物的本质和意义。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 28,
+    "text": "你很容易同情别人的遭遇。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 29,
+    "text": "你喜欢按照规则和程序做事。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 30,
+    "text": "你需要独处的时间来恢复精力。",
+    "dimension": "EI",
+    "reverse": true
+  },
+  {
+    "id": 31,
+    "text": "你对未来充满了乐观和希望。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 32,
+    "text": "你认为批评应该是建设性的，而不是破坏性的。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 33,
+    "text": "你喜欢有明确的目标和截止日期。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 34,
+    "text": "你经常会改变主意。",
+    "dimension": "JP",
+    "reverse": true
+  },
+  {
+    "id": 35,
+    "text": "你是一个非常外向的人。",
+    "dimension": "EI",
+    "reverse": false
+  },
+  {
+    "id": 36,
+    "text": "你喜欢学习新的知识和技能。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 37,
+    "text": "你很容易被别人的情绪所影响。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 38,
+    "text": "你喜欢把事情做到完美。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 39,
+    "text": "你喜欢自由和不受约束的生活。",
+    "dimension": "JP",
+    "reverse": true
+  },
+  {
+    "id": 40,
+    "text": "你在陌生人面前会感到害羞和不自在。",
+    "dimension": "EI",
+    "reverse": true
+  },
+  {
+    "id": 41,
+    "text": "你喜欢思考一些哲学性的问题。",
+    "dimension": "NS",
+    "reverse": false
+  },
+  {
+    "id": 42,
+    "text": "你认为每个人都应该有自己的观点和想法。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 43,
+    "text": "你喜欢提前规划好自己的未来。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 44,
+    "text": "你喜欢和别人分享自己的想法和感受。",
+    "dimension": "EI",
+    "reverse": false
+  },
+  {
+    "id": 45,
+    "text": "你对细节非常敏感。",
+    "dimension": "NS",
+    "reverse": true
+  },
+  {
+    "id": 46,
+    "text": "你很容易原谅别人的错误。",
+    "dimension": "FT",
+    "reverse": false
+  },
+  {
+    "id": 47,
+    "text": "你喜欢有秩序和结构的环境。",
+    "dimension": "JP",
+    "reverse": false
+  },
+  {
+    "id": 48,
+    "text": "你认为公平比仁慈更重要。",
+    "dimension": "FT",
+    "reverse": true
+  }
+]

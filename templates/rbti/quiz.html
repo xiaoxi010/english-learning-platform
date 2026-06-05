@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBTI 抽象人格测评 · 答题</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rbti.css') }}">
+</head>
+<body>
+{% set content_class = 'content-area--quiz' %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="rbti-page rbti-quiz-page assess-shell">
+    <div class="assess-quiz-layout">
+        <div class="assess-quiz-main">
+            <a href="{{ url_for('rbti.start') }}" class="rbti-back">← 返回简介</a>
+
+            <header class="home-section rbti-quiz-head">
+                <h2>RBTI 年度抽象人格测评</h2>
+                <p>共 {{ total }} 题 · 每题 A–D 四选一，凭直觉作答</p>
+                <div class="rbti-progress-track"><div class="rbti-progress-fill" id="rbtiProgressFill"></div></div>
+            </header>
+
+            <form method="post" action="{{ url_for('rbti.report') }}" id="rbtiQuizForm" class="rbti-quiz-form assess-quiz-form" novalidate>
+                <input type="hidden" name="user_name" value="{{ user_name }}">
+                {% for q in questions %}
+                {% set qi = loop.index0 %}
+                <section class="home-section rbti-q-card" id="q-{{ qi }}">
+                    <p class="assess-q-title"><span class="assess-q-num">{{ q.id }}</span>. {{ q.title }}</p>
+                    <div class="assess-opt-group" role="radiogroup" aria-label="第 {{ q.id }} 题">
+                        <label class="assess-opt rbti-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="A">
+                            <span class="assess-opt-text">{{ q.optionA }}</span>
+                        </label>
+                        <label class="assess-opt rbti-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="B">
+                            <span class="assess-opt-text">{{ q.optionB }}</span>
+                        </label>
+                        <label class="assess-opt rbti-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="C">
+                            <span class="assess-opt-text">{{ q.optionC }}</span>
+                        </label>
+                        <label class="assess-opt rbti-opt">
+                            <input type="radio" class="assess-opt-input" name="ans_{{ qi }}" value="D">
+                            <span class="assess-opt-text">{{ q.optionD }}</span>
+                        </label>
+                    </div>
+                </section>
+                {% endfor %}
+            </form>
+        </div>
+
+        {% with legend_abcd=true, form_id='rbtiQuizForm' %}
+        {% include 'partials/assessment_quiz_sidebar.html' %}
+        {% endwith %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/assessment-quiz.js') }}"></script>
+<script>
+(function () {
+  var form = document.getElementById('rbtiQuizForm');
+  var total = {{ total }};
+  var fill = document.getElementById('rbtiProgressFill');
+
+  form._assessOnProgress = function () {
+    var count = 0;
+    for (var j = 0; j < total; j++) {
+      if (form.querySelector('input[name="ans_' + j + '"]:checked')) count++;
+    }
+    if (fill) fill.style.width = Math.round((count / total) * 100) + '%';
+  };
+
+  AssessmentQuiz.init('rbtiQuizForm', total, {
+    valueMap: { 'A': 'yes', 'B': 'maybe', 'C': 'optc', 'D': 'optd' }
+  });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星血趣味测评</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/constellation.css') }}">
+</head>
+<body>
+{% include 'partials/app_shell_open.html' %}
+
+<div class="xb-page assess-shell">
+    <a href="{{ url_for('index') }}" class="xb-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="xb-alert">请将小程序云端的 <strong>constellation.json</strong> 下载后保存为 <code>data/constellation.json</code>（或 <code>data/constellation_source.json</code> 后运行 <code>node scripts/export_constellation_data.js</code>）。</div>
+    {% endif %}
+
+    <section class="home-section xb-hero">
+        <p class="xb-badge">星趣测评</p>
+        <h2 class="xb-hero-title">星座 × 血型</h2>
+        <p class="xb-hero-desc">轻松有趣的性格探索 · 仅供娱乐</p>
+    </section>
+
+    <section class="home-section xb-intro">
+        <p class="xb-welcome-lead">欢迎<span class="xb-welcome-name">「{{ welcome_name }}」</span>来到星趣测评！这里是结合星座与血型，为你解读专属性格的趣味小天地。</p>
+        <p>我们用轻松、易懂的方式，帮你发现隐藏性格特质、社交习惯与专属小特点，不严肃、不刻板，只做有趣又治愈的性格探索。</p>
+        <p class="xb-note">注：本测评仅供娱乐！</p>
+    </section>
+
+    <section class="home-section xb-form-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for category, msg in messages %}<p class="xb-error">{{ msg }}</p>{% endfor %}{% endif %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('constellation.report') }}" id="xbForm" class="xb-form" {% if not data_ready %}onsubmit="return false"{% endif %}>
+            <div class="xb-field">
+                <label for="user_name">昵称/姓名</label>
+                <input type="text" id="user_name" name="user_name" maxlength="32" placeholder="选填，用于报告显示">
+            </div>
+            <div class="xb-field">
+                <label>生日</label>
+                <div class="xb-picker-row">
+                    <select id="birth_year" name="birth_year" class="xb-select" required>
+                        <option value="">年</option>
+                        {% for y in years %}<option value="{{ y }}">{{ y }}年</option>{% endfor %}
+                    </select>
+                    <select id="birth_month" name="birth_month" class="xb-select" required>
+                        <option value="">月</option>
+                        {% for m in months %}<option value="{{ m }}">{{ m }}月</option>{% endfor %}
+                    </select>
+                    <select id="birth_day" name="birth_day" class="xb-select" required>
+                        <option value="">日</option>
+                        {% for d in days %}<option value="{{ d }}">{{ d }}日</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="birth_date" id="birth_date">
+            <div class="xb-field">
+                <label for="blood_type">血型</label>
+                <select id="blood_type" name="blood_type" class="xb-select xb-select--full" required>
+                    <option value="">请选择血型</option>
+                    {% for bt in blood_types %}
+                    <option value="{{ bt }}">{{ bt }}型</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn-primary xb-btn-submit" {% if not data_ready %}disabled{% endif %}>完成测评</button>
+        </form>
+    </section>
+</div>
+
+<script>
+(function () {
+  var y = document.getElementById('birth_year');
+  var m = document.getElementById('birth_month');
+  var d = document.getElementById('birth_day');
+  var hidden = document.getElementById('birth_date');
+  var form = document.getElementById('xbForm');
+  if (!y || !m || !d || !form) return;
+  function refreshDays() {
+    var yi = parseInt(y.value, 10);
+    var mi = parseInt(m.value, 10);
+    if (!yi || !mi) return;
+    var max = new Date(yi, mi, 0).getDate();
+    var cur = d.value;
+    d.innerHTML = '<option value="">日</option>';
+    for (var i = 1; i <= max; i++) {
+      var o = document.createElement('option');
+      o.value = i;
+      o.textContent = i + '日';
+      if (String(i) === String(cur)) o.selected = true;
+      d.appendChild(o);
+    }
+  }
+  y.addEventListener('change', refreshDays);
+  m.addEventListener('change', refreshDays);
+  form.addEventListener('submit', function () {
+    if (y.value && m.value && d.value) {
+      hidden.value = y.value + '-' + String(m.value).padStart(2, '0') + '-' + String(d.value).padStart(2, '0');
+    }
+  });
+})();
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

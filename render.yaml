@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: english-learning-platform
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:10000
+    envVars:
+      - key: LOGTO_ENDPOINT
+        value: https://x3c8uj.logto.app/
+      - key: LOGTO_APP_ID
+        value: z6vnro5mnp9tz9zyw5w7h
+      - key: LOGTO_APP_SECRET
+        value: gHDfw2bWIBrsW3u25bSB4vP0iCrChIRX
+      - key: LOGTO_REDIRECT_URI
+        value: https://english-learning-platform.onrender.com/callback

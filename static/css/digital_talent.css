@@ -1,0 +1,445 @@
+/* 数字天赋解读 */
+.dt-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 4px 40px;
+}
+
+.dt-back {
+    display: inline-block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.88em;
+    margin-bottom: 16px;
+}
+
+.dt-back:hover { color: var(--accent-green); }
+
+.dt-alert {
+    background: rgba(255, 180, 60, 0.12);
+    border: 1px solid rgba(255, 180, 60, 0.35);
+    color: #e8c070;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.88em;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.dt-alert code {
+    background: rgba(0,0,0,0.25);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* 简介 */
+.dt-welcome {
+    color: var(--text-secondary);
+    font-size: 0.92em;
+    line-height: 1.85;
+}
+
+.dt-welcome p { margin-bottom: 14px; }
+
+.dt-welcome-lead {
+    color: var(--text-primary);
+    font-size: 1.02em;
+}
+
+.dt-name {
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.dt-note {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* 生日选择 */
+.dt-form-title {
+    font-size: 1em;
+    margin: 0 0 16px;
+    font-weight: 600;
+}
+
+.dt-picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.dt-picker-group { flex: 1; min-width: 120px; }
+
+.dt-label {
+    display: block;
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.dt-select {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95em;
+    cursor: pointer;
+}
+
+.dt-select:focus {
+    outline: none;
+    border-color: var(--accent-green);
+}
+
+.dt-submit {
+    display: inline-block;
+    border: none;
+    padding: 12px 32px;
+}
+
+.dt-error {
+    color: #ff6b6b;
+    font-size: 0.88em;
+    margin-bottom: 12px;
+}
+
+/* 报告头 */
+.dt-report-head {
+    text-align: center;
+    padding: 24px 20px;
+}
+
+.dt-report-meta {
+    color: var(--text-secondary);
+    font-size: 0.88em;
+    margin-bottom: 16px;
+}
+
+.dt-core-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.dt-core-num {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--accent-green-dim);
+    border: 2px solid var(--accent-green);
+    color: var(--accent-green);
+    font-size: 2.4em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dt-core-label {
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+/* 标签页 */
+.dt-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+.dt-tab {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 10px 16px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 2px solid transparent;
+}
+
+.dt-tab:hover { color: var(--text-primary); }
+
+.dt-tab.active {
+    color: var(--accent-green);
+    border-bottom-color: var(--accent-green);
+    background: var(--accent-green-dim);
+}
+
+.dt-tab-panel { display: none; }
+.dt-tab-panel.active { display: block; }
+
+.dt-section-title {
+    font-size: 1.05em;
+    margin: 0 0 14px;
+    font-weight: 600;
+}
+
+.dt-subtitle {
+    font-size: 0.92em;
+    margin: 18px 0 10px;
+    color: var(--text-primary);
+}
+
+.dt-text-block {
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.92em;
+    white-space: pre-wrap;
+}
+
+.dt-text-muted {
+    color: var(--text-secondary);
+    font-size: 0.88em;
+    line-height: 1.65;
+    margin-bottom: 14px;
+}
+
+.dt-ol {
+    margin: 0 0 0 20px;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    font-size: 0.92em;
+}
+
+.dt-ol li { margin-bottom: 10px; }
+
+/* 金字塔 */
+.dt-pyramid-section { text-align: center; }
+
+.dt-pyramid-layout { margin: 20px auto; max-width: 420px; }
+
+.dt-aux-pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.dt-aux-base {
+    display: flex;
+    gap: 24px;
+}
+
+.dt-pyramid-middle {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+}
+
+.dt-main-pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.dt-tri-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.dt-cell {
+    min-width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.dt-cell.dt-core,
+.dt-cell.dt-apex {
+    background: var(--accent-green-dim);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    min-width: 44px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 1.1em;
+}
+
+.dt-pyramid-date {
+    margin-top: 16px;
+    font-size: 0.88em;
+    color: var(--text-secondary);
+}
+
+.dt-pyramid-date span { margin-right: 8px; }
+
+/* 卡片 */
+.dt-card {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.dt-card h4 {
+    font-size: 0.9em;
+    margin: 0 0 10px;
+    font-weight: 600;
+}
+
+.dt-card p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+}
+
+.dt-card-positive { border-left: 4px solid #2ed573; }
+.dt-card-negative { border-left: 4px solid #ff6b6b; }
+.dt-card-neutral { border-left: 4px solid #70a1ff; }
+
+/* 表格 */
+.dt-table-wrap { overflow-x: auto; margin-bottom: 8px; }
+
+.dt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+}
+
+.dt-table th,
+.dt-table td {
+    border: 1px solid var(--border-color);
+    padding: 10px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.dt-table th {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.dt-table tbody tr:nth-child(even) { background: rgba(0, 0, 0, 0.04); }
+
+.dt-highlight { color: var(--accent-green); font-weight: 600; }
+
+/* 联合码 */
+.dt-union-grid { display: flex; flex-direction: column; gap: 10px; }
+
+.dt-union-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.dt-union-cell {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.dt-union-code {
+    display: block;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin-bottom: 6px;
+}
+
+.dt-union-cell p {
+    margin: 0;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+.dt-detail-item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 14px 0;
+}
+
+.dt-detail-item:last-child { border-bottom: none; }
+
+.dt-detail-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.dt-detail-cat {
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+.dt-detail-code {
+    font-weight: 700;
+    color: var(--accent-green);
+}
+
+/* 流年 */
+.dt-badge {
+    display: inline-block;
+    background: var(--accent-green-dim);
+    color: var(--accent-green);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    margin-left: 8px;
+}
+
+.dt-year-items { display: flex; flex-direction: column; gap: 14px; }
+
+.dt-year-item strong {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+.dt-year-item p {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 0.92em;
+}
+
+.dt-report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.dt-btn-link {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+.dt-report-actions .btn-primary { color: #0d0d0d; }
+
+@media (max-width: 600px) {
+    .dt-union-row { grid-template-columns: 1fr; }
+    .dt-pyramid-middle { flex-direction: column; align-items: center; }
+}

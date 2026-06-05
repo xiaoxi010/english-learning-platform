@@ -1,0 +1,25 @@
+{
+  "province": "天津",
+  "slug": "tianjin",
+  "data_year": 2026,
+  "record_year": 2025,
+  "expert_source": "22、2026-天津-专家版数据0519.xlsx",
+  "strong_source": "李老师：2025年强基计划分数线 - 天津.xlsx",
+  "datasets": {
+    "early": "tianjin_2026_expert_early",
+    "undergraduate": "tianjin_2026_expert_undergraduate",
+    "junior": "tianjin_2026_expert_junior",
+    "strong": "tianjin_2026_strong_base"
+  },
+  "counts": {
+    "strong": 66,
+    "early": 451,
+    "undergraduate": 10204,
+    "junior": 0
+  },
+  "imported_at": "2026-06-04T15:44:20",
+  "storage": "sqlite",
+  "db_file": "data.undergraduate.db",
+  "db_undergraduate": "data.undergraduate.db",
+  "db_other": "data.other.db"
+}

@@ -1,0 +1,7 @@
+<div class="app-layout">
+{% if show_sidebar %}
+{% include 'partials/sidebar.html' %}
+{% endif %}
+<div class="app-main{% if not show_sidebar %} full-width{% endif %}">
+{% include 'partials/topbar.html' %}
+<main class="content-area{% if content_class %} {{ content_class }}{% endif %}">

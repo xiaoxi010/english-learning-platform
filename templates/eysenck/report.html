@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>艾克森情绪稳定性测评报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/eysenck.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% set vm = r.vm %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="ey-page ey-report assess-shell">
+    <a href="{{ url_for('index') }}" class="ey-back">← 返回测评报告</a>
+
+    <header class="home-section ey-report-cover">
+        <p class="ey-cover-brand">吉致生涯 · 艾克森情绪稳定性测评</p>
+        <h1>{{ vm.user_name or r.user_name }}</h1>
+        <p class="ey-cover-meta">
+            报告编号 {{ r.report_id }} · {{ r.calculate_time }} · 答题约 {{ r.duration_minutes }} 分钟 · 有效性 {{ r.validity_text }}
+        </p>
+    </header>
+
+    <section class="home-section ey-section ey-summary-card">
+        <div class="ey-summary-top">
+            <div class="ey-comp-score">{{ vm.comprehensiveScore }}<span>/100</span></div>
+            <div>
+                <p class="ey-level">{{ vm.level.icon }} {{ vm.level.name }}</p>
+                <p class="ey-level-desc">{{ vm.level.desc }}</p>
+            </div>
+        </div>
+        <p class="ey-overall">{{ vm.overallSummary }}</p>
+    </section>
+
+    <section class="home-section ey-section">
+        <h3 class="ey-section-title">七维得分速览</h3>
+        <div class="ey-dim-table">
+            <div class="ey-dim-row ey-dim-row--head">
+                <span>维度</span><span>得分</span><span>状态</span>
+            </div>
+            {% for d in vm.dimensions %}
+            <div class="ey-dim-row">
+                <span>{{ d.dimensionBipolarTitle or d.name }}</span>
+                <span class="ey-score {{ 'ey-score--high' if d.isUnstable else 'ey-score--ok' }}">{{ d.scoreSlashMax }}</span>
+                <span class="{{ 'ey-state-bad' if d.isUnstable else 'ey-state-ok' }}">{{ d.stateTraitLabel }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <canvas id="eyBar" class="ey-chart-canvas" width="360" height="280"></canvas>
+        <canvas id="eyRadar" class="ey-chart-canvas" width="320" height="320"></canvas>
+    </section>
+
+    {% if vm.mainPattern %}
+    <section class="home-section ey-section">
+        <h3 class="ey-section-title">典型情绪模式</h3>
+        <article class="ey-pattern-card ey-pattern-card--main">
+            <h4>{{ vm.mainPattern.name }}</h4>
+            <p><strong>组合特征：</strong>{{ vm.mainPattern.combination }}</p>
+            <p>{{ vm.mainPattern.features }}</p>
+            <p><strong>影响：</strong>{{ vm.mainPattern.impacts }}</p>
+            <p><strong>调整方向：</strong>{{ vm.mainPattern.adjustment }}</p>
+        </article>
+        {% if vm.hasOtherPatterns and vm.otherPatterns %}
+        <h4 class="ey-sub-title">同时匹配的其他模式</h4>
+        {% for p in vm.otherPatterns %}
+        <article class="ey-pattern-card">
+            <h4>{{ p.name }}</h4>
+            <p>{{ p.featuresFull or p.shortFeatures }}</p>
+        </article>
+        {% endfor %}
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if vm.triggerPoints %}
+    <section class="home-section ey-section">
+        <h3 class="ey-section-title">情绪触发点参考</h3>
+        {% if vm.triggerPoints.work %}
+        <p class="ey-trigger-label">工作场景</p>
+        <ul>{% for t in vm.triggerPoints.work %}<li>{{ t }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if vm.triggerPoints.interpersonal %}
+        <p class="ey-trigger-label">人际场景</p>
+        <ul>{% for t in vm.triggerPoints.interpersonal %}<li>{{ t }}</li>{% endfor %}</ul>
+        {% endif %}
+        {% if vm.triggerPoints.life %}
+        <p class="ey-trigger-label">生活场景</p>
+        <ul>{% for t in vm.triggerPoints.life %}<li>{{ t }}</li>{% endfor %}</ul>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="home-section ey-section">
+        <h3 class="ey-section-title">七维深度解读</h3>
+        {% for d in vm.dimensions %}
+        <article class="ey-dim-detail">
+            <h4>{{ d.dimensionIndexTitle or d.name }} · {{ d.stateTraitLabel }}</h4>
+            <p class="ey-dim-core">{{ d.coreFeature }}</p>
+            {% if d.behaviors %}
+            <p class="ey-dim-label">具体行为表现</p>
+            <ul>{% for b in d.behaviors %}<li>{{ b }}</li>{% endfor %}</ul>
+            {% endif %}
+            <p class="ey-dim-label">积极影响</p>
+            <p>{{ d.positiveImpact }}</p>
+            <p class="ey-dim-label">潜在挑战</p>
+            <p>{{ d.potentialChallenges }}</p>
+            {% if d.suggestions %}
+            <p class="ey-dim-label">调适建议</p>
+            <ul>{% for s in d.suggestions %}<li>{{ s }}</li>{% endfor %}</ul>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </section>
+
+    <section class="home-section ey-section ey-advice">
+        <h3 class="ey-section-title">行动指南</h3>
+        <p>优先关注维度：{{ vm.top3Unstable or '—' }}</p>
+        <p class="ey-note">本测评为情绪状态筛查工具，不能代替专业心理诊断。如有严重困扰，请寻求专业帮助。全国心理援助热线：<strong>962525</strong>。</p>
+    </section>
+
+    <div class="ey-report-actions">
+        <a href="{{ url_for('eysenck.start') }}" class="btn-secondary">重新测评</a>
+        <a href="{{ url_for('index') }}" class="btn-primary">返回测评报告</a>
+    </div>
+</div>
+
+<script>
+window.EYSENCK_CHART_ROWS = {{ r.chart_rows | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/eysenck_charts.js') }}"></script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

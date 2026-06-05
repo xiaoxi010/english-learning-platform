@@ -1,0 +1,375 @@
+{
+  "id": "jilin_2026_strong_base",
+  "title": "高考报考系统",
+  "dataset_type": "strong_base",
+  "province": "吉林",
+  "year": 2025,
+  "count": 49,
+  "columns": [
+    {
+      "key": "province",
+      "label": "省份"
+    },
+    {
+      "key": "school_name",
+      "label": "院校名称"
+    },
+    {
+      "key": "major_name",
+      "label": "专业名称"
+    },
+    {
+      "key": "qualify_score",
+      "label": "入围分"
+    },
+    {
+      "key": "admit_score",
+      "label": "录取分"
+    }
+  ],
+  "records": [
+    {
+      "province": "吉林",
+      "school_name": "北京大学",
+      "major_name": "理工类",
+      "qualify_score": "673",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京航空航天大学",
+      "major_name": "数学与应用数学",
+      "qualify_score": "56",
+      "admit_score": "671.15"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京航空航天大学",
+      "major_name": "测控技术与仪器（量子信息）",
+      "qualify_score": "71",
+      "admit_score": "662.44"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京航空航天大学",
+      "major_name": "应用物理学（空间科学）",
+      "qualify_score": "59",
+      "admit_score": "652.94"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京航空航天大学",
+      "major_name": "应用物理学",
+      "qualify_score": "49",
+      "admit_score": "651.56"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京航空航天大学",
+      "major_name": "化学",
+      "qualify_score": "75",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京理工大学",
+      "major_name": "智能无人系统技术（车辆培养方案）",
+      "qualify_score": "684.2",
+      "admit_score": "655.8"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京理工大学",
+      "major_name": "应用物理学（物理培养方案）",
+      "qualify_score": "667",
+      "admit_score": "650.9"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京理工大学",
+      "major_name": "工程力学",
+      "qualify_score": "657",
+      "admit_score": "635.77"
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京师范大学",
+      "major_name": "文科组",
+      "qualify_score": "634",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "北京师范大学",
+      "major_name": "理科组",
+      "qualify_score": "632",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "大连理工大学",
+      "major_name": "工程力学",
+      "qualify_score": "",
+      "admit_score": "854.30"
+    },
+    {
+      "province": "吉林",
+      "school_name": "哈尔滨工业大学",
+      "major_name": "材料科学与工程-航天材料",
+      "qualify_score": "700.8",
+      "admit_score": "88.78"
+    },
+    {
+      "province": "吉林",
+      "school_name": "哈尔滨工业大学",
+      "major_name": "数学与应用数学-电子信息方向",
+      "qualify_score": "706.6",
+      "admit_score": "88.33"
+    },
+    {
+      "province": "吉林",
+      "school_name": "哈尔滨工业大学",
+      "major_name": "数学类",
+      "qualify_score": "693.4",
+      "admit_score": "88.14"
+    },
+    {
+      "province": "吉林",
+      "school_name": "哈尔滨工业大学",
+      "major_name": "应用物理学",
+      "qualify_score": "690.2",
+      "admit_score": "87.61"
+    },
+    {
+      "province": "吉林",
+      "school_name": "哈尔滨工业大学",
+      "major_name": "智能装备与系统",
+      "qualify_score": "714",
+      "admit_score": "86.31"
+    },
+    {
+      "province": "吉林",
+      "school_name": "哈尔滨工业大学",
+      "major_name": "工程力学",
+      "qualify_score": "703.6",
+      "admit_score": "84.81"
+    },
+    {
+      "province": "吉林",
+      "school_name": "湖南大学",
+      "major_name": "化学生物学",
+      "qualify_score": "",
+      "admit_score": "84.18"
+    },
+    {
+      "province": "吉林",
+      "school_name": "华南理工大学",
+      "major_name": "化学类",
+      "qualify_score": "602",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "华南理工大学",
+      "major_name": "应用物理学",
+      "qualify_score": "640",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "华中科技大学",
+      "major_name": "生物科学",
+      "qualify_score": "625.1201201",
+      "admit_score": "86.5838"
+    },
+    {
+      "province": "吉林",
+      "school_name": "吉林大学",
+      "major_name": "古文字学",
+      "qualify_score": "613",
+      "admit_score": "83.7028"
+    },
+    {
+      "province": "吉林",
+      "school_name": "吉林大学",
+      "major_name": "化学",
+      "qualify_score": "610",
+      "admit_score": "83.5191"
+    },
+    {
+      "province": "吉林",
+      "school_name": "吉林大学",
+      "major_name": "物理学",
+      "qualify_score": "616",
+      "admit_score": "82.2117"
+    },
+    {
+      "province": "吉林",
+      "school_name": "吉林大学",
+      "major_name": "数学与应用数学",
+      "qualify_score": "609",
+      "admit_score": "81.8833"
+    },
+    {
+      "province": "吉林",
+      "school_name": "南开大学",
+      "major_name": "化学",
+      "qualify_score": "730.5",
+      "admit_score": "787.87"
+    },
+    {
+      "province": "吉林",
+      "school_name": "清华大学",
+      "major_name": "理工类",
+      "qualify_score": "671",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "厦门大学",
+      "major_name": "物理学",
+      "qualify_score": "",
+      "admit_score": "787.7"
+    },
+    {
+      "province": "吉林",
+      "school_name": "山东大学",
+      "major_name": "生物科学",
+      "qualify_score": "587",
+      "admit_score": "79.34"
+    },
+    {
+      "province": "吉林",
+      "school_name": "山东大学",
+      "major_name": "数学与应用数学-智能科学",
+      "qualify_score": "619",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "四川大学",
+      "major_name": "化学",
+      "qualify_score": "",
+      "admit_score": "601.86"
+    },
+    {
+      "province": "吉林",
+      "school_name": "天津大学",
+      "major_name": "数学与应用数学（智能科学）",
+      "qualify_score": "",
+      "admit_score": "85.66"
+    },
+    {
+      "province": "吉林",
+      "school_name": "同济大学",
+      "major_name": "数学与应用数学",
+      "qualify_score": "",
+      "admit_score": "853.73"
+    },
+    {
+      "province": "吉林",
+      "school_name": "同济大学",
+      "major_name": "应用物理学",
+      "qualify_score": "",
+      "admit_score": "831.85"
+    },
+    {
+      "province": "吉林",
+      "school_name": "同济大学",
+      "major_name": "工程力学",
+      "qualify_score": "",
+      "admit_score": "826.69"
+    },
+    {
+      "province": "吉林",
+      "school_name": "西安交通大学",
+      "major_name": "",
+      "qualify_score": "80",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "中国海洋大学",
+      "major_name": "海洋技术",
+      "qualify_score": "632.1",
+      "admit_score": "797.68"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中国科学技术大学",
+      "major_name": "物理学类-基础及应用物理",
+      "qualify_score": "70",
+      "admit_score": "87.939"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中国科学技术大学",
+      "major_name": "化学类",
+      "qualify_score": "70",
+      "admit_score": "82.984"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中国农业大学",
+      "major_name": "生物科学",
+      "qualify_score": "610",
+      "admit_score": "631.99"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中国农业大学",
+      "major_name": "生物育种科学",
+      "qualify_score": "610",
+      "admit_score": "618.35"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中国人民大学",
+      "major_name": "数据计算及应用",
+      "qualify_score": "",
+      "admit_score": "630.04"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中山大学",
+      "major_name": "生物科学",
+      "qualify_score": "",
+      "admit_score": "86.4567"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中山大学",
+      "major_name": "物理学-物理与天文学院",
+      "qualify_score": "",
+      "admit_score": "83.7467"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中山大学",
+      "major_name": "化学",
+      "qualify_score": "",
+      "admit_score": "82.27"
+    },
+    {
+      "province": "吉林",
+      "school_name": "中山大学",
+      "major_name": "历史学",
+      "qualify_score": "610",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "中山大学",
+      "major_name": "生态学",
+      "qualify_score": "580",
+      "admit_score": ""
+    },
+    {
+      "province": "吉林",
+      "school_name": "中山大学",
+      "major_name": "数学与应用数学-智能科学",
+      "qualify_score": "621",
+      "admit_score": ""
+    }
+  ]
+}

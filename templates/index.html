@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title | default(site_name) }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+</head>
+<body>
+{% set show_sidebar = (page in ['assessment_menu', 'english_menu']) %}
+{% set active_nav = active_nav | default('assessment') %}
+{% include 'partials/app_shell_open.html' %}
+
+                {% if page == 'assessment_menu' %}
+                <section class="home-section assess-shell">
+                    <div class="section-header">
+                        <h2><span class="section-icon">📋</span> 测评报告</h2>
+                        <p>生涯与能力方向测评</p>
+                    </div>
+
+                    <div class="assessment-group">
+                        <h3 class="assessment-group-title"><span class="section-icon">✨</span> 吉致测评</h3>
+                        <p class="assessment-group-desc">核心生涯与能力方向测评</p>
+                        <div class="item-grid">
+                            <a href="{{ url_for('digital_talent.start') }}" class="item-card assessment-card assessment-card--purple">数字天赋解读</a>
+                            <a href="{{ url_for('lifeway.start') }}" class="item-card assessment-card assessment-card--blue">人生道路解读</a>
+                            <a href="{{ url_for('subject.start') }}" class="item-card assessment-card assessment-card--green">学科能力测评</a>
+                        </div>
+                    </div>
+
+                    <div class="assessment-group">
+                        <h3 class="assessment-group-title"><span class="section-icon">👥</span> 人才测评</h3>
+                        <p class="assessment-group-desc">霍兰德、艾克森、卡特尔、大五等人格职业测评</p>
+                        <div class="item-grid">
+                            <a href="{{ url_for('holland.start') }}" class="item-card assessment-card assessment-card--orange">霍兰德职业测评</a>
+                            <a href="{{ url_for('eysenck.start') }}" class="item-card assessment-card assessment-card--orange">艾克森情绪测评</a>
+                            <a href="{{ url_for('cattell.start') }}" class="item-card assessment-card assessment-card--orange">卡特尔 16PF</a>
+                            <a href="{{ url_for('bfi2.start') }}" class="item-card assessment-card assessment-card--orange">大五人格 BFI-2</a>
+                        </div>
+                    </div>
+
+                    <div class="assessment-group">
+                        <h3 class="assessment-group-title"><span class="section-icon">🎮</span> 趣味测评</h3>
+                        <p class="assessment-group-desc">轻松有趣的互动测评体验</p>
+                        <div class="item-grid">
+                            <a href="{{ url_for('mbti.start') }}" class="item-card assessment-card assessment-card--pink">MBTI 趣味测评</a>
+                            <a href="{{ url_for('rbti.start') }}" class="item-card assessment-card assessment-card--pink">RBTI 抽象人格测评</a>
+                            <a href="{{ url_for('feier.start') }}" class="item-card assessment-card assessment-card--pink">菲尔人格测评</a>
+                            <a href="{{ url_for('constellation.start') }}" class="item-card assessment-card assessment-card--pink">星血趣味测评</a>
+                        </div>
+                    </div>
+                </section>
+                {% endif %}
+
+                {% if page == 'english_menu' %}
+                <section class="home-section">
+                    <div class="section-header">
+                        <h2><span class="section-icon">📋</span> 标准考核</h2>
+                        <p>综合考核流程，基础词汇与随机版型</p>
+                    </div>
+                    <div class="item-grid">
+                        <a href="{{ url_for('start_exam', exam_type='shadow_hunter') }}" class="item-card">阴影迷踪</a>
+                    </div>
+                </section>
+
+                <section class="home-section">
+                    <div class="section-header">
+                        <h2><span class="section-icon">📝</span> 单词考察</h2>
+                        <p>经典考试版型，检验词汇掌握</p>
+                    </div>
+                    <div class="item-grid">
+                        <a href="{{ url_for('start_exam', exam_type='past_light') }}" class="item-card">昔日之光</a>
+                        <a href="{{ url_for('start_exam', exam_type='thirty_six') }}" class="item-card">三十六计</a>
+                        <a href="{{ url_for('start_exam', exam_type='seventy_two') }}" class="item-card">七十二变</a>
+                        <a href="{{ url_for('start_exam', exam_type='treasure_master') }}" class="item-card">盗宝大师</a>
+                        <a href="{{ url_for('start_exam', exam_type='shadow_exam') }}" class="item-card">诡影重重</a>
+                    </div>
+                </section>
+
+                <section class="home-section">
+                    <div class="section-header">
+                        <h2><span class="section-icon">📖</span> 单词背诵</h2>
+                        <p>巩固记忆，管理个人词库</p>
+                    </div>
+                    <div class="item-grid">
+                        <a href="{{ url_for('start_exam', exam_type='word_recitation') }}" class="item-card">单词背诵</a>
+                    </div>
+                </section>
+
+                <section class="home-section">
+                    <div class="section-header">
+                        <h2><span class="section-icon">🎯</span> 模拟考试</h2>
+                        <p>高强度挑战与综合测试</p>
+                    </div>
+                    <div class="item-grid">
+                        <a href="{{ url_for('start_exam', exam_type='nightmare_exam') }}" class="item-card">噩梦高考</a>
+                        <a href="{{ url_for('start_exam', exam_type='chinese_to_english') }}" class="item-card">汉译英挑战</a>
+                    </div>
+                </section>
+                {% endif %}
+
+                {% if page == 'word_exam' %}
+                <div class="card-grid">
+                    {% for exam in exams %}
+                    <a href="{{ url_for('start_exam', exam_type=exam.route) }}" class="small-card" style="background: {{ exam.color }};">{{ exam.name }}</a>
+                    {% endfor %}
+                </div>
+                <a href="{{ url_for('english_home') }}" class="back-link">← 返回英语学习平台</a>
+                {% endif %}
+
+                {% if page == 'database_options' %}
+                <div class="list-menu">
+                    {% for opt in options %}
+                    <a href="{{ url_for('start_exam', exam_type=opt.route) }}" class="list-card" style="border-left: 5px solid {{ opt.color }};">{{ opt.name }}</a>
+                    {% endfor %}
+                </div>
+                <a href="{{ url_for('english_home') }}" class="back-link">← 返回英语学习平台</a>
+                {% endif %}
+
+                {% if page == 'other_projects' %}
+                <div class="list-menu">
+                    {% for proj in projects %}
+                    <a href="{{ url_for('start_exam', exam_type=proj.route) }}" class="list-card" style="border-left: 5px solid {{ proj.color }};">{{ proj.name }}</a>
+                    {% endfor %}
+                </div>
+                <a href="{{ url_for('english_home') }}" class="back-link">← 返回英语学习平台</a>
+                {% endif %}
+
+                {% if page == 'exam_placeholder' %}
+                <div class="placeholder-box">
+                    <span class="big-icon">🚧</span>
+                    <h2>{{ exam_name }}</h2>
+                    <p>该模块正在转换中，敬请期待网页版...</p>
+                    <a href="{{ url_for('english_home') }}" class="btn-primary">返回英语学习平台</a>
+                </div>
+                {% endif %}
+
+                {% if page == 'coming_soon' %}
+                <div class="placeholder-box">
+                    <span class="big-icon">🚀</span>
+                    <h2>{{ exam_name }}</h2>
+                    <p>该版型开发中，即将推出！</p>
+                    <a href="{{ url_for('english_home') }}" class="btn-primary">返回英语学习平台</a>
+                </div>
+                {% endif %}
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

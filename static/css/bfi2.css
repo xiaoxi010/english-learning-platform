@@ -1,0 +1,113 @@
+/* 大五人格 BFI-2 */
+.bfi-page { max-width: 720px; margin: 0 auto; padding-bottom: 32px; }
+.bfi-back {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9em;
+}
+.bfi-back:hover { color: var(--accent-green); }
+.bfi-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    color: #7c9cff;
+    background: rgba(124, 156, 255, 0.12);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.bfi-hero-title { margin: 0 0 8px; font-size: 1.35em; }
+.bfi-hero-desc { color: var(--text-secondary); margin: 0; }
+.bfi-intro p { color: var(--text-secondary); line-height: 1.7; margin: 0 0 12px; }
+.bfi-disclaimer { font-size: 0.88em; opacity: 0.85; }
+.bfi-field { margin-bottom: 14px; }
+.bfi-field label { display: block; margin-bottom: 6px; color: var(--text-secondary); }
+.bfi-field input[type="text"] {
+    width: 100%;
+    max-width: 280px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-input, var(--bg-card));
+    color: var(--text-primary);
+}
+.bfi-error { color: #ff6b6b; margin-bottom: 10px; }
+.bfi-alert {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.35);
+    margin-bottom: 16px;
+    font-size: 0.9em;
+}
+
+.bfi-quiz-head h2 { margin: 0 0 6px; }
+.bfi-quiz-head p { margin: 0 0 12px; color: var(--text-secondary); font-size: 0.9em; }
+.bfi-progress-track {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.bfi-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #5b7cfa, #7c9cff);
+    transition: width 0.25s ease;
+}
+.bfi-q-card { margin-bottom: 10px; }
+.bfi-opt .assess-opt-text { font-size: 0.9em; }
+
+.bfi-report-cover h1 { margin: 8px 0; font-size: 1.4em; }
+.bfi-cover-meta { color: var(--text-secondary); font-size: 0.88em; margin: 0; }
+.bfi-cover-brand { color: #7c9cff; font-size: 0.85em; margin: 0 0 4px; }
+.bfi-section-title { margin: 0 0 14px; font-size: 1.05em; }
+.bfi-dim-table { display: flex; flex-direction: column; gap: 2px; font-size: 0.88em; }
+.bfi-dim-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 48px 72px;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.04);
+    align-items: center;
+}
+.bfi-dim-row--head { font-weight: 600; color: var(--text-secondary); background: transparent; }
+.bfi-level { font-size: 0.85em; color: var(--text-secondary); }
+.bfi-level--hi { color: #7c9cff; }
+.bfi-level--lo { color: #74b9ff; }
+.bfi-facet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+.bfi-facet-chip {
+    padding: 8px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.82em;
+}
+.bfi-facet-chip strong { color: var(--text-primary); }
+.bfi-dim-block {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+.bfi-dim-block:last-child { border-bottom: none; }
+.bfi-match-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+.bfi-match-pct { color: #7c9cff; font-weight: 600; min-width: 44px; text-align: right; }
+.bfi-match-intro { font-size: 0.82em; color: var(--text-secondary); margin-top: 4px; }
+.bfi-chart-canvas {
+    display: block;
+    max-width: 100%;
+    margin: 16px auto 0;
+}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高考报考 · 信息填写</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/live_template.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gaokao_apply.css') }}">
+</head>
+<body class="page-gaokao-apply page-gaokao-career">
+{% include 'partials/app_shell_open.html' %}
+
+<div class="gc-form ga-apply-form"
+     id="gaokaoApplyForm"
+     data-lookup-url="{{ lookup_url }}"
+     data-system-url="{{ system_url }}"
+     data-default-region="{{ default_region }}">
+    <header class="gc-sheet-header">
+        <h1 class="gc-sheet-title">高考报考系统</h1>
+        <p class="gc-sheet-sub">请填写考生基本信息与成绩，完成后进入志愿查询</p>
+    </header>
+
+    <section class="gc-section">
+        <h2 class="gc-section-title">基本信息</h2>
+        <div class="gc-grid gc-grid--basic-4">
+            <label>姓名<input type="text" name="name" data-field="name" autocomplete="off"></label>
+            <label>性别<select name="gender" data-field="gender">
+                <option value=""></option>
+                {% for opt in gender_options %}
+                <option value="{{ opt }}">{{ opt }}</option>
+                {% endfor %}
+            </select></label>
+            <label>地域<select name="region" data-field="region">
+                {% for p in province_list %}
+                <option value="{{ p }}" {% if p == default_region %}selected{% endif %}>{{ p }}</option>
+                {% endfor %}
+            </select></label>
+            <label>民族<select name="ethnicity" data-field="ethnicity">
+                <option value=""></option>
+                {% for opt in ethnicity_options %}
+                <option value="{{ opt }}" {% if opt == '汉族' %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+            </select></label>
+            <label>手机号<input type="text" name="phone" data-field="phone" inputmode="tel" autocomplete="off"></label>
+            <label>高中<input type="text" name="high_school" data-field="high_school" autocomplete="off"></label>
+            <label>出生日期<input type="text" name="birthday" data-field="birthday" autocomplete="off" placeholder="如 20050330"></label>
+        </div>
+    </section>
+
+    {% include 'gaokao_apply/partials/scores_section.html' %}
+
+    <section class="gc-section" id="gaProvinceSection">
+        <h2 class="gc-section-title">院校地域</h2>
+        <p class="gc-hint">提示：除非特别不考虑的省份，建议使用者要选择尽量多的省份，以保证推荐结果全面</p>
+        <h3 class="gc-subtitle">省份选择</h3>
+        <div class="ga-region-toolbar no-print">
+            <button type="button" class="gc-btn" id="gaProvinceSelectAll">全选</button>
+            <button type="button" class="gc-btn" id="gaProvinceClear">清空</button>
+            <span class="ga-region-count" id="gaProvinceCount" aria-live="polite">已选 0 省</span>
+        </div>
+        <div class="gc-region-rows" id="gaProvinceRegion">
+            {% for row in region_rows %}
+            <div class="gc-region-row ga-region-row--flat">
+                <div class="ga-region-row-head">
+                    <span class="gc-region-row-label">{{ row.title }}</span>
+                    <div class="ga-region-row-actions no-print">
+                        <button type="button" class="gc-btn ga-region-select-all">全选</button>
+                        <button type="button" class="gc-btn gc-part-clear-btn ga-region-clear" title="重选本地区" hidden>重选</button>
+                    </div>
+                </div>
+                <div class="gc-region-province-list">
+                    {% for prov in row.provinces %}
+                    <label class="gc-region-province{% if prov.is_municipality %} gc-region-province--municipality{% endif %}">
+                        <input type="checkbox" data-province-code="{{ prov.code }}" value="{{ prov.name }}">
+                        <span class="gc-region-province-name">{{ prov.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="gc-section" id="gaMajorSection">
+        <h2 class="gc-section-title">选择目标专业</h2>
+        <p class="gc-hint">提示：目标专业分为本科专业和专科（高职）专业，应根据考生欲填报批次分别选择。</p>
+        <p class="gc-hint">按学科门类浏览，点选专业类别（可多选）；每个门类可一键全选或重选。</p>
+        <div class="gc-major-bars">
+            <div class="gc-major-search">
+                <label class="gc-major-search-label" for="gaMajorSearch">搜索类别/专业</label>
+                <input type="search"
+                       id="gaMajorSearch"
+                       class="gc-major-search-input"
+                       autocomplete="off"
+                       enterkeyhint="search"
+                       placeholder="搜索类别/专业">
+                <button type="button" class="gc-major-search-clear" id="gaMajorSearchClear" hidden>清除</button>
+                <span class="gc-major-search-meta ga-major-count" id="gaMajorCount" aria-live="polite">已选 0 类</span>
+            </div>
+        </div>
+        <div class="gc-major-disciplines" id="gaMajorDisciplines">
+            {% for disc in major_disciplines %}
+            <div class="gc-major-discipline gc-collapse" data-discipline="{{ disc.id }}">
+                <div class="gc-collapse-head">
+                    <button type="button" class="gc-collapse-trigger gc-major-discipline-title" aria-expanded="true">
+                        <span class="gc-collapse-indicator">
+                            <span class="gc-collapse-chevron" aria-hidden="true">▸</span>
+                            <span class="gc-collapse-count" hidden>0</span>
+                        </span>
+                        <span>{{ disc.title }}</span>
+                    </button>
+                    <div class="ga-disc-head-actions no-print">
+                        <button type="button" class="gc-btn ga-disc-select-all" data-discipline="{{ disc.id }}" title="全选本门类下可见类别">全选</button>
+                        <button type="button" class="gc-btn gc-part-clear-btn ga-disc-clear" data-discipline="{{ disc.id }}" title="重选本门类" hidden>重选</button>
+                    </div>
+                </div>
+                <div class="gc-collapse-body">
+                    <div class="gc-major-bar">
+                        <div class="gc-major-btns gc-major-cat-btns">
+                            {% for cat in disc.categories %}
+                            <button type="button"
+                                    class="gc-major-btn"
+                                    data-major-group="{{ cat.group_id }}"
+                                    data-major-title="{{ cat.title }}"
+                                    data-discipline="{{ disc.id }}"
+                                    data-search-text="{{ cat.search_text }}">{{ cat.title }}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="gc-toolbar gc-toolbar--bottom no-print">
+        <span class="gc-user-badge">高考报考</span>
+        <div class="gc-toolbar-actions">
+            <a href="{{ url_for('gaokao_apply.score_rank_page') }}" class="gc-btn">分数与位次</a>
+            <button type="button" class="gc-btn" id="gaSaveDraft">保存草稿</button>
+            <button type="button" class="gc-btn gc-btn--primary" id="gaEnterSystem">进入志愿查询</button>
+        </div>
+    </div>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+<script src="{{ url_for('static', filename='js/gaokao-apply-scores.js') }}"></script>
+<script src="{{ url_for('static', filename='js/gaokao-apply-profile.js') }}"></script>
+</body>
+</html>

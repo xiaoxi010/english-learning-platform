@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分数与位次</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gaokao_apply.css') }}">
+</head>
+<body class="page-score-rank">
+{% include 'partials/app_shell_open.html' %}
+
+<div class="sr-page" id="scoreRankApp"
+     data-default-province="{{ default_province }}"
+     data-api-lookup="{{ url_for('gaokao_apply.api_lookup') }}">
+    <div class="sr-toolbar">
+        <a href="{{ url_for('gaokao_apply.index') }}" class="sr-back">← 返回信息填写</a>
+    </div>
+
+    <header class="sr-header">
+        <h1 class="sr-title">2025 一分一段</h1>
+        <p class="sr-subtitle">选择省份、科目，输入分数查询位次（数据与小程序一致）</p>
+    </header>
+
+    <section class="sr-panel">
+        <div class="sr-filter-label">省份</div>
+        <div class="sr-province-tags" id="provinceTags">
+            {% for p in provinces %}
+            <button type="button"
+                    class="sr-tag {% if p.name == default_province %}sr-tag--active{% endif %}{% if not p.available %} sr-tag--missing{% endif %}"
+                    data-province="{{ p.name }}"
+                    data-available="{{ '1' if p.available else '0' }}"
+                    data-label-a="{{ p.label_a }}"
+                    data-label-b="{{ p.label_b }}"
+                    data-show-subject="{{ '1' if p.show_subject_row else '0' }}"
+                    data-file="{{ p.file }}"
+                    title="{% if not p.available %}数据未导入：{{ p.file }}{% endif %}">
+                {{ p.name }}{% if not p.available %}<span class="sr-tag-dot">·</span>{% endif %}
+            </button>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="sr-panel sr-form-panel" id="formPanel">
+        <div class="sr-loading" id="srLoading" hidden>加载中…</div>
+        <div class="sr-error" id="srDataError" hidden>
+            <p id="srDataErrorText">该省一分一段数据尚未导入。</p>
+            <p class="sr-error-hint">请将 <code id="srMissingFile"></code> 放入 <code>{{ data_dir_hint }}</code> 后刷新页面。</p>
+        </div>
+
+        <div id="srFormWrap">
+            <div class="sr-row" id="subjectRow">
+                <span class="sr-label">科目</span>
+                <div class="sr-subject-btns">
+                    <button type="button" class="sr-subject sr-subject--active" data-subject="physics" id="btnSubjectA"></button>
+                    <button type="button" class="sr-subject" data-subject="history" id="btnSubjectB"></button>
+                </div>
+            </div>
+            <div class="sr-row sr-row--single-subject" id="singleSubjectRow" hidden>
+                <span class="sr-label">科目</span>
+                <span class="sr-single-subject" id="singleSubjectLabel"></span>
+            </div>
+
+            <div class="sr-row">
+                <span class="sr-label">分数</span>
+                <input type="number" class="sr-score-input" id="scoreInput" min="0" max="900" placeholder="请输入分数" inputmode="numeric">
+                <span class="sr-unit">分</span>
+            </div>
+
+            <div class="sr-result">
+                <div class="sr-row">
+                    <span class="sr-label">位次</span>
+                    <span class="sr-result-value" id="rankResult">--</span>
+                </div>
+                <div class="sr-row" id="sameScoreRow" hidden>
+                    <span class="sr-label">同分人数</span>
+                    <span class="sr-result-value" id="sameScoreResult"></span>
+                </div>
+            </div>
+
+            <p class="sr-tip" id="srTip">* 数据来源于所选省份 2025 年高考一分一段表</p>
+        </div>
+    </section>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+<script src="{{ url_for('static', filename='js/score-rank.js') }}"></script>
+</body>
+</html>

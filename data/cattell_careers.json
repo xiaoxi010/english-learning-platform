@@ -1,0 +1,2162 @@
+[
+  {
+    "id": "C01",
+    "name": "中小学教师",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C02",
+    "name": "房产销售/置业顾问",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C03",
+    "name": "软件工程师/程序员",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C04",
+    "name": "注册会计师",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C05",
+    "name": "平面/UI设计师",
+    "dimensions": [
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "G",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C06",
+    "name": "临床内科医生",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "I",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C07",
+    "name": "执业律师",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "L",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C08",
+    "name": "人力资源HR专员",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C09",
+    "name": "品牌公关专员",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q4",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C10",
+    "name": "科研实验员",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C11",
+    "name": "基层公务员",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q1",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C12",
+    "name": "人民警察/辅警",
+    "dimensions": [
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q4",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C13",
+    "name": "网络作家/文案编辑",
+    "dimensions": [
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C14",
+    "name": "播音主持人",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C15",
+    "name": "工程项目经理",
+    "dimensions": [
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C16",
+    "name": "心理咨询师",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C17",
+    "name": "电商运营专员",
+    "dimensions": [
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C18",
+    "name": "机械制造工程师",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "I",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C19",
+    "name": "临床护士",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "E",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C20",
+    "name": "小微企业创业者",
+    "dimensions": [
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C21",
+    "name": "行政文员/秘书",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q1",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C22",
+    "name": "社会工作者",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C23",
+    "name": "导游/旅行顾问",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q4",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C24",
+    "name": "健身私教",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C25",
+    "name": "影视编导",
+    "dimensions": [
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "G",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C26",
+    "name": "物流仓储管理员",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C27",
+    "name": "汽车维修技师",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C28",
+    "name": "餐饮门店店长",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C29",
+    "name": "财务出纳",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C30",
+    "name": "少儿美术培训师",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C31",
+    "name": "银行柜员",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C32",
+    "name": "保险经纪人",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C33",
+    "name": "广告策划师",
+    "dimensions": [
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "G",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C34",
+    "name": "专业翻译",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C35",
+    "name": "建筑设计师",
+    "dimensions": [
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C36",
+    "name": "美妆化妆师",
+    "dimensions": [
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C37",
+    "name": "商业摄影师",
+    "dimensions": [
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "G",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C38",
+    "name": "中式烹调厨师",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C39",
+    "name": "民航飞行员",
+    "dimensions": [
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q4",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C40",
+    "name": "消防员",
+    "dimensions": [
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q4",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C41",
+    "name": "空乘/空姐",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C42",
+    "name": "幼儿园幼师",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C43",
+    "name": "电商直播主播",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "Q4",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C44",
+    "name": "猎头顾问",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C45",
+    "name": "互联网产品经理",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "Q2",
+        "require": "高",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C46",
+    "name": "数据分析师",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C47",
+    "name": "税务师",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C48",
+    "name": "平面模特",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C49",
+    "name": "新闻记者",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "H",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C50",
+    "name": "图书管理员",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.18
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C51",
+    "name": "物业管家",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "E",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C52",
+    "name": "水电维修工",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.15
+      },
+      {
+        "code": "A",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C53",
+    "name": "花艺烘焙师",
+    "dimensions": [
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C54",
+    "name": "投资理财顾问",
+    "dimensions": [
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "E",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C55",
+    "name": "公共营养师",
+    "dimensions": [
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C56",
+    "name": "宠物医生",
+    "dimensions": [
+      {
+        "code": "I",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "B",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C57",
+    "name": "驾校教练",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "E",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C58",
+    "name": "质检专员",
+    "dimensions": [
+      {
+        "code": "G",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "Q3",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "L",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "M",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "F",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C59",
+    "name": "酒店前台接待",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "C",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "L",
+        "require": "低",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  },
+  {
+    "id": "C60",
+    "name": "婚庆策划师",
+    "dimensions": [
+      {
+        "code": "A",
+        "require": "高",
+        "weight": 0.25
+      },
+      {
+        "code": "M",
+        "require": "高",
+        "weight": 0.2
+      },
+      {
+        "code": "F",
+        "require": "高",
+        "weight": 0.18
+      },
+      {
+        "code": "N",
+        "require": "高",
+        "weight": 0.15
+      },
+      {
+        "code": "Q1",
+        "require": "高",
+        "weight": 0.12
+      },
+      {
+        "code": "O",
+        "require": "低",
+        "weight": 0.1
+      }
+    ]
+  }
+]

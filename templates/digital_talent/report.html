@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字天赋解读报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/digital_talent.css') }}">
+</head>
+<body>
+{% set p = report.pyramid %}
+{% set t = report.text_results %}
+{% set mr = report.missing_repeated %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="dt-page dt-report-page assess-shell">
+    <a href="{{ url_for('index') }}" class="dt-back">← 返回测评报告</a>
+
+    {% if not data_ready %}
+    <div class="dt-alert">报告结构已生成，解读文案需放置 <code>data/Personality.json</code> 后重新提交生日以显示完整内容。</div>
+    {% endif %}
+
+    <div class="dt-report-head home-section">
+        <p class="dt-report-meta">出生日期：{{ report.birth_display }} · 生成时间：{{ report.calculate_time }}</p>
+        <div class="dt-core-badge">
+            <span class="dt-core-num">{{ report.child_core_personality }}</span>
+            <span class="dt-core-label">主性格数字</span>
+        </div>
+    </div>
+
+    <nav class="dt-tabs" role="tablist">
+        <button type="button" class="dt-tab active" data-tab="personality">性格解读</button>
+        <button type="button" class="dt-tab" data-tab="union">联合码</button>
+        <button type="button" class="dt-tab" data-tab="numbers">表征数字</button>
+        <button type="button" class="dt-tab" data-tab="education">教育策略</button>
+    </nav>
+
+    <!-- 性格解读 -->
+    <div class="dt-tab-panel active" id="tab-personality">
+        <section class="home-section dt-pyramid-section">
+            <h3 class="dt-section-title">生命密码三角形</h3>
+            <div class="dt-pyramid-layout">
+                <div class="dt-aux-pyramid dt-aux-top">
+                    <div class="dt-cell dt-apex">{{ p.aux_top_apex }}</div>
+                    <div class="dt-aux-base">
+                        <span class="dt-cell">{{ p.aux_top_base[0] }}</span>
+                        <span class="dt-cell">{{ p.aux_top_base[1] }}</span>
+                    </div>
+                </div>
+                <div class="dt-pyramid-middle">
+                    <div class="dt-aux-pyramid dt-aux-side">
+                        <div class="dt-cell dt-apex">{{ p.supplementary2[0] }}</div>
+                        <div class="dt-aux-base">
+                            <span class="dt-cell">{{ p.supplementary1[0] }}</span>
+                            <span class="dt-cell">{{ p.supplementary1[1] }}</span>
+                        </div>
+                    </div>
+                    <div class="dt-main-pyramid">
+                        <div class="dt-tri-row r1"><span class="dt-cell dt-core">{{ p.core }}</span></div>
+                        <div class="dt-tri-row r2">
+                            <span class="dt-cell">{{ p.inverted2[0] }}</span>
+                            <span class="dt-cell">{{ p.inverted2[1] }}</span>
+                        </div>
+                        <div class="dt-tri-row r3">
+                            <span class="dt-cell">{{ p.inverted1[0] }}</span>
+                            <span class="dt-cell">{{ p.inverted1[1] }}</span>
+                            <span class="dt-cell">{{ p.inverted1[2] }}</span>
+                            <span class="dt-cell">{{ p.inverted1[3] }}</span>
+                        </div>
+                    </div>
+                    <div class="dt-aux-pyramid dt-aux-side">
+                        <div class="dt-cell dt-apex">{{ p.supplementary2[1] }}</div>
+                        <div class="dt-aux-base">
+                            <span class="dt-cell">{{ p.supplementary1[2] }}</span>
+                            <span class="dt-cell">{{ p.supplementary1[3] }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="dt-pyramid-date"><span>阳历</span> {{ report.pyramid_date_text }}</p>
+        </section>
+
+        <section class="home-section">
+            <h3 class="dt-section-title">性格特征</h3>
+            <p class="dt-text-block">{{ t.personality_traits_1 }}</p>
+            <ol class="dt-ol">
+                <li>{{ t.personality_traits_2 }}</li>
+                <li>{{ t.personality_traits_3 }}</li>
+            </ol>
+        </section>
+
+        <section class="home-section">
+            <h3 class="dt-section-title">性格分析</h3>
+            <div class="dt-card dt-card-positive">
+                <h4>正面特质</h4>
+                <p>{{ t.positively }}</p>
+            </div>
+            <div class="dt-card dt-card-negative">
+                <h4>负面特质</h4>
+                <p>{{ t.negatively }}</p>
+            </div>
+            <div class="dt-card dt-card-neutral">
+                <h4>人生课题</h4>
+                <p>{{ t.class }}</p>
+            </div>
+        </section>
+
+        <section class="home-section">
+            <h3 class="dt-section-title">缺失数与重复数</h3>
+            <p class="dt-text-muted">生命密码三角形图谱中，「缺失」与「重复」是解读个人特质的两大关键维度。数字缺失并非缺陷，重复数字则代表天赋能量的凸显。</p>
+            <h4 class="dt-subtitle">三角形内</h4>
+            <div class="dt-table-wrap">
+                <table class="dt-table">
+                    <thead>
+                        <tr><th>数字</th><th>个数</th><th>缺失数</th><th>重复数</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for row in mr.stat_pyramid %}
+                        <tr>
+                            <td>{{ row.num }}</td>
+                            <td class="{% if row.is_max_count %}dt-highlight{% endif %}">{{ row.count_in }}个{{ row.num }}</td>
+                            <td>{{ row.missing_inside }}</td>
+                            <td>{{ row.repeated }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <h4 class="dt-subtitle">三角形外</h4>
+            <div class="dt-table-wrap">
+                <table class="dt-table">
+                    <thead>
+                        <tr><th>数字</th><th>个数</th><th>缺失数</th><th>重复数</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for row in mr.aux_pyramid %}
+                        <tr>
+                            <td>{{ row.num }}</td>
+                            <td class="{% if row.is_max_count %}dt-highlight{% endif %}">{{ row.count_out }}个{{ row.num }}</td>
+                            <td>{{ row.missing_outside }}</td>
+                            <td>{{ row.repeated }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- 联合码 -->
+    <div class="dt-tab-panel" id="tab-union">
+        <section class="home-section">
+            <h3 class="dt-section-title">12组数字联合码</h3>
+            <div class="dt-union-grid">
+                {% for i in range(0, 6) %}
+                {% set left = report.union_code_list[i] %}
+                {% set right = report.union_code_list[i + 6] %}
+                <div class="dt-union-row">
+                    <div class="dt-union-cell">
+                        <span class="dt-union-code">{{ left.code }}</span>
+                        <p>{{ left.simple }}</p>
+                    </div>
+                    <div class="dt-union-cell">
+                        <span class="dt-union-code">{{ right.code }}</span>
+                        <p>{{ right.simple }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">12组数字联合码详解</h3>
+            {% for item in report.union_detail_list %}
+            <div class="dt-detail-item">
+                <div class="dt-detail-head">
+                    <span class="dt-detail-cat">{{ item.category }}</span>
+                    <span class="dt-detail-code">{{ item.code }}</span>
+                </div>
+                <p class="dt-text-block">{{ item.detail }}</p>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
+
+    <!-- 表征数字 -->
+    <div class="dt-tab-panel" id="tab-numbers">
+        <section class="home-section dt-year-block">
+            <h3 class="dt-section-title">个人流年 <span class="dt-badge">{{ report.personal_year.year }}</span></h3>
+            <p class="dt-text-muted">不同年份对应不同的流年运势。生命密码中缺失的能量可以通过流年数字来补，抓住机会事半功倍。</p>
+            <div class="dt-year-items">
+                <div class="dt-year-item"><strong>感受</strong><p>{{ report.personal_year.ofeeling }}</p></div>
+                <div class="dt-year-item"><strong>指引</strong><p>{{ report.personal_year.guide }}</p></div>
+                <div class="dt-year-item"><strong>注意</strong><p>{{ report.personal_year.attention }}</p></div>
+            </div>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">潜意识码 {{ report.subconsciousness_code }}</h3>
+            <p class="dt-text-block">{{ t.subconsciousness }}</p>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">内心数字 {{ report.mind_num }}</h3>
+            <p class="dt-text-block">{{ t.mind_number }}</p>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">外心数字 {{ report.peripheral_number }}</h3>
+            <p class="dt-text-block">{{ t.peripheral_number_text }}</p>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">家庭密码 {{ report.family_code }}</h3>
+            <p class="dt-text-block">{{ t.family_code_text }}</p>
+        </section>
+    </div>
+
+    <!-- 教育策略 -->
+    <div class="dt-tab-panel" id="tab-education">
+        <section class="home-section">
+            <h3 class="dt-section-title">教育秘诀 · 家长应该做的</h3>
+            <ol class="dt-ol">
+                <li>{{ t.do_teaching_secret_1 }}</li>
+                <li>{{ t.do_teaching_secret_2 }}</li>
+                <li>{{ t.do_teaching_secret_3 }}</li>
+            </ol>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">教育秘诀 · 家长不应该做的</h3>
+            <ol class="dt-ol">
+                <li>{{ t.dont_teaching_secret_1 }}</li>
+                <li>{{ t.dont_teaching_secret_2 }}</li>
+                <li>{{ t.dont_teaching_secret_3 }}</li>
+            </ol>
+        </section>
+        <section class="home-section">
+            <h3 class="dt-section-title">缓解焦虑</h3>
+            <ol class="dt-ol">
+                {% for item in t.ease_anxiety %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ol>
+        </section>
+    </div>
+
+    <div class="dt-report-actions">
+        <a href="{{ url_for('digital_talent.start') }}" class="btn-secondary dt-btn-link">重新填写生日</a>
+        <a href="{{ url_for('index') }}" class="btn-primary dt-btn-link">返回测评报告</a>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.dt-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-tab');
+        document.querySelectorAll('.dt-tab').forEach(function (b) { b.classList.remove('active'); });
+        document.querySelectorAll('.dt-tab-panel').forEach(function (p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('tab-' + id).classList.add('active');
+    });
+});
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>

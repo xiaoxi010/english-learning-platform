@@ -1,0 +1,645 @@
+{
+  "info": {
+    "name": "BFI-2 大五人格量表第二版",
+    "developer": "Oliver P. John & Christopher J. Soto (2017)",
+    "chineseRevision": "张博、黎坚等 (2021)",
+    "questionCount": 60,
+    "reliability": "α系数 0.86-0.92",
+    "testRetestReliability": "0.80-0.88 (3个月)"
+  },
+  "ratingScale": {
+    "1": "非常不同意",
+    "2": "不太同意",
+    "3": "态度中立",
+    "4": "比较同意",
+    "5": "非常同意"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "text": "性格外向，喜欢交际",
+      "dimension": "E",
+      "facet": "sociability",
+      "reverse": false
+    },
+    {
+      "id": 2,
+      "text": "心肠柔软，有同情心",
+      "dimension": "A",
+      "facet": "compassion",
+      "reverse": false
+    },
+    {
+      "id": 3,
+      "text": "缺乏条理",
+      "dimension": "C",
+      "facet": "organization",
+      "reverse": true
+    },
+    {
+      "id": 4,
+      "text": "从容，善于处理压力",
+      "dimension": "N",
+      "facet": "anxiety",
+      "reverse": true
+    },
+    {
+      "id": 5,
+      "text": "对艺术没有什么兴趣",
+      "dimension": "O",
+      "facet": "aestheticSensitivity",
+      "reverse": true
+    },
+    {
+      "id": 6,
+      "text": "性格坚定自信，敢于表达自己的观点",
+      "dimension": "E",
+      "facet": "assertiveness",
+      "reverse": false
+    },
+    {
+      "id": 7,
+      "text": "为人恭谦，尊重他人",
+      "dimension": "A",
+      "facet": "respectfulness",
+      "reverse": false
+    },
+    {
+      "id": 8,
+      "text": "比较懒",
+      "dimension": "C",
+      "facet": "productiveness",
+      "reverse": true
+    },
+    {
+      "id": 9,
+      "text": "经历挫折后仍能保持积极心态",
+      "dimension": "N",
+      "facet": "depression",
+      "reverse": true
+    },
+    {
+      "id": 10,
+      "text": "对许多不同的事物都感兴趣",
+      "dimension": "O",
+      "facet": "intellectualCuriosity",
+      "reverse": false
+    },
+    {
+      "id": 11,
+      "text": "很少觉得兴奋或者特别想要(做)什么",
+      "dimension": "E",
+      "facet": "energyLevel",
+      "reverse": true
+    },
+    {
+      "id": 12,
+      "text": "常常挑别人的毛病",
+      "dimension": "A",
+      "facet": "trust",
+      "reverse": true
+    },
+    {
+      "id": 13,
+      "text": "可信赖的，可靠的",
+      "dimension": "C",
+      "facet": "responsibility",
+      "reverse": false
+    },
+    {
+      "id": 14,
+      "text": "喜怒无常，情绪起伏较多",
+      "dimension": "N",
+      "facet": "emotionalVolatility",
+      "reverse": false
+    },
+    {
+      "id": 15,
+      "text": "善于创造，能找到聪明的方法来做事",
+      "dimension": "O",
+      "facet": "creativeImagination",
+      "reverse": false
+    },
+    {
+      "id": 16,
+      "text": "比较安静",
+      "dimension": "E",
+      "facet": "sociability",
+      "reverse": true
+    },
+    {
+      "id": 17,
+      "text": "对他人没有什么同情心",
+      "dimension": "A",
+      "facet": "compassion",
+      "reverse": true
+    },
+    {
+      "id": 18,
+      "text": "做事有计划有条理",
+      "dimension": "C",
+      "facet": "organization",
+      "reverse": false
+    },
+    {
+      "id": 19,
+      "text": "容易紧张",
+      "dimension": "N",
+      "facet": "anxiety",
+      "reverse": false
+    },
+    {
+      "id": 20,
+      "text": "着迷于艺术、音乐或文学",
+      "dimension": "O",
+      "facet": "aestheticSensitivity",
+      "reverse": false
+    },
+    {
+      "id": 21,
+      "text": "常常处于主导地位，像个领导一样",
+      "dimension": "E",
+      "facet": "assertiveness",
+      "reverse": false
+    },
+    {
+      "id": 22,
+      "text": "常与他人意见不和",
+      "dimension": "A",
+      "facet": "respectfulness",
+      "reverse": true
+    },
+    {
+      "id": 23,
+      "text": "很难开始行动起来去完成一项任务",
+      "dimension": "C",
+      "facet": "productiveness",
+      "reverse": true
+    },
+    {
+      "id": 24,
+      "text": "觉得有安全感，对自己满意",
+      "dimension": "N",
+      "facet": "depression",
+      "reverse": true
+    },
+    {
+      "id": 25,
+      "text": "不喜欢知识性或者哲学性强的讨论",
+      "dimension": "O",
+      "facet": "intellectualCuriosity",
+      "reverse": true
+    },
+    {
+      "id": 26,
+      "text": "精力充沛",
+      "dimension": "E",
+      "facet": "energyLevel",
+      "reverse": false
+    },
+    {
+      "id": 27,
+      "text": "相信别人的意图都是好的",
+      "dimension": "A",
+      "facet": "trust",
+      "reverse": false
+    },
+    {
+      "id": 28,
+      "text": "有时会粗心大意",
+      "dimension": "C",
+      "facet": "responsibility",
+      "reverse": true
+    },
+    {
+      "id": 29,
+      "text": "情绪稳定，不易生气",
+      "dimension": "N",
+      "facet": "emotionalVolatility",
+      "reverse": true
+    },
+    {
+      "id": 30,
+      "text": "喜欢思考抽象的概念和理论",
+      "dimension": "O",
+      "facet": "creativeImagination",
+      "reverse": false
+    },
+    {
+      "id": 31,
+      "text": "有时会害羞，比较内向",
+      "dimension": "E",
+      "facet": "sociability",
+      "reverse": true
+    },
+    {
+      "id": 32,
+      "text": "乐于助人，待人无私",
+      "dimension": "A",
+      "facet": "compassion",
+      "reverse": false
+    },
+    {
+      "id": 33,
+      "text": "习惯让事物保持整洁有序",
+      "dimension": "C",
+      "facet": "organization",
+      "reverse": false
+    },
+    {
+      "id": 34,
+      "text": "时常忧心忡忡，担心很多事情",
+      "dimension": "N",
+      "facet": "anxiety",
+      "reverse": false
+    },
+    {
+      "id": 35,
+      "text": "重视艺术与审美",
+      "dimension": "O",
+      "facet": "aestheticSensitivity",
+      "reverse": false
+    },
+    {
+      "id": 36,
+      "text": "感觉自己很难对他人产生影响",
+      "dimension": "E",
+      "facet": "assertiveness",
+      "reverse": true
+    },
+    {
+      "id": 37,
+      "text": "有时对人比较粗鲁",
+      "dimension": "A",
+      "facet": "respectfulness",
+      "reverse": true
+    },
+    {
+      "id": 38,
+      "text": "有效率，做事有始有终",
+      "dimension": "C",
+      "facet": "productiveness",
+      "reverse": false
+    },
+    {
+      "id": 39,
+      "text": "时常觉得悲伤",
+      "dimension": "N",
+      "facet": "depression",
+      "reverse": false
+    },
+    {
+      "id": 40,
+      "text": "思想深刻",
+      "dimension": "O",
+      "facet": "intellectualCuriosity",
+      "reverse": false
+    },
+    {
+      "id": 41,
+      "text": "充满活力",
+      "dimension": "E",
+      "facet": "energyLevel",
+      "reverse": false
+    },
+    {
+      "id": 42,
+      "text": "不相信别人，怀疑别人的意图",
+      "dimension": "A",
+      "facet": "trust",
+      "reverse": true
+    },
+    {
+      "id": 43,
+      "text": "能够按时完成任务",
+      "dimension": "C",
+      "facet": "responsibility",
+      "reverse": false
+    },
+    {
+      "id": 44,
+      "text": "情绪多变，容易愤怒",
+      "dimension": "N",
+      "facet": "emotionalVolatility",
+      "reverse": false
+    },
+    {
+      "id": 45,
+      "text": "富有想象力",
+      "dimension": "O",
+      "facet": "creativeImagination",
+      "reverse": false
+    },
+    {
+      "id": 46,
+      "text": "喜欢热闹，喜欢和别人待在一起",
+      "dimension": "E",
+      "facet": "sociability",
+      "reverse": false
+    },
+    {
+      "id": 47,
+      "text": "待人温和，脾气好",
+      "dimension": "A",
+      "facet": "compassion",
+      "reverse": false
+    },
+    {
+      "id": 48,
+      "text": "东西总是乱放",
+      "dimension": "C",
+      "facet": "organization",
+      "reverse": true
+    },
+    {
+      "id": 49,
+      "text": "很少觉得焦虑或者害怕",
+      "dimension": "N",
+      "facet": "anxiety",
+      "reverse": true
+    },
+    {
+      "id": 50,
+      "text": "对新思想和新体验持开放态度",
+      "dimension": "O",
+      "facet": "creativeImagination",
+      "reverse": false
+    },
+    {
+      "id": 51,
+      "text": "喜欢独处",
+      "dimension": "E",
+      "facet": "assertiveness",
+      "reverse": true
+    },
+    {
+      "id": 52,
+      "text": "会为了自己的利益而利用别人",
+      "dimension": "A",
+      "facet": "respectfulness",
+      "reverse": true
+    },
+    {
+      "id": 53,
+      "text": "工作努力，勤奋刻苦",
+      "dimension": "C",
+      "facet": "productiveness",
+      "reverse": false
+    },
+    {
+      "id": 54,
+      "text": "时常觉得郁郁寡欢",
+      "dimension": "N",
+      "facet": "depression",
+      "reverse": false
+    },
+    {
+      "id": 55,
+      "text": "喜欢挑战传统和权威",
+      "dimension": "O",
+      "facet": "intellectualCuriosity",
+      "reverse": false
+    },
+    {
+      "id": 56,
+      "text": "热情洋溢",
+      "dimension": "E",
+      "facet": "energyLevel",
+      "reverse": false
+    },
+    {
+      "id": 57,
+      "text": "容易原谅别人",
+      "dimension": "A",
+      "facet": "trust",
+      "reverse": false
+    },
+    {
+      "id": 58,
+      "text": "有时不能做到我应有的可靠或可信",
+      "dimension": "C",
+      "facet": "responsibility",
+      "reverse": true
+    },
+    {
+      "id": 59,
+      "text": "能够控制自己的情绪",
+      "dimension": "N",
+      "facet": "emotionalVolatility",
+      "reverse": true
+    },
+    {
+      "id": 60,
+      "text": "缺乏创造力",
+      "dimension": "O",
+      "facet": "creativeImagination",
+      "reverse": true
+    }
+  ],
+  "dimensions": {
+    "E": {
+      "name": "外向性",
+      "nameEn": "Extraversion",
+      "facets": {
+        "sociability": "社交性",
+        "assertiveness": "自信果断性",
+        "energyLevel": "精力水平"
+      },
+      "description": {
+        "low": "内向、安静、喜欢独处、社交耗能",
+        "medium": "社交适中，能在独处与互动间切换",
+        "high": "外向、热情、喜欢社交、精力充沛"
+      }
+    },
+    "A": {
+      "name": "宜人性",
+      "nameEn": "Agreeableness",
+      "facets": {
+        "compassion": "同情心",
+        "respectfulness": "尊重他人",
+        "trust": "信任他人"
+      },
+      "description": {
+        "low": "竞争心强、怀疑他人、直言不讳",
+        "medium": "合作友好，但也有自己的原则",
+        "high": "善良、体贴、乐于助人、信任他人"
+      }
+    },
+    "C": {
+      "name": "尽责性",
+      "nameEn": "Conscientiousness",
+      "facets": {
+        "organization": "条理性",
+        "productiveness": "效率性",
+        "responsibility": "责任感"
+      },
+      "description": {
+        "low": "灵活随性、缺乏规划、容易拖延",
+        "medium": "有一定的责任心和条理性",
+        "high": "自律严谨、有责任心、做事有条理"
+      }
+    },
+    "N": {
+      "name": "神经质",
+      "nameEn": "Neuroticism",
+      "facets": {
+        "anxiety": "焦虑",
+        "depression": "抑郁",
+        "emotionalVolatility": "情绪波动"
+      },
+      "description": {
+        "low": "情绪稳定、冷静、抗压能力强",
+        "medium": "情绪基本稳定，偶尔会有波动",
+        "high": "情绪敏感、容易焦虑、情绪化"
+      }
+    },
+    "O": {
+      "name": "开放性",
+      "nameEn": "Openness",
+      "facets": {
+        "aestheticSensitivity": "审美敏感性",
+        "intellectualCuriosity": "智力好奇心",
+        "creativeImagination": "创造性想象力"
+      },
+      "description": {
+        "low": "务实、传统、保守、喜欢熟悉的事物",
+        "medium": "对新事物持开放态度，但也重视传统",
+        "high": "好奇、富有想象力、喜欢尝试新事物"
+      }
+    }
+  },
+  "norms": {
+    "mainDimensions": {
+      "veryLow": {
+        "max": 24,
+        "label": "很低"
+      },
+      "low": {
+        "max": 32,
+        "label": "偏低"
+      },
+      "medium": {
+        "max": 42,
+        "label": "中等"
+      },
+      "high": {
+        "max": 52,
+        "label": "偏高"
+      },
+      "veryHigh": {
+        "max": 60,
+        "label": "很高"
+      }
+    },
+    "facets": {
+      "veryLow": {
+        "max": 8,
+        "label": "很低"
+      },
+      "low": {
+        "max": 11,
+        "label": "偏低"
+      },
+      "medium": {
+        "max": 14,
+        "label": "中等"
+      },
+      "high": {
+        "max": 17,
+        "label": "偏高"
+      },
+      "veryHigh": {
+        "max": 20,
+        "label": "很高"
+      }
+    }
+  },
+  "matchMeta": {
+    "teamRoles": [
+      {
+        "key": "leader",
+        "label": "领导者",
+        "intro": "擅长目标决策与推动落地，适合带领团队突破复杂任务。"
+      },
+      {
+        "key": "executor",
+        "label": "执行者",
+        "intro": "踏实可靠、重视计划与交付，适合把战略拆解为可执行结果。"
+      },
+      {
+        "key": "creator",
+        "label": "创意者",
+        "intro": "思维发散、善于提出新方案，适合创新类产品与内容岗位。"
+      },
+      {
+        "key": "coordinator",
+        "label": "协调者",
+        "intro": "善于沟通整合资源，适合跨部门协同与项目管理型角色。"
+      },
+      {
+        "key": "supporter",
+        "label": "支持者",
+        "intro": "亲和力强、关注团队氛围，适合培训、客服与协作支持类岗位。"
+      },
+      {
+        "key": "critic",
+        "label": "批评者",
+        "intro": "善于质疑与质量控制，适合评审、风控与需要独立判断的角色。"
+      }
+    ],
+    "workEnvironments": [
+      {
+        "key": "innovative",
+        "label": "创新型环境",
+        "intro": "强调快速迭代与试错，适合互联网、科技与研发场景。"
+      },
+      {
+        "key": "traditional",
+        "label": "传统型环境",
+        "intro": "强调制度与流程稳定，适合机关单位、银行与大型国企。"
+      },
+      {
+        "key": "highPressure",
+        "label": "高压型环境",
+        "intro": "节奏快、任务密集，适合金融、医疗与应急管理等领域。"
+      },
+      {
+        "key": "teamOriented",
+        "label": "团队型环境",
+        "intro": "强调协作与集体决策，适合人力、咨询与教育行业。"
+      },
+      {
+        "key": "independent",
+        "label": "独立型环境",
+        "intro": "强调自主安排与深度工作，适合科研、编程与创作类岗位。"
+      }
+    ],
+    "careerTypes": [
+      {
+        "key": "management",
+        "label": "管理类职业",
+        "intro": "整合资源、带团队拿结果的中高层管理通道。"
+      },
+      {
+        "key": "technical",
+        "label": "技术类职业",
+        "intro": "依赖专业深度与系统思维的技术路径。"
+      },
+      {
+        "key": "service",
+        "label": "服务类职业",
+        "intro": "面向人际支持与用户体验的岗位体系。"
+      },
+      {
+        "key": "creative",
+        "label": "创意类职业",
+        "intro": "内容、设计与创新产品相关的工作形态。"
+      },
+      {
+        "key": "sales",
+        "label": "销售类职业",
+        "intro": "需要影响力、客户开拓与目标导向的岗位。"
+      }
+    ]
+  }
+}

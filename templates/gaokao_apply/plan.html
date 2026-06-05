@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} · 高考报考</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gaokao_apply.css') }}">
+</head>
+<body class="page-jilin-plan">
+{% include 'partials/app_shell_open.html' %}
+
+<div class="gk-plan-page" id="gkPlanPage"
+     data-gaokao-province="{{ gaokao_province }}"
+     data-province-batches="{{ province_batches | tojson | e }}"
+     data-batch-labels="{{ batch_labels | tojson | e }}"
+     data-system-url="{{ system_url }}"
+     data-profile-url="{{ profile_url }}"
+     data-plan-lookup-url="{{ plan_lookup_url }}">
+    <header class="gk-plan-header no-print">
+        <div class="gk-plan-header-main">
+            <h1 class="gk-plan-title">{{ page_title }}</h1>
+            <p class="gk-plan-sub">{{ page_subtitle }}</p>
+        </div>
+        <div class="gk-plan-header-actions">
+            <a href="{{ system_url }}" class="gk-btn gk-btn--ghost">返回查询</a>
+            <button type="button" class="gk-btn" id="gkPlanPrintBtn">打印 / 导出 PDF</button>
+        </div>
+    </header>
+
+    <div class="gk-plan-empty" id="gkPlanEmpty" hidden>
+        <p>暂无优选内容，请返回志愿查询页，在各批次中为意向院校/专业点击「优选」。</p>
+        <a href="{{ system_url }}" class="gk-btn gk-btn--primary">返回志愿查询</a>
+    </div>
+
+    <div class="gk-plan-body" id="gkPlanBody" hidden>
+        <div class="gk-plan-print-head" id="gkPlanPrintHead" aria-hidden="true">
+            <h1 class="gk-plan-print-title" id="gkPlanPrintTitle">志愿表</h1>
+        </div>
+        <section class="gk-plan-section gk-plan-section--basic" id="gkPlanBasicSection">
+            <h2 class="gk-plan-section-title">基础信息</h2>
+            <div class="gk-plan-basic-grid" id="gkPlanBasicGrid"></div>
+        </section>
+        <div id="gkPlanBatchSections"></div>
+    </div>
+</div>
+
+{% include 'partials/app_shell_close.html' %}
+<script src="{{ url_for('static', filename='js/gaokao-jilin-plan.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学科能力测评报告</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/assessment-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subject.css') }}">
+</head>
+<body>
+{% set r = report %}
+{% include 'partials/app_shell_open.html' %}
+
+<div class="sub-page sub-report assess-shell">
+    <a href="{{ url_for('index') }}" class="sub-back">← 返回测评报告</a>
+
+    <header class="home-section sub-report-head">
+        <h2>{{ r.name }} · 学科能力测评报告</h2>
+        <p>生日 {{ r.birth_display }} · 学科码 {{ r.subject_code }} · 坐镇码 {{ r.supervisor_code }} · {{ r.calculate_time }}</p>
+        {% if r.gender %}<p>性别 {{ r.gender }}{% if r.ethnicity %} · 民族 {{ r.ethnicity }}{% endif %}</p>{% endif %}
+    </header>
+
+    <section class="home-section sub-grade-scale">
+        <h3 class="sub-section-title">评级与排名区间对照</h3>
+        <div class="sub-scale-row sub-scale-grades">
+            {% for g in ['S','A+','A','A-','B+','B','B-','C+','C','C-','D'] %}
+            <span>{{ g }}</span>
+            {% endfor %}
+        </div>
+        <div class="sub-scale-row sub-scale-ranges">
+            <span>前5%</span><span>5-13%</span><span>13-22%</span><span>22-30%</span><span>30-43%</span>
+            <span>43-57%</span><span>57-70%</span><span>70-78%</span><span>78-87%</span><span>87-95%</span><span>95-100%</span>
+        </div>
+    </section>
+
+    <nav class="sub-tabs">
+        <button type="button" class="sub-tab active" data-tab="overview">总览</button>
+        <button type="button" class="sub-tab" data-tab="subjects">逐科能力</button>
+        <button type="button" class="sub-tab" data-tab="combo">综合分组</button>
+        <button type="button" class="sub-tab" data-tab="recommend">推荐选科</button>
+    </nav>
+
+    <div class="sub-panel active" id="sub-overview">
+        <section class="home-section sub-metric-card">
+            <div class="sub-metric-grade">{{ r.subject_literacy }}</div>
+            <div class="sub-metric-label">学科素养</div>
+            <canvas class="sub-radar-canvas" data-radar="thinking" width="320" height="320"></canvas>
+            <p class="sub-hint">能力评级雷达（学习方法、执行力、思维维度）</p>
+        </section>
+        <section class="home-section sub-metric-card">
+            <div class="sub-metric-grade">{{ r.all_subject_grade }}</div>
+            <div class="sub-metric-label">全学科综测</div>
+            <canvas class="sub-radar-canvas" data-radar="nine" width="320" height="320"></canvas>
+        </section>
+        <section class="home-section">
+            <h3 class="sub-section-title">九科综合评级</h3>
+            <div class="sub-nine-grid">
+                {% for cell in r.nine_chalkboard %}
+                <div class="sub-nine-cell {{ cell.tone_class }}">
+                    <span class="sub-nine-name">{{ cell.name }}</span>
+                    <span class="sub-nine-grade">{{ cell.grade }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+
+    <div class="sub-panel" id="sub-subjects">
+        {% for sub in r.subjects %}
+        <section class="home-section sub-subject-card">
+            <div class="sub-subject-head">
+                <span class="sub-subject-grade">{{ sub.grade }}</span>
+                <span class="sub-subject-name">{{ sub.name }}</span>
+                {% if sub.score %}<span class="sub-subject-score">评分 {{ sub.score }}</span>{% endif %}
+            </div>
+            {% if sub.labels|length >= 3 %}
+            <canvas class="sub-radar-canvas" data-radar="subject" data-index="{{ loop.index0 }}" width="320" height="320"></canvas>
+            {% else %}
+            <p class="sub-hint">细项少于 3 个，暂无雷达图</p>
+            <ul class="sub-detail-list">
+                {% for i in range(sub.labels|length) %}
+                <li><strong>{{ sub.labels[i] }}</strong>：{{ sub.grades[i] }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </section>
+        {% endfor %}
+    </div>
+
+    <div class="sub-panel" id="sub-combo">
+        {% for mod in r.group_modules %}
+        <section class="home-section sub-subject-card">
+            <div class="sub-subject-head">
+                <span class="sub-subject-grade">{{ mod.grade }}</span>
+                <span class="sub-subject-name">{{ mod.title }}</span>
+            </div>
+            {% if mod.labels|length >= 3 %}
+            <canvas class="sub-radar-canvas" data-radar="group" data-index="{{ loop.index0 }}" width="320" height="320"></canvas>
+            {% else %}
+            <p class="sub-hint">细项不足，展示各科综合评级拼合</p>
+            <ul class="sub-detail-list">
+                {% for i in range(mod.labels|length) %}
+                <li>{{ mod.labels[i] }}：{{ mod.grades[i] }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </section>
+        {% endfor %}
+    </div>
+
+    <div class="sub-panel" id="sub-recommend">
+        {% if r.comp_ready %}
+        <section class="home-section sub-metric-card">
+            <div class="sub-metric-grade">{{ r.comp_top_grade or '—' }}</div>
+            <div class="sub-metric-label">选科评级</div>
+            <p class="sub-rec-combo"><strong>组合建议</strong>：{{ r.comp_recommend_combo or '—' }}</p>
+        </section>
+        <div class="sub-combo-cols">
+            <section class="home-section">
+                <h3 class="sub-section-title">物理类方向</h3>
+                {% for row in r.comp_physics_rows %}
+                <div class="sub-kv-row"><span>{{ row.label }}</span><strong>{{ row.grade }}</strong></div>
+                {% else %}<p class="sub-hint">暂无细项</p>{% endfor %}
+            </section>
+            <section class="home-section">
+                <h3 class="sub-section-title">历史类方向</h3>
+                {% for row in r.comp_history_rows %}
+                <div class="sub-kv-row"><span>{{ row.label }}</span><strong>{{ row.grade }}</strong></div>
+                {% else %}<p class="sub-hint">暂无细项</p>{% endfor %}
+            </section>
+        </div>
+        {% else %}
+        <section class="home-section">
+            <p class="sub-hint">{{ r.comp_err }}。上方「总览」「逐科能力」已根据学科能力数据生成。</p>
+        </section>
+        {% endif %}
+    </div>
+
+    <p class="sub-footnote">注：本报告依据大数据与经验整合，优缺点描述非绝对性，请结合家庭环境、亲子关系与后天习惯理性看待。</p>
+
+    <div class="sub-actions">
+        <a href="{{ url_for('subject.start') }}" class="btn-secondary sub-btn">重新填写</a>
+        <a href="{{ url_for('index') }}" class="btn-primary sub-btn">返回测评报告</a>
+    </div>
+</div>
+
+<script>
+window.__SUBJECT_REPORT__ = {{ report | tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/subject_radar.js') }}"></script>
+<script>
+document.querySelectorAll('.sub-tab').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-tab');
+        document.querySelectorAll('.sub-tab').forEach(function (b) { b.classList.remove('active'); });
+        document.querySelectorAll('.sub-panel').forEach(function (p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('sub-' + id).classList.add('active');
+        setTimeout(function () {
+            if (window.SubjectRadar && window.__SUBJECT_REPORT__) {
+                SubjectRadar.initReportRadars(window.__SUBJECT_REPORT__);
+            }
+        }, 50);
+    });
+});
+if (window.SubjectRadar && window.__SUBJECT_REPORT__) {
+    SubjectRadar.initReportRadars(window.__SUBJECT_REPORT__);
+}
+</script>
+
+{% include 'partials/app_shell_close.html' %}
+</body>
+</html>
